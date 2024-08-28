@@ -48,11 +48,38 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    Core/User/bsp/bsp_adc.c
+    Core/User/bsp/bsp_callback.c
+    Core/User/bsp/bsp_timer.c
+    Core/User/bsp/bsp_gpio.c
+    Core/User/bsp/bsp_utils.c
+    Core/User/bsp/bsp_i2c.c
+    Core/User/bsp/bsp_uart.c
+    Core/User/bsp/bsp_flash.c
+    Core/User/bsp/bsp_serial.c
+    Core/User/drv/drv_hr.c
+    Core/User/drv/drv_button.c
+    Core/User/drv/drv_buzzer.c
+    Core/User/drv/drv_ssd1306.c
+    Core/User/drv/drv_ds1307.c
+    Core/User/middleware/cbuffer.c
+    Core/User/middleware/ssd1306_fonts.c
+    Core/User/sys/sys_protocol.c
+    Core/User/sys/sys_display.c
+    Core/User/sys/sys_measure.c
+    Core/User/sys/sys_time.c
+    Core/User/sys/sys_button.c
+    Core/User/sys/sys_storage.c
+    Core/User/sys/sys_manage.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    Core/User/bsp
+    Core/User/drv
+    Core/User/middleware
+    Core/User/sys
 )
 
 # Add project symbols (macros)
