@@ -1,27 +1,27 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2024 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "sys_manage.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +31,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define MAX_SIZE (100)
+// Set sampling rate at 100Hz
+#define PRESCALER_SAMPLING_RATE (959U)
+#define AUTORELOAD_SAMPLING_RATE (999U)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -53,7 +56,15 @@ UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
-
+uint8_t display_buffer[1024];
+sys_display_t display;
+sys_measure_t ppg;
+double filtered_data[129];
+uint32_t peak_nums;
+drv_buzzer_t buzzer;
+cbuffer_t cbuffer;
+uint8_t data_buffer[MAX_SIZE] = {0};
+uint8_t data_received[MAX_SIZE] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -112,7 +123,14 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
-
+  sys_manage_start_protocol(&huart2);
+  sys_manage_start_button(GPIOA, GPIO_PIN_0, 1);
+  sys_manage_start_display(&hi2c2, display_buffer);
+  sys_manage_start_rtc(&hi2c2);
+  sys_manage_start_measure(&hadc1, &htim2, PRESCALER_SAMPLING_RATE, AUTORELOAD_SAMPLING_RATE, filtered_data);
+  sys_manage_start_storage();
+  sys_manage_start_buzzer(&htim11, TIM_CHANNEL_1);
+  sys_manage_start(&htim5);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -122,6 +140,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    sys_manage_loop();
   }
   /* USER CODE END 3 */
 }
