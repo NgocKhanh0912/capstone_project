@@ -1,0 +1,9 @@
+{
+    "files": [
+        "main.py",
+        "form.ui",
+        "dev.ui",
+        "dev_ui_manage.py",
+        "serial_manage.py"
+    ]
+}
