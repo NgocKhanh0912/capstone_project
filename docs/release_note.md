@@ -24,6 +24,7 @@ Initial release.
 #### 2.1. Firmware
 - Peak detection algorithm is unstable and has low accuracy.
 - OLED streaming is slow.
+- The button does not work smoothly.
 
 #### 2.2. Application
 - PPG signals are slowly streamed.
@@ -32,6 +33,7 @@ Initial release.
 #### 3.1. Firmware
 - Improve the peak detection algorithm.
 - Handle the SSD1306 OLED display speed.
+- Improved button event detection.
 
 #### 3.2. Application
 - Improve the stream speed of PPG signals.
