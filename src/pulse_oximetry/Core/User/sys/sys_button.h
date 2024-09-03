@@ -23,7 +23,7 @@
 
 /* Public defines ----------------------------------------------------- */
 #define BUTTON_DEBOUNCE_TIME      (10UL)
-#define BUTTON_RELEASE_TIME       (300UL)
+#define BUTTON_RELEASE_TIME       (500UL)
 #define BUTTON_SINGLE_CLICK_TIME  (500UL)
 #define BUTTON_HOLD_TIME          (3000UL)
 
