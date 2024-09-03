@@ -31,10 +31,11 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MAX_SIZE (100)
+#define MAX_SIZE                  (100)
 // Set sampling rate at 100Hz
-#define PRESCALER_SAMPLING_RATE (959U)
-#define AUTORELOAD_SAMPLING_RATE (999U)
+#define PRESCALER_SAMPLING_RATE   (959U)
+#define AUTORELOAD_SAMPLING_RATE  (999U)
+#define BUTTON_ACTIVE_LEVEL       (1)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -127,7 +128,7 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   sys_manage_start_protocol(&huart2);
-  sys_manage_start_button(GPIOA, GPIO_PIN_0, 1);
+  sys_manage_start_button(&htim3, GPIOA, GPIO_PIN_0, BUTTON_ACTIVE_LEVEL);
   sys_manage_start_display(&hi2c2, display_buffer);
   sys_manage_start_rtc(&hi2c2);
   sys_manage_start_measure(&hadc1, &htim2, PRESCALER_SAMPLING_RATE, AUTORELOAD_SAMPLING_RATE, filtered_data);

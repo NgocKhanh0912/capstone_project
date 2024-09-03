@@ -107,10 +107,11 @@ uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc,
   return SYS_MANAGE_OK;
 }
 
-uint32_t sys_manage_start_button(GPIO_TypeDef *gpio, uint16_t pin, uint32_t button_active_level)
+uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
+                                 uint16_t pin, uint32_t button_active_level)
 {
   uint32_t ret = SYS_BUTTON_OK;
-  ret = sys_button_init(gpio, pin, button_active_level);
+  ret = sys_button_init(tim, gpio, pin, button_active_level);
   __ASSERT(ret == SYS_BUTTON_OK, SYS_MANAGE_ERROR);
   ret = sys_button_register_cb_function(sys_manage_record_heart_rate,
                                         sys_manage_select_stream,
@@ -180,7 +181,7 @@ uint32_t sys_manage_start(bsp_tim_typedef_t *tim)
   s_tim_interval = tim;
   bsp_timer_set_autoreload(s_tim_interval, SYS_MANAGE_TIMESTAMP);
   bsp_timer_set_prescaler(s_tim_interval, 0);
-  bsp_timer_register_callback(sys_manage_interval_elapsed);
+  bsp_timer_register_interval_callback(sys_manage_interval_elapsed);
 }
 
 uint32_t sys_manage_loop()

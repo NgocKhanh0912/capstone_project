@@ -19,12 +19,13 @@
 #define __USER_SYS_SYS_BUTTON_H
 
 /* Includes ----------------------------------------------------------- */
+#include "bsp_timer.h"
 #include "drv_button.h"
 
 /* Public defines ----------------------------------------------------- */
 #define BUTTON_DEBOUNCE_TIME      (10UL)
 #define BUTTON_RELEASE_TIME       (500UL)
-#define BUTTON_SINGLE_CLICK_TIME  (500UL)
+#define BUTTON_SINGLE_CLICK_TIME  (400UL)
 #define BUTTON_HOLD_TIME          (3000UL)
 
 /* Public enumerate/structure ----------------------------------------- */
@@ -79,16 +80,20 @@ typedef void (*sys_button_evt_cb_t)();
 /* Public function prototypes ----------------------------------------- */
 /**
  * @brief       Initialize the system button
+  *
+ * @param[in]   tim                   Pointer of timer debound handler.
+ * @param[in]   gpio                  Pointer point to GPIO port.
+ * @param[in]   pin                   Pin of that port.
+ * @param[in]   button_active_level   Determine the active high or active low button.
  *
- * @param[in]   gpio  Pointer point to GPIO port
- * @param[in]   pin   pin of that port
- * @param[in]   button_active_level Determine the active high or active low button
+ *
  * @return
- *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - 0xFFFFFFFF: Error
+ *  - 0x7FFFFFFF: Failed
+ *  - 0x3FFFFFFF: Success
  */
-sys_button_status_t sys_button_init(GPIO_TypeDef *gpio, uint16_t pin, uint32_t button_active_level);
+sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
+                                    uint16_t pin, uint32_t button_active_level);
 
 /**
  * @brief       Manage the system button
