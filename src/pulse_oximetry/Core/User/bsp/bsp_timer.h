@@ -192,16 +192,28 @@ bsp_timer_status_t bsp_pwm_stop(bsp_tim_typedef_t *htim, uint32_t tim_channel);
 bsp_timer_status_t bsp_pwm_stop_it(bsp_tim_typedef_t *htim, uint32_t tim_channel);
 
 /**
- * @brief       Register the function for event handler.
+ * @brief       Register the function for interval event handler.
  *
- * @param[in]   period_elapsed          Function pointer to handle the period elapsed event.
+ * @param[in]   interval_period_elapsed     Function pointer to handle the interval period elapsed event.
 
  *
  * @return      -2 if error,
- *              -1 if fail to stop PWM on that channel,
- *              0 if stop PWM on that channel successfully.
+ *              -1 if fail,
+ *              0 if successfully.
  */
-bsp_timer_status_t bsp_timer_register_callback(bsp_timer_cb_t period_elapsed);
+bsp_timer_status_t bsp_timer_register_interval_callback(bsp_timer_cb_t interval_period_elapsed);
+
+/**
+ * @brief       Register the function for debound event handler.
+ *
+ * @param[in]   debound_period_elapsed      Function pointer to handle the debound period elapsed event.
+
+ *
+ * @return      -2 if error,
+ *              -1 if fail,
+ *              0 if successfully.
+ */
+bsp_timer_status_t bsp_timer_register_debound_callback(bsp_timer_cb_t debound_period_elapsed);
 
 /**
  * @brief       Handle the callback event
@@ -209,8 +221,8 @@ bsp_timer_status_t bsp_timer_register_callback(bsp_timer_cb_t period_elapsed);
  * @param[in]   htim          Pointer of timer handler.
  *
  * @return      -2 if error,
- *              -1 if fail to stop PWM on that channel,
- *              0 if stop PWM on that channel successfully.
+ *              -1 if fail,
+ *              0 if successfully.
  */
 bsp_timer_status_t bsp_timer_period_callback_handler(bsp_tim_typedef_t *htim);
 
