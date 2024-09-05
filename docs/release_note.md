@@ -38,7 +38,7 @@ Initial release.
 #### 3.2. Application
 - Improve the stream speed of PPG signals.
 
-### 4. Contributors
+## Contributors
 - Giang Phan Truong
 - Khanh Nguyen Ngoc
 - Viet Hoang Xuan
