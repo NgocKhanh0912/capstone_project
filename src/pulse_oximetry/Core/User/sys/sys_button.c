@@ -16,7 +16,6 @@
 
 /* Includes ----------------------------------------------------------- */
 #include "sys_button.h"
-#include "bsp_timer.h"
 #include "bsp_utils.h"
 #include "common.h"
 #include <stdbool.h>
@@ -26,6 +25,8 @@
 #define SYS_BUTTON_EVT_SINGLE_CLICK_CB  (0)
 #define SYS_BUTTON_EVT_DOUBLE_CLICK_CB  (1)
 #define SYS_BUTTON_EVT_HOLD_CB          (2)
+#define SYS_BUTTON_DEBOUND_PRESCALER    (95)
+#define SYS_BUTTON_DEBOUND_AUTORELOAD   ((BUTTON_DEBOUNCE_TIME * 1000) - 1)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -33,14 +34,17 @@
 
 /* Public variables --------------------------------------------------- */
 sys_button_t s_button;
+static bsp_tim_typedef_t *s_tim_debound;
 sys_button_evt_cb_t s_button_evt_cb[SYS_BUTTON_MAX_EVT] = {0};
 bool s_button_manage_first_run_flag = true;
 
 /* Private function prototypes ---------------------------------------- */
 static void sys_button_detect_edge(uint16_t exti_line);
+static void sys_button_debound();
 
 /* Function definitions ----------------------------------------------- */
-sys_button_status_t sys_button_init(GPIO_TypeDef *gpio, uint16_t pin, uint32_t button_active_level)
+sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
+                                    uint16_t pin, uint32_t button_active_level)
 {
   drv_button_t dbutton;
   drv_button_status_t ret = DRV_BUTTON_OK;
@@ -51,7 +55,13 @@ sys_button_status_t sys_button_init(GPIO_TypeDef *gpio, uint16_t pin, uint32_t b
   s_button.dbutton = dbutton;
   s_button.transient_state = SYS_BUTTON_STATE_STABLE;
   s_button.fsm_state = SYS_BUTTON_FSM_STATE_IDLE;
+
   drv_button_register_callback(sys_button_detect_edge);
+
+  s_tim_debound =  tim;
+  bsp_timer_set_autoreload(s_tim_debound, SYS_BUTTON_DEBOUND_AUTORELOAD);
+  bsp_timer_set_prescaler(s_tim_debound, SYS_BUTTON_DEBOUND_PRESCALER);
+  bsp_timer_register_debound_callback(sys_button_debound);
 
   return SYS_BUTTON_OK;
 }
@@ -68,19 +78,6 @@ sys_button_status_t sys_button_manage()
   else 
   {
     delta_t = bsp_utils_get_tick() - previous_end_time;
-  }
-
-  if (s_button.transient_state == SYS_BUTTON_STATE_DEBOUNCE)
-  {
-    if (bsp_utils_get_tick() - s_button.dbutton.time_debounce >= BUTTON_DEBOUNCE_TIME)
-    {
-      uint32_t button_current_state = bsp_gpio_read_pin(s_button.dbutton.port, s_button.dbutton.pin);
-      if (button_current_state != s_button.dbutton.current_state)
-      {
-        s_button.dbutton.current_state = button_current_state;
-      }
-      s_button.transient_state = SYS_BUTTON_STATE_STABLE;
-    }
   }
 
   switch (s_button.fsm_state)
@@ -251,7 +248,23 @@ static void sys_button_detect_edge(uint16_t exti_line)
   {
     s_button.transient_state = SYS_BUTTON_STATE_DEBOUNCE;
     s_button.dbutton.time_debounce = bsp_utils_get_tick();
+    bsp_timer_start_it(s_tim_debound);
   }
+}
+
+static void sys_button_debound()
+{
+  if (s_button.transient_state == SYS_BUTTON_STATE_DEBOUNCE)
+  {
+    uint32_t button_current_state = bsp_gpio_read_pin(s_button.dbutton.port, s_button.dbutton.pin);
+    if (button_current_state != s_button.dbutton.current_state)
+    {
+      s_button.dbutton.current_state = button_current_state;
+    }
+    s_button.transient_state = SYS_BUTTON_STATE_STABLE;
+  }
+
+  bsp_timer_stop_it(s_tim_debound);
 }
 
 /* End of file -------------------------------------------------------- */

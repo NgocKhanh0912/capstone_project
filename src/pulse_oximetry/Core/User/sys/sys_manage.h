@@ -92,8 +92,8 @@ typedef struct
 /**
  * @brief  Start the service control display
  *
- * @param[in]     display  pointer to sys_display_t structure for manage the display in the system
- * @param[in]     i2c      pointer to I2C handler
+ * @param[in]     display  pointer to sys_display_t structure for manage the display in the system.
+ * @param[in]     i2c      pointer to I2C handler.
  *
  * @return
  *  - 0xFFFFFFFF: Error
@@ -105,10 +105,10 @@ uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer);
 /**
  * @brief  Start the service to collect and process signal
  *
- * @param[in]     adc           Channel attaches to sensor
- * @param[in]     tim           Timer to trigger ADC Conversion
- * @param[in]     prescaler     Prescale the clock timer source
- * @param[in]     autoreload    Set the top of counter
+ * @param[in]     adc           Channel attaches to sensor.
+ * @param[in]     tim           Timer to trigger ADC Conversion.
+ * @param[in]     prescaler     Prescale the clock timer source.
+ * @param[in]     autoreload    Set the top of counter.
  * @param[in]     data_buf      Pointer to buffer that store processed data.
  *
  * @return
@@ -123,11 +123,12 @@ uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc,
                                   double *data_buf);
 
 /**
- * @brief       Start the serivce handle the user button
+ * @brief       Start the service handle the user button
  *
- * @param[in]   gpio  Pointer point to GPIO port
- * @param[in]   pin   pin of that port
- * @param[in]   button_active_level Determine the active high or active low button
+ * @param[in]   tim                   Pointer of timer debound handler.
+ * @param[in]   gpio                  Pointer point to GPIO port.
+ * @param[in]   pin                   Pin of that port.
+ * @param[in]   button_active_level   Determine the active high or active low button.
  *
  *
  * @return
@@ -135,12 +136,13 @@ uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc,
  *  - 0x7FFFFFFF: Failed
  *  - 0x3FFFFFFF: Success
  */
-uint32_t sys_manage_start_button(GPIO_TypeDef *gpio, uint16_t pin, uint32_t button_active_level);
+uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
+                                 uint16_t pin, uint32_t button_active_level);
 
 /**
- * @brief                 Start service to manage the UART protocol
+ * @brief                 Start service to manage the UART protocol.
  *
- * @param[in]     uart    Hardware UART handler
+ * @param[in]     uart    Hardware UART handler.
  *
  * @return
  * -  (0xFFFFFFFF)  : Error
