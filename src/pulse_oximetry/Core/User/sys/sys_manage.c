@@ -24,6 +24,9 @@
 #define SYS_MANAGE_TIMESTAMP                        (96000000U)
 #define SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE  (4096U)
 #define SYS_MANAGE_FILTERED_DATA_OFFSET_PKT         (1000.0)
+#define SYS_MANAGE_STABILIZATION_TIMESTAMP          (5000)
+#define SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD   (140)
+#define SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD    (60)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -165,8 +168,8 @@ uint32_t sys_manage_start(bsp_tim_typedef_t *tim)
   s_mng.current_state = SYS_MANAGE_STATE_IDLE;
   s_mng.cmd = 0xFF;
   s_mng.interval = 0;
-  s_mng.lower_threshold = 60;
-  s_mng.upper_threshold = 140;
+  s_mng.lower_threshold = SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD;
+  s_mng.upper_threshold = SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD;
   s_mng.active = true;
   s_mng.stream = SYS_MANAGE_STREAM_OLED;
   uint8_t threshold[] = {s_mng.lower_threshold, s_mng.upper_threshold};
@@ -205,7 +208,7 @@ uint32_t sys_manage_loop()
   }
   sys_measure_process_data(&s_ppg_signal);
 
-  if (bsp_utils_get_tick() > 5000)
+  if (bsp_utils_get_tick() > SYS_MANAGE_STABILIZATION_TIMESTAMP)
   {
     if (s_mng.stream == SYS_MANAGE_STREAM_OLED)
     {
