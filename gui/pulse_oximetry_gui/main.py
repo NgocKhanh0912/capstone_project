@@ -477,13 +477,6 @@ class MainWindow(QMainWindow):
                 QMessageBox.warning(self, "Error", "Invalid command")
                 return
 
-            if threshold == "0F":
-                self.ui_user.line_thre_noti.setText("Heart rate too high")
-            elif threshold == "F0":
-                self.ui_user.line_thre_noti.setText("Heart rate too low")
-            elif threshold == "FF":
-                self.ui_user.line_thre_noti.setText("Normal heart rate")
-
             # Check UART
             if cmd == "00":
                 if data == "FFFFFFFF":
@@ -493,9 +486,9 @@ class MainWindow(QMainWindow):
                     QMessageBox.warning(self, "Error", "Invalid data")
                     return
 
-            # Plot heart rate
+            # Plot heart rate in heart rate graph
             elif cmd == "01":
-                self.update_heart_rate()
+                self.update_heart_rate_graph()
 
             # Plot raw PPG signal
             elif cmd == "11":
@@ -528,13 +521,16 @@ class MainWindow(QMainWindow):
                     self.dev_widget.filtered_ppg_time.pop(0)
                     self.dev_widget.filtered_ppg_value.pop(0)
 
-            # Error notification
+            # Current heart rate
             elif cmd == "06":
-                if data == "FFFFFFFF":
-                    self.dev_widget.ui_dev.line_err_noti.setText("Error occurred")
-                else:
-                    QMessageBox.warning(self, "Error", "Invalid data")
-                    return
+                self.ui_user.line_heart_rate.setText(str(self.data_value))
+
+                if threshold == "0F":
+                    self.ui_user.line_thre_noti.setText("Heart rate too high")
+                elif threshold == "F0":
+                    self.ui_user.line_thre_noti.setText("Heart rate too low")
+                elif threshold == "FF":
+                    self.ui_user.line_thre_noti.setText("Normal heart rate")
 
             # Get epoch time from STM32, convert epoch time to date time for print record
             elif cmd == "04":
@@ -553,7 +549,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Error", f"Failed to read serial data: {str(e)}")
 
     @Slot()
-    def update_heart_rate(self):
+    def update_heart_rate_graph(self):
         if not self.serial_connection:
             return
 
