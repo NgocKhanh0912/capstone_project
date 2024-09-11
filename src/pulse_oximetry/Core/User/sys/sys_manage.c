@@ -206,6 +206,7 @@ uint32_t sys_manage_loop()
       }
     }
   }
+
   sys_measure_process_data(&s_ppg_signal);
 
   if (bsp_utils_get_tick() > SYS_MANAGE_STABILIZATION_TIMESTAMP)
@@ -229,6 +230,22 @@ uint32_t sys_manage_loop()
   }
 
   sys_display_update_heart_rate(&s_oled_screen, s_ppg_signal.heart_rate);
+  
+  if ((s_ppg_signal.heart_rate < s_mng.upper_threshold) && (s_ppg_signal.heart_rate > s_mng.lower_threshold))
+  {
+    sys_protocol_pkt_t current_heart_rate = {SYS_MANAGE_CMD_GET_CURRENT_HEART_RATE, s_ppg_signal.heart_rate, 0xFF};
+    sys_protocol_send_pkt_to_port(current_heart_rate);
+  }
+  else if (s_ppg_signal.heart_rate > s_mng.upper_threshold)
+  {
+    sys_protocol_pkt_t current_heart_rate = {SYS_MANAGE_CMD_GET_CURRENT_HEART_RATE, s_ppg_signal.heart_rate, 0x0F};
+    sys_protocol_send_pkt_to_port(current_heart_rate);
+  }
+  else
+  {
+    sys_protocol_pkt_t current_heart_rate = {SYS_MANAGE_CMD_GET_CURRENT_HEART_RATE, s_ppg_signal.heart_rate, 0xF0};
+    sys_protocol_send_pkt_to_port(current_heart_rate);
+  }
 
   if (cb_data_count(&s_rx_pkt_cbuf) > 0)
   {

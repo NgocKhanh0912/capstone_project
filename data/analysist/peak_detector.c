@@ -2036,6 +2036,7 @@ double sample[MAX_SAMPLES] = {7.727940275249999859e-03,
 /* Private function prototypes ---------------------------------------- */
 static void read_csv_file(const char *file_name, int *csv_buf, int samples);
 static uint32_t peak_detector(double *input);
+
 /* Function definitions ----------------------------------------------- */
 int main(void)
 {
@@ -2049,6 +2050,7 @@ int main(void)
 
   return 0;
 }
+
 /* Private definitions ------------------------------------------------ */
 static void read_csv_file(const char *file_name, int *csv_buf, int samples)
 {
@@ -2166,4 +2168,5 @@ static uint32_t peak_detector(double *input)
   }
   return peak_num;
 }
+
 /* End of file -------------------------------------------------------- */
