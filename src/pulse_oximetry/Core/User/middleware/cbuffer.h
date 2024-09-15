@@ -68,78 +68,80 @@ typedef struct
 } cbuffer_t;
 
 /* Public macros ------------------------------------------------------ */
+
 /* Public variables --------------------------------------------------- */
+
 /* Public function prototypes ----------------------------------------- */
 
 /* Public function prototypes ----------------------------------------- */
 /**
- * @brief           Initialize circular buffer
+ * @brief           Initialize circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
- * @param[in]       buf     Pointer to array
- * @param[in]       size    Size of buffer
+ * @param[in]       cb      Pointer to a cbuffer_t structure.
+ * @param[in]       buf     Pointer to array.
+ * @param[in]       size    Size of buffer.
  *
  * @return
- *  - (0) : Success
- *  - (-1): Error
+ *  - (0) : Success.
+ *  - (-1): Error.
  */
 uint32_t cb_init(cbuffer_t *cb, void *buf, uint32_t size);
 
 /**
- * @brief           Clear circular buffer
+ * @brief           Clear circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
+ * @param[in]       cb      Pointer to a cbuffer_t structure.
  *
  * @return
- *  - (0) : Success
- *  - (-1): Error
+ *  - (0) : Success.
+ *  - (-1): Error.
  */
 uint32_t cb_clear(cbuffer_t *cb);
 
 /**
- * @brief           Read data from circular buffer
+ * @brief           Read data from circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
- * @param[out]      buf     Pointer to data buffer
- * @param[in]       size    Size of data that want to read
+ * @param[in]       cb      Pointer to a cbuffer_t structure.
+ * @param[out]      buf     Pointer to data buffer.
+ * @param[in]       size    Size of data that want to read.
  *
  * @return
- *  - Number of successfully read byte: Success
- *  - (-1): Error
+ *  - Number of successfully read byte: Success.
+ *  - (-1): Error.
  */
 uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes);
 
 /**
- * @brief           Write data to circular buffer
+ * @brief           Write data to circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
- * @param[in]       buf     Pointer to data buffer
- * @param[in]       size    Size of data that want to read
+ * @param[in]       cb      Pointer to a cbuffer_t structure.
+ * @param[in]       buf     Pointer to data buffer.
+ * @param[in]       size    Size of data that want to read.
  *
  * @return
- *  - Number of successfully read byte
+ *  - Number of successfully read byte.
  */
 uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes);
 
 /**
- * @brief           Return a number of byte in circular buffer
+ * @brief           Return a number of byte in circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
+ * @param[in]       cb      Pointer to a cbuffer_t structure.
  *
  * @return
- *  - Number of byte in circular buffer: Success
- *  - (-1): Error
+ *  - Number of byte in circular buffer: Success.
+ *  - (-1): Error.
  */
 uint32_t cb_data_count(cbuffer_t *cb);
 
 /**
- * @brief           Return a number of space (in byte unit) in circular buffer
+ * @brief           Return a number of space (in byte unit) in circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
+ * @param[in]       cb      Pointer to a cbuffer_t structure.
  *
  * @return
- *  - Number of space (in byte unit) in circular buffer: Success
- *  - (-1): Error
+ *  - Number of space (in byte unit) in circular buffer: Success.
+ *  - (-1): Error.
  */
 uint32_t cb_space_count(cbuffer_t *cb);
 

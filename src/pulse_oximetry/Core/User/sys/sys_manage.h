@@ -71,7 +71,6 @@ typedef enum
   SYS_MANAGE_STATE_SEND_RECORDS,
   SYS_MAMAGE_STATE_CLEAR_RECORDS,
   SYS_MANAGE_STATE_ERROR
-
 } sys_manage_state_t;
 
 typedef struct
