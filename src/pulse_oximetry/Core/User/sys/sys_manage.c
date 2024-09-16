@@ -50,6 +50,11 @@ static sys_manage_t s_mng;
 static sys_protocol_pkt_t s_check_pkt;
 static const uint8_t s_success_noti[] = "Success!";
 
+static uint16_t s_raw_ppg_stream_gui_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = {0};
+static double s_filtered_ppg_stream_gui_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = {0};
+static cbuffer_t s_raw_ppg_stream_gui_cbuf;
+static cbuffer_t s_filtered_ppg_stream_gui_cbuf;
+
 /* Private function prototypes ---------------------------------------- */
 
 /**
@@ -179,6 +184,9 @@ uint32_t sys_manage_start(bsp_tim_typedef_t *tim)
   s_check_pkt.data = 0xFFFFFFFF;
   s_check_pkt.threshold_level = 0xFF;
 
+  cb_init(&s_raw_ppg_stream_gui_cbuf, s_raw_ppg_stream_gui_buf, sizeof(s_raw_ppg_stream_gui_buf));
+  cb_init(&s_filtered_ppg_stream_gui_cbuf, s_filtered_ppg_stream_gui_buf, sizeof(s_filtered_ppg_stream_gui_buf));
+
   uint8_t start_msg[] = "Init OK";
   sys_display_show_noti(&s_oled_screen, start_msg);
   s_tim_interval = tim;
@@ -193,39 +201,45 @@ uint32_t sys_manage_loop()
 
   if (s_mng.stream == SYS_MANAGE_STREAM_GUI)
   {
-    if (cb_data_count(&s_ppg_signal.dev.adc_conv) > 0)
+    if ((cb_data_count(&s_raw_ppg_stream_gui_cbuf) > 0) && 
+        (cb_data_count(&s_filtered_ppg_stream_gui_cbuf) > 0))
     {
-      cbuffer_t raw_data_cbuf = s_ppg_signal.dev.adc_conv;
-
-      while (cb_data_count(&raw_data_cbuf) > 0)
+      while ((cb_data_count(&s_raw_ppg_stream_gui_cbuf) > 0) &&
+             (cb_data_count(&s_filtered_ppg_stream_gui_cbuf) > 0))
       {
         uint16_t adc_val = 0;
-        cb_read(&raw_data_cbuf, &adc_val, sizeof(adc_val));
+        cb_read(&s_raw_ppg_stream_gui_cbuf, &adc_val, sizeof(adc_val));
         sys_protocol_pkt_t raw_data_pkt = {SYS_MANAGE_CMD_GET_RAW_PPG, (uint32_t)adc_val, 0xFF};
         sys_protocol_send_pkt_to_port(raw_data_pkt);
+
+        double temp = 0;
+        cb_read(&s_filtered_ppg_stream_gui_cbuf, &temp, sizeof(temp));
+        temp += SYS_MANAGE_FILTERED_DATA_OFFSET_PKT;
+        sys_protocol_pkt_t filtered_data_pkt = {SYS_MANAGE_CMD_GET_FILTERED_PPG, (uint32_t)temp, 0xFF};
+        sys_protocol_send_pkt_to_port(filtered_data_pkt);
+
+        if (cb_space_count(&(s_ppg_signal.filtered_data)) == 0)
+        {
+          cb_clear(&(s_ppg_signal.filtered_data));
+        }
       }
+    }
+
+    if (cb_space_count(&(s_ppg_signal.filtered_data)) == 0)
+    {
+      cb_clear(&(s_ppg_signal.filtered_data));
     }
   }
 
-  sys_measure_process_data(&s_ppg_signal);
+  sys_measure_process_data(&s_ppg_signal, 
+                           &s_raw_ppg_stream_gui_cbuf, 
+                           &s_filtered_ppg_stream_gui_cbuf);
 
   if (bsp_utils_get_tick() > SYS_MANAGE_STABILIZATION_TIMESTAMP)
   {
     if (s_mng.stream == SYS_MANAGE_STREAM_OLED)
     {
       sys_display_update_ppg_signal(&s_oled_screen, &(s_ppg_signal.filtered_data));
-    }
-  }
-
-  if (s_mng.stream == SYS_MANAGE_STREAM_GUI)
-  {
-    while (cb_data_count(&s_ppg_signal.filtered_data) > 0)
-    {
-      double temp = 0;
-      cb_read(&s_ppg_signal.filtered_data, &temp, sizeof(temp));
-      temp += SYS_MANAGE_FILTERED_DATA_OFFSET_PKT;
-      sys_protocol_pkt_t filtered_data_pkt = {SYS_MANAGE_CMD_GET_FILTERED_PPG, (uint32_t)temp, 0xFF};
-      sys_protocol_send_pkt_to_port(filtered_data_pkt);
     }
   }
 

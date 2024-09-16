@@ -23,6 +23,7 @@
 #include "cbuffer.h"
 
 /* Public defines ----------------------------------------------------- */
+#define SYS_MEASURE_MAX_SAMPLES_PROCESS (128)
 
 /* Public enumerate/structure ----------------------------------------- */
 enum sys_measure_status_t
@@ -45,18 +46,19 @@ typedef struct
 
 /* Public function prototypes ----------------------------------------- */
 /**
- * @brief  Initialize the system measurement
+ * @brief  Initialize the system measurement.
  *
- * @param[in]     signal      The type of signal
- * @param[in]     dev         Sensor
- * @param[in]     tim         Timer to trigerr ADC Conversion
- * @param[in]     prescaler   Prescale the clock timer source
- * @param[in]     autoreload   Set the top of counter
+ * @param[in]     signal       The type of signal.
+ * @param[in]     adc          ADC to convert analog signal to digital.
+ * @param[in]     tim          Timer to trigerr ADC Conversion.
+ * @param[in]     prescaler    Prescale the clock timer source.
+ * @param[in]     autoreload   Set the top of counter.
+ * @param[in]     data_buf     Filtered PPG buffer for cbuffer.
  *
  * @return
- *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF) : Success.
  */
 uint32_t sys_measure_init(sys_measure_t *signal,
                           bsp_adc_typedef_t *adc,
@@ -66,18 +68,20 @@ uint32_t sys_measure_init(sys_measure_t *signal,
                           double *data_buf);
 
 /**
- * @brief Process
+ * @brief Process PPG data to measure heart rate.
  *
- * @param[in]     signal      The signal need to be processed
- * @param[in]     output      Pointer to output buffer
- * @param[in]     heart_rate  Heart rate if can be measured
- *
+ * @param[in]         signal                 The signal need to be processed.
+ * @param[inout]      gui_raw_ppg_cb         Pointer to the raw PPG cbuffer to stream on GUI.
+ * @param[inout]      gui_filtered_ppg_cb    Pointer to the filtered PPG cbuffer to stream on GUI.
  * @return
- *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ * 
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF) : Success.
  */
-uint32_t sys_measure_process_data(sys_measure_t *signal);
+uint32_t sys_measure_process_data(sys_measure_t *signal, 
+                                  cbuffer_t *gui_raw_ppg_cb, 
+                                  cbuffer_t *gui_filtered_ppg_cb);
 
 #endif // __USER_SYS_MEASURE_H
 

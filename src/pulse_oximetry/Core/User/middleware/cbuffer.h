@@ -116,7 +116,7 @@ uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes);
  *
  * @param[in]       cb      Pointer to a cbuffer_t structure.
  * @param[in]       buf     Pointer to data buffer.
- * @param[in]       size    Size of data that want to read.
+ * @param[in]       size    Size of data that want to write.
  *
  * @return
  *  - Number of successfully read byte.

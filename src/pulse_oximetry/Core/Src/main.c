@@ -58,7 +58,7 @@ DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 uint8_t display_buffer[1024];
-double filtered_data[129];
+double filtered_data[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

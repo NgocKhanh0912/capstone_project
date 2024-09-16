@@ -20,7 +20,6 @@
 #include "math.h"
 
 /* Private defines ---------------------------------------------------- */
-#define SYS_MEASURE_MAX_SAMPLES_PROCESS (128)
 #define SYS_MEASURE_LPF_NUM_OF_COEFFS   (5) // 4-order
 #define SYS_MEASURE_HPF_NUM_OF_COEFFS   (3) // 2-order
 #define SYS_MEASURE_SAMPLING_RATE       (100.0)
@@ -36,24 +35,32 @@ static uint16_t s_adc_val_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = {0};
 
 /* Private function prototypes ---------------------------------------- */
 /**
- * @brief  Filter the interferances of the signal
+ * @brief  Filter the interferances of the signal.
  *
- * @param[in]     signal  The signal object
- * @param[in]     input   The input signal
- *
+ * @param[in]        signal                The signal object.
+ * @param[inout]     gui_raw_ppg_cb        Pointer to the raw PPG cbuffer to stream on GUI.
+ * @param[inout]     gui_filtered_ppg_cb   Pointer to the filtered PPG cbuffer to stream on GUI.
+ * 
  * @return
- *  - the filtered data
+ *
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF) : Success.
  */
-static uint32_t sys_measure_filter_data(sys_measure_t *signal);
+static uint32_t sys_measure_filter_data(sys_measure_t *signal, 
+                                        cbuffer_t *gui_raw_ppg_cb, 
+                                        cbuffer_t *gui_filtered_ppg_cb);
 
 /**
- * @brief  Detect the peak in dataset of signal
+ * @brief  Detect the peak in dataset of signal.
  *
- * @param[in]     signal  The signal object
- * @param[in]     data    Data need to be detected the peak
+ * @param[in]     signal  The signal object.
  *
  * @return
- *  - the number of peaks
+ *
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF) : Success.
  */
 static uint32_t sys_measure_peak_detector(sys_measure_t *signal);
 
@@ -77,12 +84,14 @@ uint32_t sys_measure_init(sys_measure_t *signal,
   return SYS_MEASURE_OK;
 }
 
-uint32_t sys_measure_process_data(sys_measure_t *signal)
+uint32_t sys_measure_process_data(sys_measure_t *signal, 
+                                  cbuffer_t *gui_raw_ppg_cb, 
+                                  cbuffer_t *gui_filtered_ppg_cb)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
   __ASSERT(signal->dev.active == true, SYS_MEASURE_ERROR);
 
-  sys_measure_filter_data(signal);
+  sys_measure_filter_data(signal, gui_raw_ppg_cb, gui_filtered_ppg_cb);
 
   if (cb_space_count(&signal->filtered_data) == 0)
   {
@@ -93,7 +102,9 @@ uint32_t sys_measure_process_data(sys_measure_t *signal)
 }
 
 /* Private definitions ------------------------------------------------ */
-static uint32_t sys_measure_filter_data(sys_measure_t *signal)
+static uint32_t sys_measure_filter_data(sys_measure_t *signal, 
+                                        cbuffer_t *gui_raw_ppg_cb, 
+                                        cbuffer_t *gui_filtered_ppg_cb)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
 
@@ -147,6 +158,7 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal)
     // Put the current value of the input signal into the first position of the array
     uint16_t adc_temp;
     cb_read(&(signal->dev.adc_conv), &adc_temp, sizeof(adc_temp));
+    cb_write(gui_raw_ppg_cb, &adc_temp, sizeof(adc_temp));
     lpf_recent_input[0] = (double)adc_temp;
 
     // Calculate the current output value
@@ -186,6 +198,7 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal)
 
     // Place the current output value at the first position of the array
     cb_write(&(signal->filtered_data), &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+    cb_write(gui_filtered_ppg_cb, &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
   }
   return SYS_MEASURE_OK;
 }
