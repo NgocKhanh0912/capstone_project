@@ -115,7 +115,7 @@ static void sys_protocol_receive_packet_cplt_handler(uint16_t received_bytes)
 {
   bsp_serial_receive(s_pkt_buf);
   uint8_t *start_byte_pos = strchr(s_pkt_buf, START_BYTE);
-  uint8_t *stop_byte_pos = strchr(start_byte_pos + CMD_PKT_SIZE + DATA_PKT_SIZE, STOP_BYTE);
+  uint8_t *stop_byte_pos = strchr(start_byte_pos + 1 + CMD_PKT_SIZE + DATA_PKT_SIZE, STOP_BYTE);
   if ((start_byte_pos != NULL) && (stop_byte_pos != NULL))
   {
     memmove(s_pkt, start_byte_pos + CMD_PKT_SIZE, stop_byte_pos - start_byte_pos - 1);

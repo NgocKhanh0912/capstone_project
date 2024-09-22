@@ -253,7 +253,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   mean_of_signal /= SYS_MEASURE_MAX_SAMPLES_PROCESS;
 
   // Calculate the Threshold for generating Block of Interest
-  double beta = 0.8;
+  double beta = 0.95;
   double threshold[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)

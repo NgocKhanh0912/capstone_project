@@ -54,7 +54,7 @@ Whenever heart rate overcomes the threshold, system must signal to users.
 - Data (DATA): (GUI side)
   - Length: 4 bytes.
   - Value: Based on CMD.
-    - Check UART: transmit&receive - 0xFFFFFFFF.
+    - Check UART: transmit & receive - 0xFFFFFFFF.
     - Get Heart Rate: transmit - 0xFFFFFFFF; receive - Heart Rate value.
     - Get raw PPG signal: receive - raw PPG Signal.
     - Get filtered PPG signal: recieve - filtered PPG signal.
