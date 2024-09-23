@@ -22,7 +22,7 @@
 #include <math.h>
 
 /* Private defines ---------------------------------------------------- */
-#define MAX_SAMPLES     (2000)
+#define MAX_SAMPLES     (5000)
 #define MAX_LINE_LENGTH (100)
 
 /* Private enumerate/structure ---------------------------------------- */
@@ -30,7 +30,7 @@
 /* Private macros ----------------------------------------------------- */
 
 /* Public variables --------------------------------------------------- */
-const char *data_file = "../golden_data/filtered_golden_data.csv";
+const char *data_file = "real_world_dataset/golden_data/filtered_ppg_data_100hz.csv";
 double sample[MAX_SAMPLES] = {0};
 
 /* Private variables -------------------------------------------------- */
@@ -82,8 +82,8 @@ static void read_csv_file(const char *file_name, double *csv_buf, int samples)
 static uint32_t peak_detector(double *input)
 {
   // Choose the Windows Size W1, W2 in TERMA framework
-  uint32_t w_cycle = 301,
-           w_evt = 51;
+  uint32_t w_cycle = 97,
+           w_evt = 17;
 
   float ma_cycle[MAX_SAMPLES] = {0},
         ma_evt[MAX_SAMPLES] = {0};
@@ -128,7 +128,7 @@ static uint32_t peak_detector(double *input)
   mean_of_signal /= MAX_SAMPLES;
 
   // Calculate the Threshold for generating Block of Interest
-  float beta = 0.8;
+  float beta = 0.5;
   float threshold_1[MAX_SAMPLES] = {0};
 
   for (i = 0; i < MAX_SAMPLES; i++)
