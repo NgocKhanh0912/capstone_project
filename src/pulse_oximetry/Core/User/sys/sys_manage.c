@@ -23,7 +23,7 @@
 /* Private defines ---------------------------------------------------- */
 #define SYS_MANAGE_TIMESTAMP                        (96000000U)
 #define SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE  (4096U)
-#define SYS_MANAGE_FILTERED_DATA_OFFSET_PKT         (1000.0)
+#define SYS_MANAGE_FILTERED_DATA_OFFSET_PKT         (1500.0)
 #define SYS_MANAGE_STABILIZATION_TIMESTAMP          (5000)
 #define SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD   (140)
 #define SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD    (60)

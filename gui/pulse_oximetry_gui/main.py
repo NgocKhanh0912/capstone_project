@@ -507,7 +507,7 @@ class MainWindow(QMainWindow):
 
             # Plot filtered PPG signal
             elif cmd == "21":
-                self.data_value = self.data_value - 1000 # Minus offset
+                self.data_value = self.data_value - 1500 # Minus offset
                 if self.dev_widget.filtered_ppg_time:
                     filtered_ppg_new_time = self.dev_widget.filtered_ppg_time[-1] + 0.01
                 else:

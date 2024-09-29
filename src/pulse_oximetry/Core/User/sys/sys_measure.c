@@ -20,9 +20,10 @@
 #include "math.h"
 
 /* Private defines ---------------------------------------------------- */
-#define SYS_MEASURE_LPF_NUM_OF_COEFFS   (5) // 4-order
-#define SYS_MEASURE_HPF_NUM_OF_COEFFS   (3) // 2-order
-#define SYS_MEASURE_SAMPLING_RATE       (100.0)
+#define SYS_MEASURE_LPF_NUM_OF_COEFFS         (5) // 4-order
+#define SYS_MEASURE_HPF_NUM_OF_COEFFS         (3) // 2-order
+#define SYS_MEASURE_SAMPLING_RATE             (100.0)
+#define SYS_MEASURE_FILTERED_PPG_OFFSET       (1500.0)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -206,9 +207,11 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal,
 static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
-  // Choose the Windows Size W1, W2 in TERMA framework
-  int w_cycle = 97,
-      w_evt = 17;
+
+  // Choose the beta and Windows Size W1, W2 in TERMA framework
+  static int w_cycle = 55;
+  static int w_evt = 9;
+  static double beta = 0.005;
 
   double ma_cycle[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0},
          ma_evt[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
@@ -222,7 +225,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   // Enhance the signal
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
   {
-    handle_data[i] = pow(handle_data[i], 2);
+    handle_data[i] = pow(handle_data[i] + SYS_MEASURE_FILTERED_PPG_OFFSET, 2);
   }
 
   // Calculate the Event Duration Moving Average
@@ -253,7 +256,6 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   mean_of_signal /= SYS_MEASURE_MAX_SAMPLES_PROCESS;
 
   // Calculate the Threshold for generating Block of Interest
-  double beta = 0.95;
   double threshold[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
@@ -315,16 +317,57 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     }
   }
 
+  // TODO: Add maximum time to calib, not calib all runtime
+  if ((peak_nums >= 3) && (beta <= 2))
+  {
+    for (uint8_t n = 1; n <= peak_nums - 2; n++)
+    {
+      uint8_t current_peak_peak_index_space = peak_index_buf[n + 1] - peak_index_buf[n];
+      uint8_t previous_peak_peak_index_space = peak_index_buf[n] - peak_index_buf[n - 1];
+      if ((current_peak_peak_index_space == 0) || 
+          (previous_peak_peak_index_space == 0))
+      {
+        return SYS_MEASURE_OK;
+      }
+      if (abs(current_peak_peak_index_space - previous_peak_peak_index_space) >= 10)
+      {
+        beta += 0.05;
+        return SYS_MEASURE_OK;
+      }
+    }
+  }
+
+  if ((peak_nums == 0) && (beta >= 0.05))
+  {
+    beta -= 0.05;
+    return SYS_MEASURE_OK;
+  }
+
+  if ((peak_index_buf[0] <= 15) || (peak_index_buf[peak_nums - 1] >= 110))
+  {
+    return SYS_MEASURE_OK;
+  }
+
   // Calculate the average peak interval (in second unit)
   heart_rate_avg = peak_index_buf[peak_nums - 1] - peak_index_buf[0];
   if (peak_nums > 1)
   {
+    for (uint8_t n = 0; n <= peak_nums - 2; n++)
+    {
+      uint8_t peak_peak_index_space = peak_index_buf[n + 1] - peak_index_buf[n];
+      if (peak_peak_index_space == 0)
+      {
+        return SYS_MEASURE_OK;
+      }
+    }
+
     heart_rate_avg /= (peak_nums - 1);
     heart_rate_avg *= (1 / SYS_MEASURE_SAMPLING_RATE);
     // Calibration
     heart_rate_avg -= 0.0065;
     // Estimate the heart rate (beats per minute unit)
     heart_rate_avg = 60 / heart_rate_avg;
+
     signal->heart_rate = (uint32_t)heart_rate_avg;
   }
   return SYS_MEASURE_OK;
