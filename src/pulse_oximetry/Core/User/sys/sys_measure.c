@@ -20,10 +20,29 @@
 #include "math.h"
 
 /* Private defines ---------------------------------------------------- */
-#define SYS_MEASURE_LPF_NUM_OF_COEFFS         (5) // 4-order
-#define SYS_MEASURE_HPF_NUM_OF_COEFFS         (3) // 2-order
+/**
+ * @defgroup Defines related to beta
+ * @brief    Beta max, min value; calib beta step
+ * @{
+ */
+#define SYS_MEASURE_CALIB_BETA_STEP           (0.05)
+#define SYS_MEASURE_BETA_MAX                  (1.2)
+#define SYS_MEASURE_BETA_MIN                  (0.005)
+/**@} */
+
+/**
+ * @defgroup Defines related to filter
+ * @brief    Filter number of coefficients
+ * @{
+ */
+#define SYS_MEASURE_LPF_NUM_OF_COEFFS         (5)       // 4-order
+#define SYS_MEASURE_HPF_NUM_OF_COEFFS         (3)       // 2-order
+/**@} */
+
 #define SYS_MEASURE_SAMPLING_RATE             (100.0)
 #define SYS_MEASURE_FILTERED_PPG_OFFSET       (1500.0)
+#define SYS_MEASURE_MAX_PEAK_IN_BUFFER        (10)      // 10 peak (240 bpm max)
+#define SYS_MEASURE_CALIB_INTERVAL            (0.0065)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -283,9 +302,9 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
   double peak = 0;
   uint32_t peak_index = 0;
-  double heart_rate_avg = 0;
+  double heart_rate = 0;
   uint32_t is_block_of_interest = 0;
-  uint32_t peak_index_buf[8] = {0};
+  uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = {0};
   uint32_t peak_nums = 0;
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS - 1; i++)
@@ -317,59 +336,52 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     }
   }
 
-  // TODO: Add maximum time to calib, not calib all runtime
-  if ((peak_nums >= 3) && (beta <= 2))
+  if ((peak_nums > SYS_MEASURE_MAX_PEAK_IN_BUFFER) && (beta < SYS_MEASURE_BETA_MAX))
   {
     for (uint8_t n = 1; n <= peak_nums - 2; n++)
     {
       uint8_t current_peak_peak_index_space = peak_index_buf[n + 1] - peak_index_buf[n];
       uint8_t previous_peak_peak_index_space = peak_index_buf[n] - peak_index_buf[n - 1];
+
       if ((current_peak_peak_index_space == 0) || 
           (previous_peak_peak_index_space == 0))
       {
-        return SYS_MEASURE_OK;
+        return SYS_MEASURE_FAILED;
       }
+
       if (abs(current_peak_peak_index_space - previous_peak_peak_index_space) >= 10)
       {
-        beta += 0.05;
-        return SYS_MEASURE_OK;
+        beta += SYS_MEASURE_CALIB_BETA_STEP;
+        return SYS_MEASURE_FAILED;
       }
     }
   }
 
-  if ((peak_nums == 0) && (beta >= 0.05))
+  if (peak_nums <= 1)
   {
-    beta -= 0.05;
-    return SYS_MEASURE_OK;
-  }
-
-  if ((peak_index_buf[0] <= 15) || (peak_index_buf[peak_nums - 1] >= 110))
-  {
-    return SYS_MEASURE_OK;
-  }
-
-  // Calculate the average peak interval (in second unit)
-  heart_rate_avg = peak_index_buf[peak_nums - 1] - peak_index_buf[0];
-  if (peak_nums > 1)
-  {
-    for (uint8_t n = 0; n <= peak_nums - 2; n++)
+    double down_beta = beta - SYS_MEASURE_CALIB_BETA_STEP;
+    if (down_beta >= 0)
     {
-      uint8_t peak_peak_index_space = peak_index_buf[n + 1] - peak_index_buf[n];
-      if (peak_peak_index_space == 0)
-      {
-        return SYS_MEASURE_OK;
-      }
+      beta = down_beta;
+      return SYS_MEASURE_FAILED;
     }
-
-    heart_rate_avg /= (peak_nums - 1);
-    heart_rate_avg *= (1 / SYS_MEASURE_SAMPLING_RATE);
-    // Calibration
-    heart_rate_avg -= 0.0065;
-    // Estimate the heart rate (beats per minute unit)
-    heart_rate_avg = 60 / heart_rate_avg;
-
-    signal->heart_rate = (uint32_t)heart_rate_avg;
   }
+  else
+  {
+    // Calculate the peak interval (in second unit)
+    heart_rate = peak_index_buf[2] - peak_index_buf[1];
+
+    heart_rate *= (1 / SYS_MEASURE_SAMPLING_RATE);
+
+    // Calibration
+    heart_rate -= SYS_MEASURE_CALIB_INTERVAL;
+
+    // Estimate the heart rate (beats per minute unit)
+    heart_rate = SECONDS_PER_MINUTE / heart_rate;
+
+    signal->heart_rate = (uint32_t)heart_rate;
+  }
+
   return SYS_MEASURE_OK;
 }
 

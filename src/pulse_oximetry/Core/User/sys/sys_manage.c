@@ -24,9 +24,10 @@
 #define SYS_MANAGE_TIMESTAMP                        (96000000U)
 #define SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE  (4096U)
 #define SYS_MANAGE_FILTERED_DATA_OFFSET_PKT         (1500.0)
-#define SYS_MANAGE_STABILIZATION_TIMESTAMP          (5000)
-#define SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD   (140)
-#define SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD    (60)
+#define SYS_MANAGE_STABILIZATION_TIMESTAMP          (5000U)
+#define SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD   (140U)
+#define SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD    (60U)
+#define SYS_MANAGE_RECEIVE_PACKET_SIZE              (100U)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -44,7 +45,7 @@ static bsp_tim_typedef_t *s_tim_interval;
 static sys_storage_t s_heart_rate_records;
 
 static cbuffer_t s_rx_pkt_cbuf;
-static uint8_t s_rx_pkt_buf[100] = {0};
+static uint8_t s_rx_pkt_buf[SYS_MANAGE_RECEIVE_PACKET_SIZE] = {0};
 
 static sys_manage_t s_mng;
 static sys_protocol_pkt_t s_check_pkt;

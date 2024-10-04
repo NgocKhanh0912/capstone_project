@@ -28,6 +28,7 @@
 #define GRAPH_HEIGHT  (45)
 #define GRAPH_WIDTH   (MAX_WIDTH)
 #define RATIO         (1) // Changing this also change the size of PPG Signal buffer size
+#define SIGNAL_SIZE   (256)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -151,7 +152,7 @@ uint32_t sys_display_update_ppg_signal(sys_display_t *display, cbuffer_t *signal
   {
     return SYS_DISPLAY_FAILED;
   }
-  double temp_buf[(MAX_WIDTH + 1) / RATIO] = {0};
+  double temp_buf[SIGNAL_SIZE] = {0};
   cb_read(signal_buf, temp_buf, sizeof(temp_buf));
   // Check if we have reached the width or not
   s_graph_pos_x = (s_graph_pos_x > (GRAPH_WIDTH - 2) ? 0 : s_graph_pos_x);

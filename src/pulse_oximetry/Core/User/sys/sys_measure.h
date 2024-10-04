@@ -23,7 +23,7 @@
 #include "cbuffer.h"
 
 /* Public defines ----------------------------------------------------- */
-#define SYS_MEASURE_MAX_SAMPLES_PROCESS (128)
+#define SYS_MEASURE_MAX_SAMPLES_PROCESS (256)
 
 /* Public enumerate/structure ----------------------------------------- */
 enum sys_measure_status_t

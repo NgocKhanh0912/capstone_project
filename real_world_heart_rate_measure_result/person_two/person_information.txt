@@ -1,0 +1,8 @@
+Name:
+Age:
+Gender:
+Date of birth:
+Date and time of measurement: 
+Total measurement time: 
+Physical condition during measurement:
+Cardiovascular health and blood circulation: 
