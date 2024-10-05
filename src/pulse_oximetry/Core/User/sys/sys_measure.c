@@ -21,13 +21,23 @@
 
 /* Private defines ---------------------------------------------------- */
 /**
- * @defgroup Defines related to beta
- * @brief    Beta max, min value; calib beta step
+ * @defgroup Defines related to TERMA beta coefficient
+ * @brief    Beta max, min value; calib beta step; beta init value
  * @{
  */
-#define SYS_MEASURE_CALIB_BETA_STEP           (0.05)
-#define SYS_MEASURE_BETA_MAX                  (1.2)
-#define SYS_MEASURE_BETA_MIN                  (0.005)
+#define SYS_MEASURE_CALIB_BETA_STEP  (0.05)
+#define SYS_MEASURE_BETA_MAX         (1.2)
+#define SYS_MEASURE_BETA_MIN         (0.005)
+#define SYS_MEASURE_BETA_INIT_VALUE  (0.095)
+/**@} */
+
+/**
+ * @defgroup Defines related to TERMA window event
+ * @brief    Window event and window cycle values
+ * @{
+ */
+#define SYS_MEASURE_WINDOW_EVENT  (9)
+#define SYS_MEASURE_WINDOW_CYCLE  ((SYS_MEASURE_WINDOW_EVENT * 6) + 1)
 /**@} */
 
 /**
@@ -35,14 +45,31 @@
  * @brief    Filter number of coefficients
  * @{
  */
-#define SYS_MEASURE_LPF_NUM_OF_COEFFS         (5)       // 4-order
-#define SYS_MEASURE_HPF_NUM_OF_COEFFS         (3)       // 2-order
+#define SYS_MEASURE_LPF_NUM_OF_COEFFS  (5) // 4-order
+#define SYS_MEASURE_HPF_NUM_OF_COEFFS  (3) // 2-order
 /**@} */
 
-#define SYS_MEASURE_SAMPLING_RATE             (100.0)
-#define SYS_MEASURE_FILTERED_PPG_OFFSET       (1500.0)
-#define SYS_MEASURE_MAX_PEAK_IN_BUFFER        (10)      // 10 peak (240 bpm max)
-#define SYS_MEASURE_CALIB_INTERVAL            (0.0065)
+/**
+ * @defgroup Defines related to numbers of peak in buffer
+ * @brief    Numbers of maximum peaks and minimum peaks in the buffer
+ * @{
+ */
+#define SYS_MEASURE_MAX_PEAK_IN_BUFFER    (12) // 12 peak (300 bpm max)
+#define SYS_MEASURE_MIN_PEAK_IN_BUFFER    (2)
+/**@} */
+
+/**
+ * @defgroup Defines related to stable index position threshold of peak in buffer
+ * @brief    Peak stable position threshold at the begin and the end of the buffer
+ * @{
+ */
+#define SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER   (15)
+#define SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER     (240)
+/**@} */
+
+#define SYS_MEASURE_SAMPLING_RATE         (100.0)
+#define SYS_MEASURE_FILTERED_PPG_OFFSET   (1500.0)
+#define SYS_MEASURE_CALIB_INTERVAL        (0.0065)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -228,9 +255,9 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
 
   // Choose the beta and Windows Size W1, W2 in TERMA framework
-  static int w_cycle = 55;
-  static int w_evt = 9;
-  static double beta = 0.005;
+  static int w_cycle = SYS_MEASURE_WINDOW_CYCLE;
+  static int w_evt = SYS_MEASURE_WINDOW_EVENT;
+  static double beta = SYS_MEASURE_BETA_INIT_VALUE;
 
   double ma_cycle[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0},
          ma_evt[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
@@ -336,40 +363,63 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     }
   }
 
-  if ((peak_nums > SYS_MEASURE_MAX_PEAK_IN_BUFFER) && (beta < SYS_MEASURE_BETA_MAX))
+  if (peak_nums < SYS_MEASURE_MIN_PEAK_IN_BUFFER)
   {
-    for (uint8_t n = 1; n <= peak_nums - 2; n++)
+    double decrease_beta = beta - SYS_MEASURE_CALIB_BETA_STEP;
+    if (decrease_beta >= SYS_MEASURE_BETA_MIN)
     {
-      uint8_t current_peak_peak_index_space = peak_index_buf[n + 1] - peak_index_buf[n];
-      uint8_t previous_peak_peak_index_space = peak_index_buf[n] - peak_index_buf[n - 1];
-
-      if ((current_peak_peak_index_space == 0) || 
-          (previous_peak_peak_index_space == 0))
-      {
-        return SYS_MEASURE_FAILED;
-      }
-
-      if (abs(current_peak_peak_index_space - previous_peak_peak_index_space) >= 10)
-      {
-        beta += SYS_MEASURE_CALIB_BETA_STEP;
-        return SYS_MEASURE_FAILED;
-      }
-    }
-  }
-
-  if (peak_nums <= 1)
-  {
-    double down_beta = beta - SYS_MEASURE_CALIB_BETA_STEP;
-    if (down_beta >= 0)
-    {
-      beta = down_beta;
+      beta = decrease_beta;
       return SYS_MEASURE_FAILED;
     }
   }
   else
   {
-    // Calculate the peak interval (in second unit)
-    heart_rate = peak_index_buf[2] - peak_index_buf[1];
+    if (peak_nums > SYS_MEASURE_MAX_PEAK_IN_BUFFER)
+    {
+      double increase_beta = beta + SYS_MEASURE_CALIB_BETA_STEP;
+      if (increase_beta <= SYS_MEASURE_BETA_MAX)
+      {
+        beta = increase_beta;
+        return SYS_MEASURE_FAILED;
+      }
+    }
+
+    // Choose stable peak and calculate the peak interval (in second unit)
+    if (peak_nums >= 4)
+    {
+      heart_rate = peak_index_buf[2] - peak_index_buf[1];
+      __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+    }
+    else if (peak_nums == 3)
+    {
+      if (peak_index_buf[0] >= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER)
+      {
+        heart_rate = peak_index_buf[1] - peak_index_buf[0];
+        __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+      }
+      else if (peak_index_buf[2] <= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER)
+      {
+        heart_rate = peak_index_buf[2] - peak_index_buf[1];
+        __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+      }
+      else 
+      {
+        return SYS_MEASURE_FAILED;
+      }
+    }
+    else
+    {
+      if ((peak_index_buf[0] >= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER) && 
+          (peak_index_buf[1] <= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER))
+      {
+        heart_rate = peak_index_buf[1] - peak_index_buf[0];
+        __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+      }
+      else 
+      {
+        return SYS_MEASURE_FAILED;
+      }
+    }
 
     heart_rate *= (1 / SYS_MEASURE_SAMPLING_RATE);
 
@@ -379,6 +429,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     // Estimate the heart rate (beats per minute unit)
     heart_rate = SECONDS_PER_MINUTE / heart_rate;
 
+    __ASSERT(((heart_rate >= HEART_RATE_MIN) && (heart_rate <= HEART_RATE_MAX)), SYS_MEASURE_FAILED);
     signal->heart_rate = (uint32_t)heart_rate;
   }
 

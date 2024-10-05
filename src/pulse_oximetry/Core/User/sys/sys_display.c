@@ -27,8 +27,8 @@
 #define MAX_HEIGHT    (SSD1306_HEIGHT - 1)
 #define GRAPH_HEIGHT  (45)
 #define GRAPH_WIDTH   (MAX_WIDTH)
-#define RATIO         (1) // Changing this also change the size of PPG Signal buffer size
-#define SIGNAL_SIZE   (256)
+#define RATIO         (1)     // Changing this also change the size of PPG Signal buffer size
+#define SIGNAL_SIZE   (256)   // PPG signal max samples processed
 
 /* Private enumerate/structure ---------------------------------------- */
 
