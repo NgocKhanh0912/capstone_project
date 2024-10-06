@@ -2,7 +2,7 @@ Name: Nguyễn Ngọc Khanh
 Age: 20
 Gender: Male
 Date of birth: 09/12/2003
-Date and time of measurement:
-Total measurement time:
-Physical condition during measurement:
-Cardiovascular health and blood circulation:
+Date and time of measurement: 13h24m 06/10/2024
+Total measurement time: 5 minutes and 27 seconds
+Physical condition during measurement: comfortable state, resting, slight movement of the measured finger
+Cardiovascular health and blood circulation: fast heart rate condition, normal blood flow status
