@@ -310,7 +310,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     threshold[i] = ma_cycle[i] + beta * mean_of_signal;
   }
 
-  // Generate the Bloock of Interest
+  // Generate the Block of Interest
   uint8_t block_of_interest[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
   {
@@ -349,7 +349,6 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
       pos_stop_block = i;
       if (pos_stop_block - pos_start_block >= w_evt)
       {
-        // hmmm, add histogram
         peak = handle_data[pos_start_block];
         for (i = pos_start_block; i <= pos_stop_block; i++)
         {
