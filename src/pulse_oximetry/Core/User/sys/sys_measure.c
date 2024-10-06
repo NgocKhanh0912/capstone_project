@@ -67,9 +67,10 @@
 #define SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER     (240)
 /**@} */
 
-#define SYS_MEASURE_SAMPLING_RATE         (100.0)
-#define SYS_MEASURE_FILTERED_PPG_OFFSET   (1500.0)
-#define SYS_MEASURE_CALIB_INTERVAL        (0.0065)
+#define SYS_MEASURE_SAMPLING_RATE                                           (100.0)
+#define SYS_MEASURE_FILTERED_PPG_OFFSET                                     (1500.0)
+#define SYS_MEASURE_CALIB_INTERVAL                                          (0.0065)
+#define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS     (25) // 25 bpm
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -326,13 +327,15 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   // Peak detector
   uint32_t pos_start_block = 0;
   uint32_t pos_stop_block = 0;
+  uint32_t is_block_of_interest = 0;
 
   double peak = 0;
   uint32_t peak_index = 0;
-  double heart_rate = 0;
-  uint32_t is_block_of_interest = 0;
-  uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = {0};
   uint32_t peak_nums = 0;
+  uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = {0};
+
+  double heart_rate = 0;
+  static double previous_heart_rate = 0;
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS - 1; i++)
   {
@@ -430,6 +433,14 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     heart_rate = SECONDS_PER_MINUTE / heart_rate;
 
     __ASSERT(((heart_rate >= HEART_RATE_MIN) && (heart_rate <= HEART_RATE_MAX)), SYS_MEASURE_FAILED);
+
+    if (previous_heart_rate != 0)
+    {
+      __ASSERT(abs(heart_rate - previous_heart_rate) < SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS, 
+               SYS_MEASURE_FAILED);
+    }
+
+    previous_heart_rate = heart_rate;
     signal->heart_rate = (uint32_t)heart_rate;
   }
 
