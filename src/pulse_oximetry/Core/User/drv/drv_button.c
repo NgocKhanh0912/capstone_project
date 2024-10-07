@@ -32,29 +32,23 @@ static drv_button_callback drv_button_exti_callback = NULL;
 /* Private function prototypes ---------------------------------------- */
 
 /* Function definitions ----------------------------------------------- */
-drv_button_status_t drv_button_init(drv_button_t *button,
-                                    GPIO_TypeDef *button_port,
-                                    uint16_t button_pin,
+drv_button_status_t drv_button_init(drv_button_t *button, GPIO_TypeDef *button_port, uint16_t button_pin,
                                     uint32_t button_active_level)
 {
   __ASSERT(button != NULL, DRV_BUTTON_ERROR);
-  __ASSERT((button_port == GPIOA) ||
-           (button_port == GPIOB) ||
-           (button_port == GPIOC) ||
-           (button_port == GPIOE),
+  __ASSERT((button_port == GPIOA) || (button_port == GPIOB) || (button_port == GPIOC) ||
+             (button_port == GPIOE),
            DRV_BUTTON_ERROR);
   __ASSERT((button_pin >= 0) && (button_pin < 16), DRV_BUTTON_ERROR);
-  __ASSERT((button_active_level == 0) ||
-           (button_active_level == 1),
-           DRV_BUTTON_ERROR);
+  __ASSERT((button_active_level == 0) || (button_active_level == 1), DRV_BUTTON_ERROR);
 
-  button->port = button_port;
-  button->pin = button_pin;
-  button->active_level = button_active_level;
+  button->port          = button_port;
+  button->pin           = button_pin;
+  button->active_level  = button_active_level;
   button->time_debounce = 0;
-  button->time_change = 0;
+  button->time_change   = 0;
   button->current_state = !button_active_level;
-  button->click_cnt = 0;
+  button->click_cnt     = 0;
 
   return DRV_BUTTON_OK;
 }

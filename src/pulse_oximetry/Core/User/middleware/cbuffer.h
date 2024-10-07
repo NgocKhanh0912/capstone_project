@@ -7,7 +7,7 @@
  * @author     Giang Phan Truong
  *             Khanh Nguyen Ngoc
  *             Viet Hoang Xuan
- * 
+ *
  * @brief      Circular Buffer
  *             This Circular Buffer is safe to use in IRQ with single reader,
  *             single writer. No need to disable any IRQ.
@@ -71,9 +71,9 @@ typedef struct
  */
 typedef enum
 {
-  CB_STATUS_ERROR = 0xFFFFFFFF,
+  CB_STATUS_ERROR  = 0xFFFFFFFF,
   CB_STATUS_FAILED = 0x7FFFFFFF,
-  CB_STATUS_OK = 0x3FFFFFFF,
+  CB_STATUS_OK     = 0x3FFFFFFF,
 } cbuffer_status_t;
 
 /* Public macros ------------------------------------------------------ */

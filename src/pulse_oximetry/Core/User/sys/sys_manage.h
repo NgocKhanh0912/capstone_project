@@ -32,21 +32,21 @@
 /* Public enumerate/structure ----------------------------------------- */
 enum sys_manage_status_t
 {
-  SYS_MANAGE_ERROR = 0xFFFFFFFF,
+  SYS_MANAGE_ERROR  = 0xFFFFFFFF,
   SYS_MANAGE_FAILED = 0x7FFFFFFF,
-  SYS_MANAGE_OK = 0x3FFFFFFF
+  SYS_MANAGE_OK     = 0x3FFFFFFF
 };
 
 typedef enum
 {
-  SYS_MANAGE_CMD_CHECK_UART = 0x00,
-  SYS_MANAGE_CMD_GET_RECORDS = 0x01,
-  SYS_MANAGE_CMD_GET_RAW_PPG = 0x11,
-  SYS_MANAGE_CMD_GET_FILTERED_PPG = 0x21,
-  SYS_MANAGE_CMD_SET_THRESHOLD = 0x02,
-  SYS_MANAGE_CMD_SET_INTERVAL = 0x03,
-  SYS_MANAGE_CMD_TIME = 0x04,
-  SYS_MANAGE_CMD_CLEAR_RECORDS = 0x05,
+  SYS_MANAGE_CMD_CHECK_UART             = 0x00,
+  SYS_MANAGE_CMD_GET_RECORDS            = 0x01,
+  SYS_MANAGE_CMD_GET_RAW_PPG            = 0x11,
+  SYS_MANAGE_CMD_GET_FILTERED_PPG       = 0x21,
+  SYS_MANAGE_CMD_SET_THRESHOLD          = 0x02,
+  SYS_MANAGE_CMD_SET_INTERVAL           = 0x03,
+  SYS_MANAGE_CMD_TIME                   = 0x04,
+  SYS_MANAGE_CMD_CLEAR_RECORDS          = 0x05,
   SYS_MANAGE_CMD_GET_CURRENT_HEART_RATE = 0x06
 } sys_manage_cmd_t;
 
@@ -116,11 +116,8 @@ uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer);
  *  - 0x7FFFFFFF: Failed
  *  - 0x3FFFFFFF: Success
  */
-uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc,
-                                  bsp_tim_typedef_t *tim,
-                                  uint32_t prescaler,
-                                  uint32_t autoreload,
-                                  double *data_buf);
+uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim, uint32_t prescaler,
+                                  uint32_t autoreload, double *data_buf);
 
 /**
  * @brief       Start the service handle the user button
@@ -136,8 +133,8 @@ uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc,
  *  - 0x7FFFFFFF: Failed
  *  - 0x3FFFFFFF: Success
  */
-uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
-                                 uint16_t pin, uint32_t button_active_level);
+uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
+                                 uint32_t button_active_level);
 
 /**
  * @brief                 Start service to manage the UART protocol.

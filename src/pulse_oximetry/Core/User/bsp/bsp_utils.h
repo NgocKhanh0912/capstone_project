@@ -8,7 +8,7 @@
  *             Khanh Nguyen Ngoc
  *             Viet Hoang Xuan
  *
- * @brief      
+ * @brief
  *
  * @note       None
  * @example    None

@@ -29,9 +29,9 @@
 /* Public enumerate/structure ----------------------------------------- */
 enum sys_display_status_t
 {
-  SYS_DISPLAY_ERROR = 0xFFFFFFFF,
+  SYS_DISPLAY_ERROR  = 0xFFFFFFFF,
   SYS_DISPLAY_FAILED = 0x7FFFFFFF,
-  SYS_DISPLAY_OK = 0x3FFFFFFF
+  SYS_DISPLAY_OK     = 0x3FFFFFFF
 };
 
 typedef struct

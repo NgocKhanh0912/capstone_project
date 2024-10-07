@@ -16,7 +16,7 @@ UseTab: Never
 AlignAfterOpenBracket: Align
 
 # AlignArrayOfStructures: Right
-AlignConsecutiveAssignments: true
+AlignConsecutiveAssignments : true
 AlignConsecutiveBitFields: true
 AlignEscapedNewlines: Left
 AlignConsecutiveMacros:
@@ -38,17 +38,17 @@ AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: Never
 BinPackArguments: true
-BinPackParameters: true
+BinPackParameters : true
 BitFieldColonSpacing: None
 
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel: true
-  AfterStruct: true
-  AfterFunction: true
-  AfterUnion: true
-  BeforeElse: true
-  AfterClass: true
+  AfterCaseLabel:  true
+  AfterStruct:     true
+  AfterFunction:   true
+  AfterUnion:      true
+  BeforeElse:      true
+  AfterClass:      true
   AfterControlStatement: true
 
 BreakBeforeBinaryOperators: None

@@ -7,7 +7,7 @@
  * @author     Giang Phan Truong
  *             Khanh Nguyen Ngoc
  *             Viet Hoang Xuan
- * 
+ *
  * @brief      Circular Buffer
  *             This Circular Buffer is safe to use in IRQ with single reader,
  *             single writer. No need to disable any IRQ.
@@ -60,12 +60,12 @@ cbuffer_status_t cb_init(cbuffer_t *cb, void *buf, uint32_t size)
   __ASSERT(buf != NULL, CB_STATUS_ERROR);
   __ASSERT(size <= CB_MAX_SIZE, CB_STATUS_ERROR);
 
-  cb->data = buf;
-  cb->size = size;
-  cb->writer = 0;
-  cb->reader = 0;
+  cb->data     = buf;
+  cb->size     = size;
+  cb->writer   = 0;
+  cb->reader   = 0;
   cb->overflow = 0;
-  cb->active = 1;
+  cb->active   = 1;
 
   return CB_STATUS_OK;
 }
@@ -74,8 +74,8 @@ cbuffer_status_t cb_clear(cbuffer_t *cb)
 {
   __ASSERT(cb != NULL, CB_STATUS_ERROR);
 
-  cb->writer = 0;
-  cb->reader = 0;
+  cb->writer   = 0;
+  cb->reader   = 0;
   cb->overflow = 0;
 
   return CB_STATUS_OK;
@@ -87,7 +87,7 @@ uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes)
   __ASSERT(buf != NULL, CB_STATUS_ERROR);
   __ASSERT(cb->active == 1, CB_STATUS_ERROR);
 
-  int data_count = 0;
+  int data_count      = 0;
   int num_avail_bytes = 0;
 
   // Temporary deactive for processing
@@ -120,7 +120,7 @@ uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes)
   __ASSERT(buf != NULL, CB_STATUS_ERROR);
   __ASSERT(cb->active == 1, CB_STATUS_ERROR);
 
-  int space_count = 0;
+  int space_count     = 0;
   int num_avail_bytes = 0;
 
   // Temporary deactive for processing
@@ -131,12 +131,12 @@ uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes)
   if (space_count >= nbytes)
   {
     num_avail_bytes = nbytes;
-    cb->overflow = 0;
+    cb->overflow    = 0;
   }
   else
   {
     num_avail_bytes = space_count;
-    cb->overflow = nbytes - space_count;
+    cb->overflow    = nbytes - space_count;
   }
 
   for (int i = 0; i < num_avail_bytes; i++)
@@ -201,7 +201,7 @@ static cbuffer_status_t cb_write_byte(cbuffer_t *cb, uint8_t byte)
   __ASSERT(next != cb->reader, CB_STATUS_ERROR);
 
   *(cb->data + cb->writer) = byte;
-  cb->writer = next;
+  cb->writer               = next;
 
   return CB_STATUS_OK;
 }
@@ -217,7 +217,7 @@ static cbuffer_status_t cb_read_byte(cbuffer_t *cb, uint8_t *byte)
     next = 0;
   }
 
-  *byte = *(cb->data + cb->reader);
+  *byte      = *(cb->data + cb->reader);
   cb->reader = next;
 
   return CB_STATUS_OK;

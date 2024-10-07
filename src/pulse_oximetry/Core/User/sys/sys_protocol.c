@@ -30,11 +30,11 @@
 /* Public variables --------------------------------------------------- */
 
 /* Private variables -------------------------------------------------- */
-const uint8_t s_protocol_msg[] = "\r\nStart the System Protocol finished SUCCESSFULLY!\r\n";
-static bool s_packet_cplt_flag = false;
-static uint8_t s_pkt_buf[MAX_PKT_LEN] = {0};
-static uint8_t s_pkt[MAX_PKT_LEN] = {0};
-static cbuffer_t *s_protocol_node[SYS_PROTOCOL_MAX_NODE] = {NULL};
+const uint8_t s_protocol_msg[]        = "\r\nStart the System Protocol finished SUCCESSFULLY!\r\n";
+static bool s_packet_cplt_flag        = false;
+static uint8_t s_pkt_buf[MAX_PKT_LEN] = { 0 };
+static uint8_t s_pkt[MAX_PKT_LEN]     = { 0 };
+static cbuffer_t *s_protocol_node[SYS_PROTOCOL_MAX_NODE] = { NULL };
 
 /* Private function prototypes ---------------------------------------- */
 static void sys_protocol_receive_packet_cplt_handler(uint16_t received_bytes);
@@ -94,12 +94,12 @@ uint32_t sys_protocol_send_pkt_to_node(sys_protocol_node_t rx_node, sys_protocol
 }
 uint32_t sys_protocol_send_pkt_to_port(sys_protocol_pkt_t pkt)
 {
-  uint8_t trash[] = {0x01, 0x04};
+  uint8_t trash[] = { 0x01, 0x04 };
 
   // Operation
   uint32_t ret = SYS_PROTOCOL_OK;
-  ret = bsp_serial_transmit(trash, 1);
-  ret = bsp_serial_transmit(&(pkt.command), CMD_PKT_SIZE);
+  ret          = bsp_serial_transmit(trash, 1);
+  ret          = bsp_serial_transmit(&(pkt.command), CMD_PKT_SIZE);
   __ASSERT((ret == SYS_PROTOCOL_OK), SYS_PROTOCOL_FAILED);
   ret = bsp_serial_transmit(&(pkt.data), DATA_PKT_SIZE);
   __ASSERT((ret == SYS_PROTOCOL_OK), SYS_PROTOCOL_FAILED);
@@ -115,7 +115,7 @@ static void sys_protocol_receive_packet_cplt_handler(uint16_t received_bytes)
 {
   bsp_serial_receive(s_pkt_buf);
   uint8_t *start_byte_pos = strchr(s_pkt_buf, START_BYTE);
-  uint8_t *stop_byte_pos = strchr(start_byte_pos + 1 + CMD_PKT_SIZE + DATA_PKT_SIZE, STOP_BYTE);
+  uint8_t *stop_byte_pos  = strchr(start_byte_pos + 1 + CMD_PKT_SIZE + DATA_PKT_SIZE, STOP_BYTE);
   if ((start_byte_pos != NULL) && (stop_byte_pos != NULL))
   {
     memmove(s_pkt, start_byte_pos + CMD_PKT_SIZE, stop_byte_pos - start_byte_pos - 1);

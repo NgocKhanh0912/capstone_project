@@ -25,10 +25,10 @@
  * @brief    Beta max, min value; calib beta step; beta init value
  * @{
  */
-#define SYS_MEASURE_CALIB_BETA_STEP  (0.05)
-#define SYS_MEASURE_BETA_MAX         (1.2)
-#define SYS_MEASURE_BETA_MIN         (0.005)
-#define SYS_MEASURE_BETA_INIT_VALUE  (0.095)
+#define SYS_MEASURE_CALIB_BETA_STEP (0.05)
+#define SYS_MEASURE_BETA_MAX        (1.2)
+#define SYS_MEASURE_BETA_MIN        (0.005)
+#define SYS_MEASURE_BETA_INIT_VALUE (0.095)
 /**@} */
 
 /**
@@ -36,8 +36,8 @@
  * @brief    Window event and window cycle values
  * @{
  */
-#define SYS_MEASURE_WINDOW_EVENT  (9)
-#define SYS_MEASURE_WINDOW_CYCLE  ((SYS_MEASURE_WINDOW_EVENT * 6) + 1)
+#define SYS_MEASURE_WINDOW_EVENT (9)
+#define SYS_MEASURE_WINDOW_CYCLE ((SYS_MEASURE_WINDOW_EVENT * 6) + 1)
 /**@} */
 
 /**
@@ -45,8 +45,8 @@
  * @brief    Filter number of coefficients
  * @{
  */
-#define SYS_MEASURE_LPF_NUM_OF_COEFFS  (5) // 4-order
-#define SYS_MEASURE_HPF_NUM_OF_COEFFS  (3) // 2-order
+#define SYS_MEASURE_LPF_NUM_OF_COEFFS (5) // 4-order
+#define SYS_MEASURE_HPF_NUM_OF_COEFFS (3) // 2-order
 /**@} */
 
 /**
@@ -54,8 +54,8 @@
  * @brief    Numbers of maximum peaks and minimum peaks in the buffer
  * @{
  */
-#define SYS_MEASURE_MAX_PEAK_IN_BUFFER    (12) // 12 peak (300 bpm max)
-#define SYS_MEASURE_MIN_PEAK_IN_BUFFER    (2)
+#define SYS_MEASURE_MAX_PEAK_IN_BUFFER (12) // 12 peak (300 bpm max)
+#define SYS_MEASURE_MIN_PEAK_IN_BUFFER (2)
 /**@} */
 
 /**
@@ -63,21 +63,21 @@
  * @brief    Peak stable position threshold at the begin and the end of the buffer
  * @{
  */
-#define SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER   (15)
-#define SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER     (240)
+#define SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER (15)
+#define SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER   (240)
 /**@} */
 
-#define SYS_MEASURE_SAMPLING_RATE                                           (100.0)
-#define SYS_MEASURE_FILTERED_PPG_OFFSET                                     (1500.0)
-#define SYS_MEASURE_CALIB_INTERVAL                                          (0.0065)
-#define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS     (25) // 25 bpm
+#define SYS_MEASURE_SAMPLING_RATE                                       (100.0)
+#define SYS_MEASURE_FILTERED_PPG_OFFSET                                 (1500.0)
+#define SYS_MEASURE_CALIB_INTERVAL                                      (0.0065)
+#define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS (25) // 25 bpm
 
 /* Private enumerate/structure ---------------------------------------- */
 
 /* Private macros ----------------------------------------------------- */
 
 /* Public variables --------------------------------------------------- */
-static uint16_t s_adc_val_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = {0};
+static uint16_t s_adc_val_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = { 0 };
 
 /* Private variables -------------------------------------------------- */
 
@@ -88,15 +88,14 @@ static uint16_t s_adc_val_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = {0};
  * @param[in]        signal                The signal object.
  * @param[inout]     gui_raw_ppg_cb        Pointer to the raw PPG cbuffer to stream on GUI.
  * @param[inout]     gui_filtered_ppg_cb   Pointer to the filtered PPG cbuffer to stream on GUI.
- * 
+ *
  * @return
  *
  *  - (0xFFFFFFFF): Error.
  *  - (0x7FFFFFFF): Failed.
  *  - (0x3FFFFFFF) : Success.
  */
-static uint32_t sys_measure_filter_data(sys_measure_t *signal, 
-                                        cbuffer_t *gui_raw_ppg_cb, 
+static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_raw_ppg_cb,
                                         cbuffer_t *gui_filtered_ppg_cb);
 
 /**
@@ -113,12 +112,8 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal,
 static uint32_t sys_measure_peak_detector(sys_measure_t *signal);
 
 /* Function definitions ----------------------------------------------- */
-uint32_t sys_measure_init(sys_measure_t *signal,
-                          bsp_adc_typedef_t *adc,
-                          bsp_tim_typedef_t *tim,
-                          uint32_t prescaler,
-                          uint32_t autoreload,
-                          double *data_buf)
+uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim,
+                          uint32_t prescaler, uint32_t autoreload, double *data_buf)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
   __ASSERT(data_buf != NULL, SYS_MEASURE_ERROR);
@@ -132,8 +127,7 @@ uint32_t sys_measure_init(sys_measure_t *signal,
   return SYS_MEASURE_OK;
 }
 
-uint32_t sys_measure_process_data(sys_measure_t *signal, 
-                                  cbuffer_t *gui_raw_ppg_cb, 
+uint32_t sys_measure_process_data(sys_measure_t *signal, cbuffer_t *gui_raw_ppg_cb,
                                   cbuffer_t *gui_filtered_ppg_cb)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
@@ -150,8 +144,7 @@ uint32_t sys_measure_process_data(sys_measure_t *signal,
 }
 
 /* Private definitions ------------------------------------------------ */
-static uint32_t sys_measure_filter_data(sys_measure_t *signal, 
-                                        cbuffer_t *gui_raw_ppg_cb, 
+static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_raw_ppg_cb,
                                         cbuffer_t *gui_filtered_ppg_cb)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
@@ -164,17 +157,12 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal,
   // wp = 3
   // wc = 4
   // order = 4
-  const double lpf_numerator_z[SYS_MEASURE_LPF_NUM_OF_COEFFS] = {0.000177296607979,
-                                                                 0.000709186431917,
-                                                                 0.001063779647875,
-                                                                 0.000709186431917,
-                                                                 0.000177296607979};
+  const double lpf_numerator_z[SYS_MEASURE_LPF_NUM_OF_COEFFS] = { 0.000177296607979, 0.000709186431917,
+                                                                  0.001063779647875, 0.000709186431917,
+                                                                  0.000177296607979 };
 
-  const double lpf_denominator_z[SYS_MEASURE_LPF_NUM_OF_COEFFS] = {1,
-                                                                   -3.349831562667920,
-                                                                   4.252610698953553,
-                                                                   -2.420450670140820,
-                                                                   0.520508279582855};
+  const double lpf_denominator_z[SYS_MEASURE_LPF_NUM_OF_COEFFS] = { 1, -3.349831562667920, 4.252610698953553,
+                                                                    -2.420450670140820, 0.520508279582855 };
 
   // HPF params:
   // fs = 100.0
@@ -182,24 +170,22 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal,
   // wp = 0.01
   // wc = 0.005
   // order = 2
-  const double hpf_numerator_z[SYS_MEASURE_HPF_NUM_OF_COEFFS] = {0.999777886079662,
-                                                                 -1.999555772159325,
-                                                                 0.999777886079662};
+  const double hpf_numerator_z[SYS_MEASURE_HPF_NUM_OF_COEFFS] = { 0.999777886079662, -1.999555772159325,
+                                                                  0.999777886079662 };
 
-  const double hpf_denominator_z[SYS_MEASURE_HPF_NUM_OF_COEFFS] = {1,
-                                                                   -1.999555722824731,
-                                                                   0.999555821493919};
+  const double hpf_denominator_z[SYS_MEASURE_HPF_NUM_OF_COEFFS] = { 1, -1.999555722824731,
+                                                                    0.999555821493919 };
 
   while (cb_data_count(&(signal->dev.adc_conv)) != 0)
   {
     // Apply LPF
-    static double lpf_recent_input[SYS_MEASURE_LPF_NUM_OF_COEFFS] = {0};
-    static double lpf_recent_output[SYS_MEASURE_LPF_NUM_OF_COEFFS] = {0};
+    static double lpf_recent_input[SYS_MEASURE_LPF_NUM_OF_COEFFS]  = { 0 };
+    static double lpf_recent_output[SYS_MEASURE_LPF_NUM_OF_COEFFS] = { 0 };
 
     // Shift lpf recent value to the right
     for (int i = SYS_MEASURE_LPF_NUM_OF_COEFFS - 1; i > 0; --i)
     {
-      lpf_recent_input[i] = lpf_recent_input[i - 1];
+      lpf_recent_input[i]  = lpf_recent_input[i - 1];
       lpf_recent_output[i] = lpf_recent_output[i - 1];
     }
 
@@ -223,7 +209,7 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal,
     }
 
     // Apply HPF
-    static double hpf_recent_output[SYS_MEASURE_HPF_NUM_OF_COEFFS] = {0};
+    static double hpf_recent_output[SYS_MEASURE_HPF_NUM_OF_COEFFS] = { 0 };
     // lpf output is the hpf input, dont need to shift it because it's shifted in lpf
     // Shift hpf recent output to the right
     for (int i = SYS_MEASURE_HPF_NUM_OF_COEFFS - 1; i > 0; --i)
@@ -257,16 +243,15 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
   // Choose the beta and Windows Size W1, W2 in TERMA framework
   static int w_cycle = SYS_MEASURE_WINDOW_CYCLE;
-  static int w_evt = SYS_MEASURE_WINDOW_EVENT;
+  static int w_evt   = SYS_MEASURE_WINDOW_EVENT;
   static double beta = SYS_MEASURE_BETA_INIT_VALUE;
 
-  double ma_cycle[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0},
-         ma_evt[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
+  double ma_cycle[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 }, ma_evt[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
 
   double mean_of_signal = 0;
   int i, j;
-  double handle_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
-  cbuffer_t peak_detector_cbuf = signal->filtered_data;
+  double handle_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
+  cbuffer_t peak_detector_cbuf                        = signal->filtered_data;
   cb_read(&peak_detector_cbuf, handle_data, sizeof(handle_data));
 
   // Enhance the signal
@@ -303,7 +288,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   mean_of_signal /= SYS_MEASURE_MAX_SAMPLES_PROCESS;
 
   // Calculate the Threshold for generating Block of Interest
-  double threshold[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
+  double threshold[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
   {
@@ -311,7 +296,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   }
 
   // Generate the Block of Interest
-  uint8_t block_of_interest[SYS_MEASURE_MAX_SAMPLES_PROCESS] = {0};
+  uint8_t block_of_interest[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
   {
     if (ma_evt[i] > threshold[i])
@@ -325,23 +310,23 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   }
 
   // Peak detector
-  uint32_t pos_start_block = 0;
-  uint32_t pos_stop_block = 0;
+  uint32_t pos_start_block      = 0;
+  uint32_t pos_stop_block       = 0;
   uint32_t is_block_of_interest = 0;
 
-  double peak = 0;
-  uint32_t peak_index = 0;
-  uint32_t peak_nums = 0;
-  uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = {0};
+  double peak                                             = 0;
+  uint32_t peak_index                                     = 0;
+  uint32_t peak_nums                                      = 0;
+  uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = { 0 };
 
-  double heart_rate = 0;
+  double heart_rate                 = 0;
   static double previous_heart_rate = 0;
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS - 1; i++)
   {
     if ((block_of_interest[i + 1] - block_of_interest[i]) == 1)
     {
-      pos_start_block = i;
+      pos_start_block      = i;
       is_block_of_interest = 1;
     }
     if (((block_of_interest[i] - block_of_interest[i + 1]) == 1) && (is_block_of_interest == 1))
@@ -354,7 +339,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
         {
           if (handle_data[i] > peak)
           {
-            peak = handle_data[i];
+            peak       = handle_data[i];
             peak_index = i;
           }
         }
@@ -404,20 +389,20 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
         heart_rate = peak_index_buf[2] - peak_index_buf[1];
         __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
       }
-      else 
+      else
       {
         return SYS_MEASURE_FAILED;
       }
     }
     else
     {
-      if ((peak_index_buf[0] >= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER) && 
+      if ((peak_index_buf[0] >= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER) &&
           (peak_index_buf[1] <= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER))
       {
         heart_rate = peak_index_buf[1] - peak_index_buf[0];
         __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
       }
-      else 
+      else
       {
         return SYS_MEASURE_FAILED;
       }
@@ -435,12 +420,13 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
     if (previous_heart_rate != 0)
     {
-      __ASSERT(abs(heart_rate - previous_heart_rate) < SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS, 
+      __ASSERT(abs(heart_rate - previous_heart_rate) <
+                 SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS,
                SYS_MEASURE_FAILED);
     }
 
     previous_heart_rate = heart_rate;
-    signal->heart_rate = (uint32_t)heart_rate;
+    signal->heart_rate  = (uint32_t)heart_rate;
   }
 
   return SYS_MEASURE_OK;
