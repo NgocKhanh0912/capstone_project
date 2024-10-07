@@ -28,8 +28,8 @@ typedef TIM_HandleTypeDef bsp_tim_typedef_t;
 typedef enum
 {
   BSP_TIMER_ERROR = 0xFFFFFFFF,
-  BSP_TIMER_FAIL = 0x7FFFFFFF,
-  BSP_TIMER_OK = 0x3FFFFFFF
+  BSP_TIMER_FAIL  = 0x7FFFFFFF,
+  BSP_TIMER_OK    = 0x3FFFFFFF
 } bsp_timer_status_t;
 
 /* Public macros ------------------------------------------------------ */
@@ -81,7 +81,8 @@ bsp_timer_status_t bsp_timer_set_autoreload(bsp_tim_typedef_t *htim, uint32_t au
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-bsp_timer_status_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_t tim_channel, uint32_t compare);
+bsp_timer_status_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_t tim_channel,
+                                                uint32_t compare);
 
 /**
  * @brief       Start the PWM generator on a channel of timer.

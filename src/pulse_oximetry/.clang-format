@@ -1,0 +1,59 @@
+---
+BasedOnStyle: Microsoft
+---
+Language: Cpp
+IndentWidth: 2
+ContinuationIndentWidth: 2
+ColumnLimit: 110
+DerivePointerAlignment: false
+PointerAlignment: Right
+UseTab: Never
+
+#
+# someLongFunction(argument1,
+#                  argument2);
+#
+AlignAfterOpenBracket: Align
+
+# AlignArrayOfStructures: Right
+AlignConsecutiveAssignments : true
+AlignConsecutiveBitFields: true
+AlignEscapedNewlines: Left
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
+
+AlignOperands: AlignAfterOperator
+AlignTrailingComments: true
+
+#
+# while (true)
+# {
+# }
+# Instead of
+# while (true) {}
+AllowShortBlocksOnASingleLine: Never
+
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: Never
+BinPackArguments: true
+BinPackParameters : true
+BitFieldColonSpacing: None
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel:  true
+  AfterStruct:     true
+  AfterFunction:   true
+  AfterUnion:      true
+  BeforeElse:      true
+  AfterClass:      true
+  AfterControlStatement: true
+
+BreakBeforeBinaryOperators: None
+ReflowComments: true
+SortIncludes: false
+IndentGotoLabels: false
+AllowAllArgumentsOnNextLine: false
+Cpp11BracedListStyle: false

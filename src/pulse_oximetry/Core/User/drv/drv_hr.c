@@ -42,10 +42,7 @@
 static uint32_t drv_hr_peri_init(drv_hr_t *hr_sen);
 
 /* Function definitions ----------------------------------------------- */
-uint32_t drv_hr_init(drv_hr_t *hr_sen,
-                     bsp_adc_typedef_t *sen_adc,
-                     bsp_tim_typedef_t *tim,
-                     uint32_t prescaler,
+uint32_t drv_hr_init(drv_hr_t *hr_sen, bsp_adc_typedef_t *sen_adc, bsp_tim_typedef_t *tim, uint32_t prescaler,
                      uint32_t autoreload)
 {
   __ASSERT(hr_sen != NULL, DRV_HR_ERROR);
@@ -54,13 +51,13 @@ uint32_t drv_hr_init(drv_hr_t *hr_sen,
   __ASSERT(prescaler != 0, DRV_HR_ERROR);
   __ASSERT(autoreload > 0, DRV_HR_ERROR);
 
-  hr_sen->adc = sen_adc;
-  hr_sen->sampling_rate.timer = tim;
-  hr_sen->sampling_rate.prescaler = prescaler;
+  hr_sen->adc                      = sen_adc;
+  hr_sen->sampling_rate.timer      = tim;
+  hr_sen->sampling_rate.prescaler  = prescaler;
   hr_sen->sampling_rate.autoreload = autoreload;
 
   uint32_t ret = DRV_HR_OK;
-  ret = drv_hr_peri_init(hr_sen);
+  ret          = drv_hr_peri_init(hr_sen);
   __ASSERT(ret == DRV_HR_OK, DRV_HR_FAIL);
 
   ret = bsp_adc_register_handler(&(hr_sen->adc_conv));
@@ -76,7 +73,7 @@ uint32_t drv_hr_sleep(drv_hr_t *hr_sen)
   __ASSERT(hr_sen != NULL, DRV_HR_ERROR);
 
   uint32_t ret = BSP_TIMER_OK;
-  ret = bsp_timer_stop_it(hr_sen->sampling_rate.timer);
+  ret          = bsp_timer_stop_it(hr_sen->sampling_rate.timer);
   __ASSERT(ret == BSP_TIMER_OK, DRV_HR_FAIL);
   ret = bsp_adc_stop_it(hr_sen->adc);
   __ASSERT(ret == BSP_ADC_OK, DRV_HR_FAIL);
@@ -91,7 +88,7 @@ uint32_t drv_hr_wakeup(drv_hr_t *hr_sen)
   __ASSERT(hr_sen != NULL, DRV_HR_ERROR);
 
   uint32_t ret = BSP_ADC_OK;
-  ret = bsp_adc_start_it(hr_sen->adc);
+  ret          = bsp_adc_start_it(hr_sen->adc);
   __ASSERT(ret == BSP_ADC_OK, DRV_HR_FAIL);
   ret = bsp_timer_start_it(hr_sen->sampling_rate.timer);
   __ASSERT(ret == BSP_TIMER_OK, DRV_HR_FAIL);
@@ -107,7 +104,7 @@ static uint32_t drv_hr_peri_init(drv_hr_t *hr_sen)
   __ASSERT(hr_sen != NULL, DRV_HR_ERROR);
 
   uint32_t ret = BSP_TIMER_OK;
-  ret = bsp_timer_set_prescaler(hr_sen->sampling_rate.timer, hr_sen->sampling_rate.prescaler);
+  ret          = bsp_timer_set_prescaler(hr_sen->sampling_rate.timer, hr_sen->sampling_rate.prescaler);
   __ASSERT(ret == BSP_TIMER_OK, DRV_HR_FAIL);
 
   ret = bsp_timer_set_autoreload(hr_sen->sampling_rate.timer, hr_sen->sampling_rate.autoreload);

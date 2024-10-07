@@ -23,23 +23,23 @@
 
 /* Public defines ----------------------------------------------------- */
 #ifndef SYS_STORAGE_FLASH_SECTOR
-#define SYS_STORAGE_FLASH_SECTOR                (FLASH_SECTOR_7)
+#define SYS_STORAGE_FLASH_SECTOR (FLASH_SECTOR_7)
 #endif
 
 #ifndef SYS_STORAGE_FLASH_SECTOR_SIZE
-#define SYS_STORAGE_FLASH_SECTOR_SIZE           (BSP_FLASH_SECTOR_7_SIZE)
+#define SYS_STORAGE_FLASH_SECTOR_SIZE (BSP_FLASH_SECTOR_7_SIZE)
 #endif
 
 #ifndef SYS_STORAGE_FLASH_SECTOR_ADDRESS
-#define SYS_STORAGE_FLASH_SECTOR_ADDRESS        (BSP_FLASH_SECTOR_7_ADDRESS)
+#define SYS_STORAGE_FLASH_SECTOR_ADDRESS (BSP_FLASH_SECTOR_7_ADDRESS)
 #endif
 
 #ifndef SYS_STORAGE_BACKUP_FLASH_SECTOR
-#define SYS_STORAGE_BACKUP_FLASH_SECTOR         (FLASH_SECTOR_6)
+#define SYS_STORAGE_BACKUP_FLASH_SECTOR (FLASH_SECTOR_6)
 #endif
 
 #ifndef SYS_STORAGE_BACKUP_FLASH_SECTOR_SIZE
-#define SYS_STORAGE_BACKUP_FLASH_SECTOR_SIZE    (BSP_FLASH_SECTOR_6_SIZE)
+#define SYS_STORAGE_BACKUP_FLASH_SECTOR_SIZE (BSP_FLASH_SECTOR_6_SIZE)
 #endif
 
 #ifndef SYS_STORAGE_BACKUP_FLASH_SECTOR_ADDRESS
@@ -49,9 +49,9 @@
 /* Public enumerate/structure ----------------------------------------- */
 enum sys_storage_status_t
 {
-  SYS_STORAGE_ERROR = 0xFFFFFFFF,
+  SYS_STORAGE_ERROR  = 0xFFFFFFFF,
   SYS_STORAGE_FAILED = 0x7FFFFFFF,
-  SYS_STORAGE_OK = 0x3FFFFFFF
+  SYS_STORAGE_OK     = 0x3FFFFFFF
 };
 
 /**
@@ -74,11 +74,11 @@ typedef struct __attribute__((__packed__))
 /**
  * @brief  Initialize the segment in flash to store data.
  *
- * @param[in]     storage       pointer to structure mangage the data segment.
- * @param[in]     start_address the start address of segment in Flash
- * @param[in]     size          Size of the segment
+ * @param[in]     storage         Pointer to structure mangage the data segment.
+ * @param[in]     start_address   The start address of segment in Flash
+ * @param[in]     size            Size of the segment
  *
- * @attention  Please read Flash module organization before use.
+ * @attention     Please read Flash module organization before use.
  *
  * @return
  *  - 0xFFFFFFFF: Error
@@ -88,10 +88,10 @@ typedef struct __attribute__((__packed__))
 uint32_t sys_storage_init(sys_storage_t *storage, uint32_t start_address, uint32_t size);
 
 /**
- * @brief  Write data in "storage" segment if possible.
+ * @brief         Write data in "storage" segment if possible.
  *
- * @param[in]     storage       pointer to structure mangage the data segment.
- * @param[in]     data          data that want to stored.
+ * @param[in]     storage       Pointer to structure mangage the data segment.
+ * @param[in]     data          Data that want to stored.
  * @param[in]     size          Number of bytes of data.
  *
  * @return
@@ -102,10 +102,10 @@ uint32_t sys_storage_init(sys_storage_t *storage, uint32_t start_address, uint32
 uint32_t sys_storage_import(sys_storage_t *storage, void *data, uint32_t size);
 
 /**
- * @brief  Read data in "storage" segment if available.
+ * @brief         Read data in "storage" segment if available.
  *
- * @param[in]     storage       pointer to structure mangage the data segment.
- * @param[in]     data          buffer stored the read data.
+ * @param[in]     storage       Pointer to structure mangage the data segment.
+ * @param[in]     data          Buffer stored the read data.
  * @param[in]     size          Number of bytes of data.
  *
  * @return
@@ -116,9 +116,9 @@ uint32_t sys_storage_import(sys_storage_t *storage, void *data, uint32_t size);
 uint32_t sys_storage_export(sys_storage_t *storage, void *data, uint32_t size);
 
 /**
- * @brief  Fully clean data in "storage" segment.
+ * @brief         Fully clean data in "storage" segment.
  *
- * @param[in]     storage       pointer to structure mangage the data segment.
+ * @param[in]     storage       Pointer to structure mangage the data segment.
  *
  * @return
  *  - 0xFFFFFFFF: Error
@@ -128,11 +128,11 @@ uint32_t sys_storage_export(sys_storage_t *storage, void *data, uint32_t size);
 uint32_t sys_storage_fully_clean(sys_storage_t *storage);
 
 /**
- * @brief  Deinitialize the segment in flash to store data and free this segment.
+ * @brief         Deinitialize the segment in flash to store data and free this segment.
  *
- * @param[in]     storage       pointer to structure mangage the data segment.
+ * @param[in]     storage       Pointer to structure mangage the data segment.
  *
- * @attention  Please read Flash module organization before use.
+ * @attention     Please read Flash module organization before use.
  *
  * @return
  *  - 0xFFFFFFFF: Error

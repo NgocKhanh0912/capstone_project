@@ -7,7 +7,7 @@
  * @author     Giang Phan Truong
  *             Khanh Nguyen Ngoc
  *             Viet Hoang Xuan
- * 
+ *
  * @brief      Circular Buffer
  *             This Circular Buffer is safe to use in IRQ with single reader,
  *             single writer. No need to disable any IRQ.
@@ -37,6 +37,7 @@
  *                   printf("Error\n");
  *             }
  */
+
 /* Define to prevent recursive inclusion ------------------------------ */
 #ifndef __CBUFFER_H
 #define __CBUFFER_H
@@ -49,13 +50,11 @@
 #include <string.h>
 
 /* Public defines ----------------------------------------------------- */
-#define CB_MAX_SIZE (0x00800000)    /* Max size of circular buffer */
-#define CB_ERROR    (0xFFFFFFFF)    /* Error return vale */
-#define CB_SUCCESS  (0x00000000)    /* Success return vale */
+#define CB_MAX_SIZE ((uint32_t)(0x00800000u)) /* Max size of circular buffer */
 
 /* Public enumerate/structure ----------------------------------------- */
 /**
- * @brief Circular buffer struct definition
+ * @brief Circular buffer struct definition.
  */
 typedef struct
 {
@@ -67,79 +66,84 @@ typedef struct
   volatile bool active;       /* Initialized or not */
 } cbuffer_t;
 
+/**
+ * @brief Circular buffer status enum definition.
+ */
+typedef enum
+{
+  CB_STATUS_ERROR  = 0xFFFFFFFF,
+  CB_STATUS_FAILED = 0x7FFFFFFF,
+  CB_STATUS_OK     = 0x3FFFFFFF,
+} cbuffer_status_t;
+
 /* Public macros ------------------------------------------------------ */
+
 /* Public variables --------------------------------------------------- */
-/* Public function prototypes ----------------------------------------- */
 
 /* Public function prototypes ----------------------------------------- */
 /**
- * @brief           Initialize circular buffer
+ * @brief        Initialize circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
- * @param[in]       buf     Pointer to array
- * @param[in]       size    Size of buffer
+ * @param[in]    cb      Pointer to a cbuffer_t structure.
+ * @param[in]    buf     Pointer to array.
+ * @param[in]    size    Size of buffer.
  *
- * @return
- *  - (0) : Success
- *  - (-1): Error
+ * @retval       CB_STATUS_OK: if the function works correctly.
+ * @retval       CB_STATUS_ERROR: if the function encounters an error.
  */
-uint32_t cb_init(cbuffer_t *cb, void *buf, uint32_t size);
+cbuffer_status_t cb_init(cbuffer_t *cb, void *buf, uint32_t size);
 
 /**
- * @brief           Clear circular buffer
+ * @brief        Clear circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
+ * @param[in]    cb    Pointer to a cbuffer_t structure.
  *
- * @return
- *  - (0) : Success
- *  - (-1): Error
+ * @retval       CB_STATUS_OK: if the function works correctly.
+ * @retval       CB_STATUS_ERROR: if the function encounters an error.
  */
-uint32_t cb_clear(cbuffer_t *cb);
+cbuffer_status_t cb_clear(cbuffer_t *cb);
 
 /**
- * @brief           Read data from circular buffer
+ * @brief         Read data from circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
- * @param[out]      buf     Pointer to data buffer
- * @param[in]       size    Size of data that want to read
+ * @param[in]     cb      Pointer to a cbuffer_t structure.
+ * @param[out]    buf     Pointer to data buffer.
+ * @param[in]     size    Size of data that want to read.
  *
- * @return
- *  - Number of successfully read byte: Success
- *  - (-1): Error
+ * @retval        Number of successfully read byte: if the function works correctly.
+ * @retval        CB_STATUS_ERROR: if the function encounters an error.
  */
 uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes);
 
 /**
- * @brief           Write data to circular buffer
+ * @brief        Write data to circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
- * @param[in]       buf     Pointer to data buffer
- * @param[in]       size    Size of data that want to read
+ * @param[in]    cb      Pointer to a cbuffer_t structure.
+ * @param[in]    buf     Pointer to data buffer.
+ * @param[in]    size    Size of data that want to write.
  *
- * @return
- *  - Number of successfully read byte
+ * @retval       Number of successfully write byte: if the function works correctly.
+ * @retval       CB_STATUS_ERROR: if the function encounters an error.
  */
 uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes);
 
 /**
- * @brief           Return a number of byte in circular buffer
+ * @brief        Return a number of byte in circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
+ * @param[in]    cb    Pointer to a cbuffer_t structure.
  *
- * @return
- *  - Number of byte in circular buffer: Success
- *  - (-1): Error
+ * @retval       Number of byte in circular buffer: if the function works correctly.
+ * @retval       CB_STATUS_ERROR: if the function encounters an error.
  */
 uint32_t cb_data_count(cbuffer_t *cb);
 
 /**
- * @brief           Return a number of space (in byte unit) in circular buffer
+ * @brief        Return a number of space (in byte unit) in circular buffer.
  *
- * @param[in]       cb      Pointer to a cbuffer_t structure
+ * @param[in]    cb    Pointer to a cbuffer_t structure.
  *
- * @return
- *  - Number of space (in byte unit) in circular buffer: Success
- *  - (-1): Error
+ * @retval       Number of space (in byte unit) in circular buffer: if the function works correctly.
+ * @retval       CB_STATUS_ERROR: if the function encounters an error.
  */
 uint32_t cb_space_count(cbuffer_t *cb);
 

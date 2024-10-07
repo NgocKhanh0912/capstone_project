@@ -22,6 +22,9 @@
 #include "main.h"
 
 /* Public defines ----------------------------------------------------- */
+#define SECONDS_PER_MINUTE (60u)
+#define HEART_RATE_MAX     (300u)
+#define HEART_RATE_MIN     (30u)
 
 /* Public enumerate/structure ----------------------------------------- */
 

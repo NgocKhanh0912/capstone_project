@@ -29,9 +29,9 @@
 /* Public enumerate/structure ----------------------------------------- */
 typedef enum
 {
-  SYS_PROTOCOL_ERROR = 0xFFFFFFFF,
+  SYS_PROTOCOL_ERROR  = 0xFFFFFFFF,
   SYS_PROTOCOL_FAILED = 0x7FFFFFFF,
-  SYS_PROTOCOL_OK = 0x3FFFFFFF
+  SYS_PROTOCOL_OK     = 0x3FFFFFFF
 } sys_protocol_status_t;
 typedef struct
 {
@@ -45,13 +45,13 @@ typedef enum
 } sys_protocol_node_t;
 
 /* Public macros ------------------------------------------------------ */
-#define COMMAND_FIELD   (0xFF)
-#define DATA_FIELD      (0xFF)
-#define TH_LEVEL_FIELD  (0xFF)
-#define PKT_SIZE        (6)
-#define CMD_PKT_SIZE    (1)
-#define DATA_PKT_SIZE   (4)
-#define TH_PKT_SIZE     (1)
+#define COMMAND_FIELD  (0xFF)
+#define DATA_FIELD     (0xFF)
+#define TH_LEVEL_FIELD (0xFF)
+#define PKT_SIZE       (6)
+#define CMD_PKT_SIZE   (1)
+#define DATA_PKT_SIZE  (4)
+#define TH_PKT_SIZE    (1)
 
 /* Public variables --------------------------------------------------- */
 
