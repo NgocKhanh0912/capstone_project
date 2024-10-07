@@ -29,16 +29,11 @@
 
 /* Public variables --------------------------------------------------- */
 
-sound_effect_t win_11_startup[] =
-    {
-        {NOTE_FS5, 50},
-        {NOTE_CS6, 100},
-        {NOTE_GS7, 200},
-        {NOTE_C5, 500}};
+sound_effect_t win_11_startup[] = {
+  { NOTE_FS5, 50 }, { NOTE_CS6, 100 }, { NOTE_GS7, 200 }, { NOTE_C5, 500 }
+};
 
-sound_effect_t system_alert[] =
-    {
-        {NOTE_AS7, 20}};
+sound_effect_t system_alert[] = { { NOTE_AS7, 20 } };
 
 /* Public function prototypes ----------------------------------------- */
 

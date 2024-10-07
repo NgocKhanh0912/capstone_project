@@ -26,9 +26,9 @@
 /* Public enumerate/structure ----------------------------------------- */
 typedef enum
 {
-  DRV_BUTTON_FAIL = 0xFFFFFFFF,
+  DRV_BUTTON_FAIL  = 0xFFFFFFFF,
   DRV_BUTTON_ERROR = 0x7FFFFFFF,
-  DRV_BUTTON_OK = 0x3FFFFFFF
+  DRV_BUTTON_OK    = 0x3FFFFFFF
 } drv_button_status_t;
 
 typedef struct __attribute__((__packed__))
@@ -63,9 +63,7 @@ typedef void (*drv_button_callback)(uint16_t exti_line);
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-drv_button_status_t drv_button_init(drv_button_t *button,
-                                    GPIO_TypeDef *button_port,
-                                    uint16_t button_pin,
+drv_button_status_t drv_button_init(drv_button_t *button, GPIO_TypeDef *button_port, uint16_t button_pin,
                                     uint32_t button_active_level);
 
 /**

@@ -21,12 +21,13 @@
 #include "common.h"
 
 /* Private defines ---------------------------------------------------- */
-#define SYS_MANAGE_TIMESTAMP                        (96000000U)
-#define SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE  (4096U)
-#define SYS_MANAGE_FILTERED_DATA_OFFSET_PKT         (1000.0)
-#define SYS_MANAGE_STABILIZATION_TIMESTAMP          (5000)
-#define SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD   (140)
-#define SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD    (60)
+#define SYS_MANAGE_TIMESTAMP                       (96000000U)
+#define SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE (4096U)
+#define SYS_MANAGE_FILTERED_DATA_OFFSET_PKT        (1500.0)
+#define SYS_MANAGE_STABILIZATION_TIMESTAMP         (5000U)
+#define SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD  (140U)
+#define SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD   (60U)
+#define SYS_MANAGE_RECEIVE_PACKET_SIZE             (100U)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -44,11 +45,16 @@ static bsp_tim_typedef_t *s_tim_interval;
 static sys_storage_t s_heart_rate_records;
 
 static cbuffer_t s_rx_pkt_cbuf;
-static uint8_t s_rx_pkt_buf[100] = {0};
+static uint8_t s_rx_pkt_buf[SYS_MANAGE_RECEIVE_PACKET_SIZE] = { 0 };
 
 static sys_manage_t s_mng;
 static sys_protocol_pkt_t s_check_pkt;
 static const uint8_t s_success_noti[] = "Success!";
+
+static uint16_t s_raw_ppg_stream_gui_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1]    = { 0 };
+static double s_filtered_ppg_stream_gui_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = { 0 };
+static cbuffer_t s_raw_ppg_stream_gui_cbuf;
+static cbuffer_t s_filtered_ppg_stream_gui_cbuf;
 
 /* Private function prototypes ---------------------------------------- */
 
@@ -89,7 +95,7 @@ static void sys_manage_interval_elapsed(bsp_tim_typedef_t *tim);
 uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer)
 {
   uint32_t ret = SYS_DISPLAY_OK;
-  ret = sys_display_init(&s_oled_screen, i2c, dev_buffer);
+  ret          = sys_display_init(&s_oled_screen, i2c, dev_buffer);
   __ASSERT(ret == SYS_DISPLAY_OK, SYS_MANAGE_ERROR);
   ret = sys_display_show_noti(&s_oled_screen, s_success_noti);
   __ASSERT(ret == SYS_DISPLAY_OK, SYS_MANAGE_ERROR);
@@ -97,27 +103,23 @@ uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer)
   return SYS_MANAGE_OK;
 }
 
-uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc,
-                                  bsp_tim_typedef_t *tim,
-                                  uint32_t prescaler,
-                                  uint32_t autoreload,
-                                  double *data_buf)
+uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim, uint32_t prescaler,
+                                  uint32_t autoreload, double *data_buf)
 {
   uint32_t ret = SYS_MEASURE_OK;
-  ret = sys_measure_init(&s_ppg_signal, adc, tim, prescaler, autoreload, data_buf);
+  ret          = sys_measure_init(&s_ppg_signal, adc, tim, prescaler, autoreload, data_buf);
   __ASSERT(ret == SYS_MEASURE_OK, SYS_MANAGE_FAILED);
 
   return SYS_MANAGE_OK;
 }
 
-uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
-                                 uint16_t pin, uint32_t button_active_level)
+uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
+                                 uint32_t button_active_level)
 {
   uint32_t ret = SYS_BUTTON_OK;
-  ret = sys_button_init(tim, gpio, pin, button_active_level);
+  ret          = sys_button_init(tim, gpio, pin, button_active_level);
   __ASSERT(ret == SYS_BUTTON_OK, SYS_MANAGE_ERROR);
-  ret = sys_button_register_cb_function(sys_manage_record_heart_rate,
-                                        sys_manage_select_stream,
+  ret = sys_button_register_cb_function(sys_manage_record_heart_rate, sys_manage_select_stream,
                                         sys_manage_pwr_ctrl);
   __ASSERT(ret == SYS_BUTTON_OK, SYS_MANAGE_ERROR);
   return SYS_MANAGE_OK;
@@ -126,7 +128,7 @@ uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio,
 uint32_t sys_manage_start_protocol(UART_HandleTypeDef *uart)
 {
   uint32_t ret = SYS_PROTOCOL_OK;
-  ret = sys_protocol_init(uart);
+  ret          = sys_protocol_init(uart);
   __ASSERT(ret == SYS_PROTOCOL_OK, SYS_MANAGE_ERROR);
 
   cb_init(&s_rx_pkt_cbuf, s_rx_pkt_buf, sizeof(s_rx_pkt_buf));
@@ -139,7 +141,7 @@ uint32_t sys_manage_start_protocol(UART_HandleTypeDef *uart)
 uint32_t sys_manage_start_rtc(bsp_i2c_handle_t *i2c)
 {
   uint32_t ret = SYS_TIME_OK;
-  ret = sys_time_init(i2c, &s_rtc);
+  ret          = sys_time_init(i2c, &s_rtc);
   __ASSERT(ret == SYS_TIME_OK, SYS_MANAGE_ERROR);
 
   return SYS_MANAGE_OK;
@@ -148,7 +150,7 @@ uint32_t sys_manage_start_rtc(bsp_i2c_handle_t *i2c)
 uint32_t sys_manage_start_buzzer(bsp_tim_typedef_t *tim, uint32_t pwm_channel)
 {
   uint32_t ret = DRV_BUZZER_OK;
-  ret = drv_buzzer_init(&s_passive_buzzer, tim, pwm_channel);
+  ret          = drv_buzzer_init(&s_passive_buzzer, tim, pwm_channel);
   __ASSERT(ret == DRV_BUTTON_OK, SYS_MANAGE_ERROR);
 
   return SYS_MANAGE_OK;
@@ -157,7 +159,8 @@ uint32_t sys_manage_start_buzzer(bsp_tim_typedef_t *tim, uint32_t pwm_channel)
 uint32_t sys_manage_start_storage()
 {
   uint32_t ret = SYS_STORAGE_OK;
-  ret = sys_storage_init(&s_heart_rate_records, BSP_FLASH_SECTOR_7_ADDRESS, SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE);
+  ret          = sys_storage_init(&s_heart_rate_records, BSP_FLASH_SECTOR_7_ADDRESS,
+                                  SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE);
   __ASSERT(ret == SYS_STORAGE_OK, SYS_MANAGE_FAILED);
 
   return SYS_MANAGE_OK;
@@ -165,19 +168,23 @@ uint32_t sys_manage_start_storage()
 
 uint32_t sys_manage_start(bsp_tim_typedef_t *tim)
 {
-  s_mng.current_state = SYS_MANAGE_STATE_IDLE;
-  s_mng.cmd = 0xFF;
-  s_mng.interval = 0;
+  s_mng.current_state   = SYS_MANAGE_STATE_IDLE;
+  s_mng.cmd             = 0xFF;
+  s_mng.interval        = 0;
   s_mng.lower_threshold = SYS_MANAGE_INIT_HEART_RATE_LOW_THRESHOLD;
   s_mng.upper_threshold = SYS_MANAGE_INIT_HEART_RATE_HIGH_THRESHOLD;
-  s_mng.active = true;
-  s_mng.stream = SYS_MANAGE_STREAM_OLED;
-  uint8_t threshold[] = {s_mng.lower_threshold, s_mng.upper_threshold};
+  s_mng.active          = true;
+  s_mng.stream          = SYS_MANAGE_STREAM_OLED;
+  uint8_t threshold[]   = { s_mng.lower_threshold, s_mng.upper_threshold };
   sys_display_update_threshold(&s_oled_screen, threshold);
 
-  s_check_pkt.command = 0x00;
-  s_check_pkt.data = 0xFFFFFFFF;
+  s_check_pkt.command         = 0x00;
+  s_check_pkt.data            = 0xFFFFFFFF;
   s_check_pkt.threshold_level = 0xFF;
+
+  cb_init(&s_raw_ppg_stream_gui_cbuf, s_raw_ppg_stream_gui_buf, sizeof(s_raw_ppg_stream_gui_buf));
+  cb_init(&s_filtered_ppg_stream_gui_cbuf, s_filtered_ppg_stream_gui_buf,
+          sizeof(s_filtered_ppg_stream_gui_buf));
 
   uint8_t start_msg[] = "Init OK";
   sys_display_show_noti(&s_oled_screen, start_msg);
@@ -193,20 +200,37 @@ uint32_t sys_manage_loop()
 
   if (s_mng.stream == SYS_MANAGE_STREAM_GUI)
   {
-    if (cb_data_count(&s_ppg_signal.dev.adc_conv) > 0)
+    if ((cb_data_count(&s_raw_ppg_stream_gui_cbuf) > 0) &&
+        (cb_data_count(&s_filtered_ppg_stream_gui_cbuf) > 0))
     {
-      cbuffer_t raw_data_cbuf = s_ppg_signal.dev.adc_conv;
-
-      while (cb_data_count(&raw_data_cbuf) > 0)
+      while ((cb_data_count(&s_raw_ppg_stream_gui_cbuf) > 0) &&
+             (cb_data_count(&s_filtered_ppg_stream_gui_cbuf) > 0))
       {
         uint16_t adc_val = 0;
-        cb_read(&raw_data_cbuf, &adc_val, sizeof(adc_val));
-        sys_protocol_pkt_t raw_data_pkt = {SYS_MANAGE_CMD_GET_RAW_PPG, (uint32_t)adc_val, 0xFF};
+        cb_read(&s_raw_ppg_stream_gui_cbuf, &adc_val, sizeof(adc_val));
+        sys_protocol_pkt_t raw_data_pkt = { SYS_MANAGE_CMD_GET_RAW_PPG, (uint32_t)adc_val, 0xFF };
         sys_protocol_send_pkt_to_port(raw_data_pkt);
+
+        double temp = 0;
+        cb_read(&s_filtered_ppg_stream_gui_cbuf, &temp, sizeof(temp));
+        temp += SYS_MANAGE_FILTERED_DATA_OFFSET_PKT;
+        sys_protocol_pkt_t filtered_data_pkt = { SYS_MANAGE_CMD_GET_FILTERED_PPG, (uint32_t)temp, 0xFF };
+        sys_protocol_send_pkt_to_port(filtered_data_pkt);
+
+        if (cb_space_count(&(s_ppg_signal.filtered_data)) == 0)
+        {
+          cb_clear(&(s_ppg_signal.filtered_data));
+        }
       }
     }
+
+    if (cb_space_count(&(s_ppg_signal.filtered_data)) == 0)
+    {
+      cb_clear(&(s_ppg_signal.filtered_data));
+    }
   }
-  sys_measure_process_data(&s_ppg_signal);
+
+  sys_measure_process_data(&s_ppg_signal, &s_raw_ppg_stream_gui_cbuf, &s_filtered_ppg_stream_gui_cbuf);
 
   if (bsp_utils_get_tick() > SYS_MANAGE_STABILIZATION_TIMESTAMP)
   {
@@ -216,19 +240,26 @@ uint32_t sys_manage_loop()
     }
   }
 
-  if (s_mng.stream == SYS_MANAGE_STREAM_GUI)
-  {
-    while (cb_data_count(&s_ppg_signal.filtered_data) > 0)
-    {
-      double temp = 0;
-      cb_read(&s_ppg_signal.filtered_data, &temp, sizeof(temp));
-      temp += SYS_MANAGE_FILTERED_DATA_OFFSET_PKT;
-      sys_protocol_pkt_t filtered_data_pkt = {SYS_MANAGE_CMD_GET_FILTERED_PPG, (uint32_t)temp, 0xFF};
-      sys_protocol_send_pkt_to_port(filtered_data_pkt);
-    }
-  }
-
   sys_display_update_heart_rate(&s_oled_screen, s_ppg_signal.heart_rate);
+
+  if ((s_ppg_signal.heart_rate < s_mng.upper_threshold) && (s_ppg_signal.heart_rate > s_mng.lower_threshold))
+  {
+    sys_protocol_pkt_t current_heart_rate = { SYS_MANAGE_CMD_GET_CURRENT_HEART_RATE, s_ppg_signal.heart_rate,
+                                              0xFF };
+    sys_protocol_send_pkt_to_port(current_heart_rate);
+  }
+  else if (s_ppg_signal.heart_rate > s_mng.upper_threshold)
+  {
+    sys_protocol_pkt_t current_heart_rate = { SYS_MANAGE_CMD_GET_CURRENT_HEART_RATE, s_ppg_signal.heart_rate,
+                                              0x0F };
+    sys_protocol_send_pkt_to_port(current_heart_rate);
+  }
+  else
+  {
+    sys_protocol_pkt_t current_heart_rate = { SYS_MANAGE_CMD_GET_CURRENT_HEART_RATE, s_ppg_signal.heart_rate,
+                                              0xF0 };
+    sys_protocol_send_pkt_to_port(current_heart_rate);
+  }
 
   if (cb_data_count(&s_rx_pkt_cbuf) > 0)
   {
@@ -306,7 +337,8 @@ uint32_t sys_manage_loop()
 
   case SYS_MANAGE_STATE_NORMAL:
   {
-    if ((s_ppg_signal.heart_rate < s_mng.lower_threshold) || (s_ppg_signal.heart_rate > s_mng.upper_threshold))
+    if ((s_ppg_signal.heart_rate < s_mng.lower_threshold) ||
+        (s_ppg_signal.heart_rate > s_mng.upper_threshold))
     {
       s_mng.current_state = SYS_MANAGE_STATE_HEART_RATE_WARNING;
     }
@@ -318,7 +350,8 @@ uint32_t sys_manage_loop()
   case SYS_MANAGE_STATE_HEART_RATE_WARNING:
   {
     uint8_t msg[] = "Warning";
-    if ((s_ppg_signal.heart_rate > s_mng.lower_threshold) && (s_ppg_signal.heart_rate < s_mng.upper_threshold))
+    if ((s_ppg_signal.heart_rate > s_mng.lower_threshold) &&
+        (s_ppg_signal.heart_rate < s_mng.upper_threshold))
     {
       s_mng.current_state = SYS_MANAGE_STATE_NORMAL;
     }
@@ -340,7 +373,7 @@ uint32_t sys_manage_loop()
     // Set threshold
     s_mng.lower_threshold = temp_data & (0x000000FF);
     s_mng.upper_threshold = (temp_data >> 8) & (0x000000FF);
-    uint8_t threshold[] = {s_mng.lower_threshold, s_mng.upper_threshold};
+    uint8_t threshold[]   = { s_mng.lower_threshold, s_mng.upper_threshold };
     sys_display_update_threshold(&s_oled_screen, threshold);
     // Notification
     cb_clear(&s_rx_pkt_cbuf);
@@ -365,7 +398,7 @@ uint32_t sys_manage_loop()
     sys_display_show_noti(&s_oled_screen, msg);
     // Get epoch time from packet
     uint32_t temp_ept = 0;
-    uint32_t ret = SYS_TIME_OK;
+    uint32_t ret      = SYS_TIME_OK;
     cb_read(&s_rx_pkt_cbuf, &temp_ept, DATA_PKT_SIZE);
     // Set time for system RTC
     ret = sys_time_set_epoch_time(temp_ept, &s_rtc);
@@ -391,9 +424,9 @@ uint32_t sys_manage_loop()
 
   case SYS_MANAGE_STATE_SEND_RECORDS:
   {
-    uint32_t time = 0;
+    uint32_t time      = 0;
     uint8_t heart_rate = 0;
-    uint8_t msg[] = "Sending";
+    uint8_t msg[]      = "Sending";
     sys_display_show_noti(&s_oled_screen, msg);
     uint32_t ret = 0;
     do
@@ -408,24 +441,25 @@ uint32_t sys_manage_loop()
       {
         break;
       }
-      if ((s_ppg_signal.heart_rate < s_mng.upper_threshold) && (s_ppg_signal.heart_rate > s_mng.lower_threshold))
+      if ((s_ppg_signal.heart_rate < s_mng.upper_threshold) &&
+          (s_ppg_signal.heart_rate > s_mng.lower_threshold))
       {
-        sys_protocol_pkt_t record_time = {SYS_MANAGE_CMD_TIME, time, 0xFF};
-        sys_protocol_pkt_t record_value = {SYS_MANAGE_CMD_GET_RECORDS, heart_rate, 0xFF};
+        sys_protocol_pkt_t record_time  = { SYS_MANAGE_CMD_TIME, time, 0xFF };
+        sys_protocol_pkt_t record_value = { SYS_MANAGE_CMD_GET_RECORDS, heart_rate, 0xFF };
         sys_protocol_send_pkt_to_port(record_time);
         sys_protocol_send_pkt_to_port(record_value);
       }
       else if (s_ppg_signal.heart_rate > s_mng.upper_threshold)
       {
-        sys_protocol_pkt_t record_time = {SYS_MANAGE_CMD_TIME, time, 0x0F};
-        sys_protocol_pkt_t record_value = {SYS_MANAGE_CMD_GET_RECORDS, heart_rate, 0x0F};
+        sys_protocol_pkt_t record_time  = { SYS_MANAGE_CMD_TIME, time, 0x0F };
+        sys_protocol_pkt_t record_value = { SYS_MANAGE_CMD_GET_RECORDS, heart_rate, 0x0F };
         sys_protocol_send_pkt_to_port(record_time);
         sys_protocol_send_pkt_to_port(record_value);
       }
       else
       {
-        sys_protocol_pkt_t record_time = {SYS_MANAGE_CMD_TIME, time, 0xF0};
-        sys_protocol_pkt_t record_value = {SYS_MANAGE_CMD_GET_RECORDS, heart_rate, 0xF0};
+        sys_protocol_pkt_t record_time  = { SYS_MANAGE_CMD_TIME, time, 0xF0 };
+        sys_protocol_pkt_t record_value = { SYS_MANAGE_CMD_GET_RECORDS, heart_rate, 0xF0 };
         sys_protocol_send_pkt_to_port(record_time);
         sys_protocol_send_pkt_to_port(record_value);
       }

@@ -22,44 +22,44 @@
 #include "bsp_i2c.h"
 
 /* Public defines ----------------------------------------------------- */
-#define DS1307_I2C_ADDRESS            (0x68 << 1)
+#define DS1307_I2C_ADDRESS (0x68 << 1)
 
-#define DS1307_TIMEOUT                (1000) // Timeout 1 second
+#define DS1307_TIMEOUT (1000) // Timeout 1 second
 
-#define DS1307_TIME_REGISTER_ADDRESS  (0x00)
-#define DS1307_DATE_REGISTER_ADDRESS  (0x03)
+#define DS1307_TIME_REGISTER_ADDRESS (0x00)
+#define DS1307_DATE_REGISTER_ADDRESS (0x03)
 
-#define DS1307_REGISTER_ADDRESS_SIZE  (I2C_MEMADD_SIZE_8BIT)
+#define DS1307_REGISTER_ADDRESS_SIZE (I2C_MEMADD_SIZE_8BIT)
 
-#define DS1307_TIME_SIZE              (3) // Time size is 3 for second, minute and hour
-#define DS1307_DATE_SIZE              (4) // Date size is 4 for date, day, month and year
+#define DS1307_TIME_SIZE (3) // Time size is 3 for second, minute and hour
+#define DS1307_DATE_SIZE (4) // Date size is 4 for date, day, month and year
 
-#define AM_PM_BIT                     (5)
-#define HOUR_MODE_BIT                 (6)
+#define AM_PM_BIT     (5)
+#define HOUR_MODE_BIT (6)
 
-#define MAXIMUM_DAY                   (7) // 2 to 7 are Monday to Saturday
-#define MINIMUM_DAY                   (1) // 1 is Sunday
+#define MAXIMUM_DAY (7) // 2 to 7 are Monday to Saturday
+#define MINIMUM_DAY (1) // 1 is Sunday
 
-#define MAXIMUM_DATE                  (31)
-#define MINIMUM_DATE                  (1)
+#define MAXIMUM_DATE (31)
+#define MINIMUM_DATE (1)
 
-#define MAXIMUM_MONTH                 (12)
-#define MINIMUM_MONTH                 (1)
+#define MAXIMUM_MONTH (12)
+#define MINIMUM_MONTH (1)
 
-#define MAXIMUM_YEAR                  (99)
-#define MINIMUM_YEAR                  (0)
+#define MAXIMUM_YEAR (99)
+#define MINIMUM_YEAR (0)
 
-#define MAXIMUM_HOUR_MODE_12H         (12)
-#define MINIMUM_HOUR_MODE_12H         (1)
+#define MAXIMUM_HOUR_MODE_12H (12)
+#define MINIMUM_HOUR_MODE_12H (1)
 
-#define MAXIMUM_HOUR_MODE_24H         (23)
-#define MINIMUM_HOUR_MODE_24H         (0)
+#define MAXIMUM_HOUR_MODE_24H (23)
+#define MINIMUM_HOUR_MODE_24H (0)
 
-#define MAXIMUM_MINUTE                (59)
-#define MINIMUM_MINUTE                (0)
+#define MAXIMUM_MINUTE (59)
+#define MINIMUM_MINUTE (0)
 
-#define MAXIMUM_SECOND                (59)
-#define MINIMUM_SECOND                (0)
+#define MAXIMUM_SECOND (59)
+#define MINIMUM_SECOND (0)
 
 /* Public enumerate/structure ----------------------------------------- */
 /**
@@ -67,9 +67,9 @@
  */
 typedef enum
 {
-  DRV_DS1307_ERROR = 0xFFFFFFFF,
+  DRV_DS1307_ERROR  = 0xFFFFFFFF,
   DRV_DS1307_FAILED = 0x7FFFFFFF,
-  DRV_DS1307_OK = 0x3FFFFFFF
+  DRV_DS1307_OK     = 0x3FFFFFFF
 } drv_ds1307_status_t;
 
 /**
@@ -127,8 +127,7 @@ typedef struct __attribute__((__packed__))
  *
  * @return      The status of the DS1307 driver operation.
  */
-drv_ds1307_status_t drv_ds1307_init(I2C_HandleTypeDef *i2c,
-                                    drv_ds1307_t *ds1307);
+drv_ds1307_status_t drv_ds1307_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307);
 
 /**
  * @brief       Set time to RTC DS1307.

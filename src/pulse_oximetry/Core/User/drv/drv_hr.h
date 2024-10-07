@@ -31,8 +31,8 @@
 enum drv_hr_status_t
 {
   DRV_HR_ERROR = 0xFFFFFFFF,
-  DRV_HR_FAIL = 0x7FFFFFFF,
-  DRV_HR_OK = 0x3FFFFFFF
+  DRV_HR_FAIL  = 0x7FFFFFFF,
+  DRV_HR_OK    = 0x3FFFFFFF
 };
 
 typedef struct
@@ -69,10 +69,7 @@ typedef struct
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-uint32_t drv_hr_init(drv_hr_t *hr_sen,
-                     bsp_adc_typedef_t *sen_adc,
-                     bsp_tim_typedef_t *tim,
-                     uint32_t prescaler,
+uint32_t drv_hr_init(drv_hr_t *hr_sen, bsp_adc_typedef_t *sen_adc, bsp_tim_typedef_t *tim, uint32_t prescaler,
                      uint32_t autoreload);
 
 /**

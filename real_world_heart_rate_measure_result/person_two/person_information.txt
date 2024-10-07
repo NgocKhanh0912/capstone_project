@@ -1,0 +1,9 @@
+Name: Vũ Thị Hiền
+Age: 53
+Gender: Female
+Date of birth: 05/12/1970
+Date and time of measurement: 20h35m 07/10/2024
+Total measurement time: 6 minutes and 5 seconds
+Record interval: 5 seconds per 1 record 
+Physical condition during measurement: comfortable state, resting, slight movement of the measured finger
+Cardiovascular health and blood circulation: normal heart rate condition, normal blood flow status
