@@ -33,9 +33,9 @@
 static bsp_serial_t b_serial;
 static bsp_evt_cb_t b_new_rx_data_cb;
 
-static uint8_t dma_buffer[DMA_BUFFER_SIZE] = {0};
-static uint8_t swap_buffer_a[DMA_BUFFER_SIZE] = {0};
-static uint8_t swap_buffer_b[DMA_BUFFER_SIZE] = {0};
+static uint8_t dma_buffer[DMA_BUFFER_SIZE]    = { 0 };
+static uint8_t swap_buffer_a[DMA_BUFFER_SIZE] = { 0 };
+static uint8_t swap_buffer_b[DMA_BUFFER_SIZE] = { 0 };
 
 /* Private function prototypes ---------------------------------------- */
 /**
@@ -55,16 +55,16 @@ uint32_t bsp_serial_init(UART_HandleTypeDef *uart)
 {
   __ASSERT(uart != NULL, BSP_SERIAL_ERROR);
 
-  b_serial.uart = uart;
-  b_serial.dma_buf = dma_buffer;
-  b_serial.reception_buf = swap_buffer_a;
-  b_serial.handle_buf = swap_buffer_b;
-  b_serial.size = DMA_BUFFER_SIZE;
-  b_serial.reader = 0;
+  b_serial.uart           = uart;
+  b_serial.dma_buf        = dma_buffer;
+  b_serial.reception_buf  = swap_buffer_a;
+  b_serial.handle_buf     = swap_buffer_b;
+  b_serial.size           = DMA_BUFFER_SIZE;
+  b_serial.reader         = 0;
   b_serial.received_bytes = 0;
 
   uint32_t ret = BSP_UART_OK;
-  ret = bsp_uart_start_receive_to_idle_dma(b_serial.uart, b_serial.dma_buf, b_serial.size);
+  ret          = bsp_uart_start_receive_to_idle_dma(b_serial.uart, b_serial.dma_buf, b_serial.size);
   __ASSERT(ret == BSP_UART_OK, BSP_SERIAL_FAILED);
 
   ret = bsp_uart_register_cb_function(bsp_serial_rx_evt_handler);
@@ -78,7 +78,7 @@ uint32_t bsp_serial_transmit(uint8_t *tx_buf, uint16_t tx_size)
   __ASSERT(tx_buf != NULL, BSP_SERIAL_ERROR);
 
   uint32_t ret = BSP_UART_OK;
-  ret = bsp_uart_transmit(b_serial.uart, tx_buf, tx_size);
+  ret          = bsp_uart_transmit(b_serial.uart, tx_buf, tx_size);
   __ASSERT(ret == BSP_UART_OK, BSP_SERIAL_FAILED);
 
   return BSP_SERIAL_OK;
@@ -140,9 +140,9 @@ static void bsp_serial_rx_evt_handler(UART_HandleTypeDef *uart, uint16_t size)
           b_serial.received_bytes += size;
         }
       }
-      temp = b_serial.reception_buf;
+      temp                   = b_serial.reception_buf;
       b_serial.reception_buf = b_serial.handle_buf;
-      b_serial.handle_buf = temp;
+      b_serial.handle_buf    = temp;
 
       if (strchr((const char *)b_serial.handle_buf, START_BYTE) != NULL)
       {
