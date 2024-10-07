@@ -31,9 +31,9 @@
 /* Public enumerate/structure ----------------------------------------- */
 enum drv_ssd1306_status_t
 {
-  DRV_SSD1306_ERROR  = 0xFFFFFFFF,
+  DRV_SSD1306_ERROR = 0xFFFFFFFF,
   DRV_SSD1306_FAILED = 0x7FFFFFFF,
-  DRV_SSD1306_OK     = 0x3FFFFFFF
+  DRV_SSD1306_OK = 0x3FFFFFFF
 };
 
 typedef enum
@@ -88,8 +88,12 @@ typedef enum
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-uint32_t drv_ssd1306_init(drv_ssd1306_t *dev, bsp_i2c_handle_t *dev_i2c, uint16_t dev_address,
-                          uint8_t *dev_buffer, uint8_t dev_width, uint8_t dev_height);
+uint32_t drv_ssd1306_init(drv_ssd1306_t *dev,
+                          bsp_i2c_handle_t *dev_i2c,
+                          uint16_t dev_address,
+                          uint8_t *dev_buffer,
+                          uint8_t dev_width,
+                          uint8_t dev_height);
 
 /**
  * @brief         Set state of the SSD1306 OLED screen
@@ -185,8 +189,7 @@ uint32_t drv_ssd1306_write_char(drv_ssd1306_t *dev, char ch, ssd1306_font_t font
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-uint32_t drv_ssd1306_write_string(drv_ssd1306_t *dev, char *str, ssd1306_font_t font,
-                                  drv_ssd1306_color_t color);
+uint32_t drv_ssd1306_write_string(drv_ssd1306_t *dev, char *str, ssd1306_font_t font, drv_ssd1306_color_t color);
 
 /**
  * @brief         Update screen on the SSD1306 OLED
@@ -211,8 +214,13 @@ uint32_t drv_ssd1306_update_screen(drv_ssd1306_t *dev);
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-uint32_t drv_ssd1306_draw_bitmap(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_y, const uint8_t *bitmap,
-                                 uint8_t bitmap_width, uint8_t bitmap_height, drv_ssd1306_color_t color);
+uint32_t drv_ssd1306_draw_bitmap(drv_ssd1306_t *dev,
+                                 uint8_t pos_x,
+                                 uint8_t pos_y,
+                                 const uint8_t *bitmap,
+                                 uint8_t bitmap_width,
+                                 uint8_t bitmap_height,
+                                 drv_ssd1306_color_t color);
 
 /**
  * @brief         Draw a line on OLED
@@ -227,8 +235,12 @@ uint32_t drv_ssd1306_draw_bitmap(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-uint32_t drv_ssd1306_draw_line(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y1, uint8_t pos_x2,
-                               uint8_t pos_y2, drv_ssd1306_color_t color);
+uint32_t drv_ssd1306_draw_line(drv_ssd1306_t *dev,
+                               uint8_t pos_x1,
+                               uint8_t pos_y1,
+                               uint8_t pos_x2,
+                               uint8_t pos_y2,
+                               drv_ssd1306_color_t color);
 
 /**
  * @brief         Draw a rectangle on OLED
@@ -242,8 +254,12 @@ uint32_t drv_ssd1306_draw_line(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-uint32_t drv_ssd1306_draw_rectangle(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y1, uint8_t pos_x2,
-                                    uint8_t pos_y2, drv_ssd1306_color_t color);
+uint32_t drv_ssd1306_draw_rectangle(drv_ssd1306_t *dev,
+                                    uint8_t pos_x1,
+                                    uint8_t pos_y1,
+                                    uint8_t pos_x2,
+                                    uint8_t pos_y2,
+                                    drv_ssd1306_color_t color);
 
 /**
  * @brief         Fill a rectangle with selected color
@@ -258,8 +274,12 @@ uint32_t drv_ssd1306_draw_rectangle(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t 
  *  - (0x7FFFFFFF): Failed
  *  - (0x3FFFFFFF) : Success
  */
-uint32_t drv_ssd1306_fill_rectangle(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y1, uint8_t pos_x2,
-                                    uint8_t pos_y2, drv_ssd1306_color_t color);
+uint32_t drv_ssd1306_fill_rectangle(drv_ssd1306_t *dev,
+                                    uint8_t pos_x1,
+                                    uint8_t pos_y1,
+                                    uint8_t pos_x2,
+                                    uint8_t pos_y2,
+                                    drv_ssd1306_color_t color);
 #endif // __USER_DRV_SSD1306_H
 
 /* End of file -------------------------------------------------------- */

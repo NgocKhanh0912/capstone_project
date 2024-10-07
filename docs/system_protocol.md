@@ -43,18 +43,17 @@ Whenever heart rate overcomes the threshold, system must signal to users.
   - Length: 1 byte.
   - Value:
     - 0x00: Check UART.
-    - 0x01: Get Heart Rate to plot heart rate record graph.
+    - 0x01: Get Heart Rate.
     - 0x11: Get raw PPG signal.
     - 0x21: Get filtered PPG signal.
     - 0x02: Set Threshold.
     - 0x03: Set interval.
-    - 0x04: Set/Get time for recording.
+    - 0x04: Set/Get time.
     - 0x05: Clear records.
-    - 0x06: Get current heart rate.
 - Data (DATA): (GUI side)
   - Length: 4 bytes.
   - Value: Based on CMD.
-    - Check UART: transmit & receive - 0xFFFFFFFF.
+    - Check UART: transmit&receive - 0xFFFFFFFF.
     - Get Heart Rate: transmit - 0xFFFFFFFF; receive - Heart Rate value.
     - Get raw PPG signal: receive - raw PPG Signal.
     - Get filtered PPG signal: recieve - filtered PPG signal.

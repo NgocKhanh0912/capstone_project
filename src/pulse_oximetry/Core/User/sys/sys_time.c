@@ -38,7 +38,7 @@ sys_used_alarm_evt_cb_t used_alarm_evt_cb_internal;
 drv_ds1307_t *s_alarm_ds1307_internal = NULL;
 
 // Internal pointer array to store alarm time when user pass to sys_time_set_alarm
-sys_time_alarm_t *s_alarm_time_internal[MAX_NUMBER_OF_ALARM] = { NULL };
+sys_time_alarm_t *s_alarm_time_internal[MAX_NUMBER_OF_ALARM] = {NULL};
 
 /* Private function prototypes ---------------------------------------- */
 /**
@@ -51,10 +51,12 @@ sys_time_alarm_t *s_alarm_time_internal[MAX_NUMBER_OF_ALARM] = { NULL };
  *
  * @return          The status of sys_time operation.
  */
-static sys_time_status_t sys_time_convert_epoch_time(uint32_t epoch_time, drv_ds1307_t *date_time);
+static sys_time_status_t sys_time_convert_epoch_time(uint32_t epoch_time,
+                                                     drv_ds1307_t *date_time);
 
 /* Function definitions ----------------------------------------------- */
-sys_time_status_t sys_time_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307)
+sys_time_status_t sys_time_init(I2C_HandleTypeDef *i2c,
+                                drv_ds1307_t *ds1307)
 {
   sys_time_status_t ret = SYS_TIME_OK;
 
@@ -66,7 +68,8 @@ sys_time_status_t sys_time_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307)
   return SYS_TIME_OK;
 }
 
-sys_time_status_t sys_time_set_epoch_time(uint32_t epoch_time, drv_ds1307_t *ds1307)
+sys_time_status_t sys_time_set_epoch_time(uint32_t epoch_time,
+                                          drv_ds1307_t *ds1307)
 {
   sys_time_status_t ret = SYS_TIME_OK;
 
@@ -117,19 +120,20 @@ uint32_t sys_time_get_epoch_time(drv_ds1307_t *ds1307)
 
   struct tm t;
   time_t t_of_day;
-  t.tm_year  = (ds1307->year + 2000) - 1900;
-  t.tm_mon   = (ds1307->month) - 1;
-  t.tm_mday  = (ds1307->date);
-  t.tm_hour  = (ds1307->hour);
-  t.tm_min   = (ds1307->minute);
-  t.tm_sec   = (ds1307->second);
+  t.tm_year = (ds1307->year + 2000) - 1900;
+  t.tm_mon = (ds1307->month) - 1;
+  t.tm_mday = (ds1307->date);
+  t.tm_hour = (ds1307->hour);
+  t.tm_min = (ds1307->minute);
+  t.tm_sec = (ds1307->second);
   t.tm_isdst = (-1);
-  t_of_day   = mktime(&t);
+  t_of_day = mktime(&t);
   // Return
   return (uint32_t)t_of_day;
 }
 
-sys_time_status_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm_id)
+sys_time_status_t sys_time_set_alarm(sys_time_alarm_t *alarm_time,
+                                     uint8_t alarm_id)
 {
   if (s_alarm_time_internal[alarm_id] != NULL)
   {
@@ -138,22 +142,24 @@ sys_time_status_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm
 
   __ASSERT((alarm_time != NULL), SYS_TIME_ERROR);
 
-  __ASSERT(((alarm_time->alarm_second) >= MINIMUM_SECOND) && ((alarm_time->alarm_second) <= MAXIMUM_SECOND),
+  __ASSERT(((alarm_time->alarm_second) >= MINIMUM_SECOND) &&
+               ((alarm_time->alarm_second) <= MAXIMUM_SECOND),
            SYS_TIME_ERROR);
 
-  __ASSERT(((alarm_time->alarm_minute) >= MINIMUM_MINUTE) && ((alarm_time->alarm_minute) <= MAXIMUM_MINUTE),
+  __ASSERT(((alarm_time->alarm_minute) >= MINIMUM_MINUTE) &&
+               ((alarm_time->alarm_minute) <= MAXIMUM_MINUTE),
            SYS_TIME_ERROR);
 
   if (alarm_time->alarm_mode_hour == DS1307_MODE_12_HOUR)
   {
     __ASSERT(((alarm_time->alarm_hour) >= MINIMUM_HOUR_MODE_12H) &&
-               ((alarm_time->alarm_hour) <= MAXIMUM_HOUR_MODE_12H),
+                 ((alarm_time->alarm_hour) <= MAXIMUM_HOUR_MODE_12H),
              SYS_TIME_ERROR);
   }
   else if (alarm_time->alarm_mode_hour == DS1307_MODE_24_HOUR)
   {
     __ASSERT(((alarm_time->alarm_hour) >= MINIMUM_HOUR_MODE_24H) &&
-               ((alarm_time->alarm_hour) <= MAXIMUM_HOUR_MODE_24H),
+                 ((alarm_time->alarm_hour) <= MAXIMUM_HOUR_MODE_24H),
              SYS_TIME_ERROR);
   }
 
@@ -216,7 +222,8 @@ sys_time_status_t sys_time_register_used_alarm_cb(sys_used_alarm_evt_cb_t used_a
 }
 
 /* Private definitions ------------------------------------------------ */
-static sys_time_status_t sys_time_convert_epoch_time(uint32_t epoch_time, drv_ds1307_t *date_time)
+static sys_time_status_t sys_time_convert_epoch_time(uint32_t epoch_time,
+                                                     drv_ds1307_t *date_time)
 {
   __ASSERT((date_time != NULL), SYS_TIME_ERROR);
 
@@ -250,7 +257,7 @@ static sys_time_status_t sys_time_convert_epoch_time(uint32_t epoch_time, drv_ds
   // +1 to convert (0->6) to (1->7) to fix with RTC DS1307
   date_time->day = (current_date_time->tm_wday) + 1;
 
-  date_time->hour   = current_date_time->tm_hour;
+  date_time->hour = current_date_time->tm_hour;
   date_time->minute = current_date_time->tm_min;
   date_time->second = current_date_time->tm_sec;
 

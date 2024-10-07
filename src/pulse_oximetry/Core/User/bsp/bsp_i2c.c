@@ -31,13 +31,16 @@
 /* Private function prototypes ---------------------------------------- */
 
 /* Function definitions ----------------------------------------------- */
-bsp_i2c_status_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                         uint8_t *data_pointer, uint16_t size, uint32_t time_out)
+bsp_i2c_status_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c,
+                                         uint16_t device_address,
+                                         uint8_t *data_pointer,
+                                         uint16_t size,
+                                         uint32_t time_out)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
   __ASSERT((data_pointer != NULL), BSP_I2C_ERROR);
-
+  
   // Transmit
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Master_Transmit(hi2c, device_address, data_pointer, size, time_out);
@@ -45,8 +48,11 @@ bsp_i2c_status_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                        uint8_t *data_pointer, uint16_t size, uint32_t time_out)
+bsp_i2c_status_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c,
+                                        uint16_t device_address,
+                                        uint8_t *data_pointer,
+                                        uint16_t size,
+                                        uint32_t time_out)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -59,8 +65,10 @@ bsp_i2c_status_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                            uint8_t *data_pointer, uint16_t size)
+bsp_i2c_status_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c,
+                                            uint16_t device_address,
+                                            uint8_t *data_pointer,
+                                            uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -73,8 +81,10 @@ bsp_i2c_status_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t dev
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                           uint8_t *data_buffer, uint16_t size)
+bsp_i2c_status_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c,
+                                           uint16_t device_address,
+                                           uint8_t *data_buffer,
+                                           uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -87,8 +97,12 @@ bsp_i2c_status_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t devi
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                   uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size,
+bsp_i2c_status_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c,
+                                   uint16_t device_address,
+                                   uint16_t mem_address,
+                                   uint16_t mem_address_size,
+                                   uint8_t *data_buffer,
+                                   uint16_t size,
                                    uint32_t time_out)
 {
   // Check parameters
@@ -102,8 +116,12 @@ bsp_i2c_status_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_addre
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                  uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size,
+bsp_i2c_status_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c,
+                                  uint16_t device_address,
+                                  uint16_t mem_address,
+                                  uint16_t mem_address_size,
+                                  uint8_t *data_buffer,
+                                  uint16_t size,
                                   uint32_t time_out)
 {
   // Check parameters
@@ -117,8 +135,12 @@ bsp_i2c_status_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_addres
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                      uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size)
+bsp_i2c_status_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c,
+                                      uint16_t device_address,
+                                      uint16_t mem_address,
+                                      uint16_t mem_address_size,
+                                      uint8_t *data_buffer,
+                                      uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -131,8 +153,12 @@ bsp_i2c_status_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_ad
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_read_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                     uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size)
+bsp_i2c_status_t bsp_i2c_mem_read_it(bsp_i2c_handle_t *hi2c,
+                                     uint16_t device_address,
+                                     uint16_t mem_address,
+                                     uint16_t mem_address_size,
+                                     uint8_t *data_buffer,
+                                     uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);

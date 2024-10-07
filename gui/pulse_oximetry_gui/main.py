@@ -22,7 +22,7 @@ from ui_form import Ui_User_UI
 from serial_manage import serial_manage
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
         self.stacked_widget = QStackedWidget()
@@ -54,11 +54,8 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         # Thread
-        self.thread_plot_raw_ppg_graph = threading.Thread(target = self.update_raw_ppg_graph, daemon = True)
-        self.thread_plot_filtered_ppg_graph = threading.Thread(target = self.update_filtered_ppg_graph, daemon = True)
-
-        self.thread_plot_raw_ppg_graph.start()
-        self.thread_plot_filtered_ppg_graph.start()
+        self.thread_plot_raw_ppg_graph = threading.Thread(target=self.update_raw_ppg_graph, daemon=True)
+        self.thread_plot_filtered_ppg_graph = threading.Thread(target=self.update_filtered_ppg_graph, daemon=True)
 
         # Initialize serial communication
         self.ui_user.cbb_baudrate.setCurrentText("115200")
@@ -90,7 +87,7 @@ class MainWindow(QMainWindow):
         self.heart_rate_graph.setXRange(0, 24) # X-Axis from 0h to 24h
 
         # ScatterPlotItem for scatter points
-        self.heart_rate_scatter = pg.ScatterPlotItem(size = 10, pen = None, brush = (255, 0, 0))
+        self.heart_rate_scatter = pg.ScatterPlotItem(size=10, pen=None, brush=(255, 0, 0))
         self.heart_rate_graph.addItem(self.heart_rate_scatter)
 
         # Data lists for plotting heart rate
@@ -109,25 +106,23 @@ class MainWindow(QMainWindow):
         self.data_value = 0
 
         # PlotDataItem for lines
-        # self.heart_rate_pen = pg.mkPen(color = (0, 0, 255))
-        # self.heart_rate_plot_lines = pg.PlotDataItem(pen = self.heart_rate_pen)
+        # self.heart_rate_pen = pg.mkPen(color=(0, 0, 255))
+        # self.heart_rate_plot_lines = pg.PlotDataItem(pen=self.heart_rate_pen)
         # self.heart_rate_graph.addItem(self.heart_rate_plot_lines)
 
         # Initialize and start the timer to check for COM port updates
         self.port_check_timer = QTimer(self)
         self.port_check_timer.timeout.connect(self.update_available_ports)
-
-        # Initialize and start the timer to plot PPG signal
-        self.plot_raw_ppg_timer = QTimer(self)
-        self.plot_raw_ppg_timer.timeout.connect(self.update_raw_ppg_graph)
-
-        # Initialize and start the timer to plot PPG signal
-        self.plot_filtered_ppg_timer = QTimer(self)
-        self.plot_filtered_ppg_timer.timeout.connect(self.update_filtered_ppg_graph)
-
         self.port_check_timer.start(1000)  # Check every 1000 ms (1 second)
-        self.plot_raw_ppg_timer.start(10)
-        self.plot_filtered_ppg_timer.start(10)
+
+        # Initialize and start the timer to plot PPG signal
+        self.ppg_graph_index = 0
+        self.plot_ppg_timer = QTimer(self)
+        self.plot_ppg_timer.timeout.connect(self.update_ppg_graph)
+        self.plot_ppg_timer.start(50)
+
+        self.thread_plot_raw_ppg_graph.start()
+        self.thread_plot_filtered_ppg_graph.start()
 
     def store_base_info(self, widget):
         for child in widget.findChildren(QWidget):
@@ -434,17 +429,17 @@ class MainWindow(QMainWindow):
         self.heart_rate_graph.clear()
 
         self.heart_rate_graph.setBackground("w")
-        self.heart_rate_graph.setTitle("Heart Rate Graph", color = "black", size = "10pt")
+        self.heart_rate_graph.setTitle("Heart Rate Graph", color="black", size="10pt")
 
         styles = {"color": "black", "font-size": "13px"}
         self.heart_rate_graph.setLabel("left", "Heart Rate (bpm)", **styles)
         self.heart_rate_graph.setLabel("bottom", "Time (h)", **styles)
 
-        # self.heart_rate_pen = pg.mkPen(color = (0, 0, 255))  # Blue
+        # self.heart_rate_pen = pg.mkPen(color=(0, 0, 255))  # Blue
         self.heart_rate_graph.setXRange(0, 24) # X-Axis from 0h to 24h
 
         # ScatterPlotItem for scatter points
-        self.heart_rate_scatter = pg.ScatterPlotItem(size = 10, pen = None, brush = (255, 0, 0))
+        self.heart_rate_scatter = pg.ScatterPlotItem(size=10, pen=None, brush=(255, 0, 0))
         self.heart_rate_graph.addItem(self.heart_rate_scatter)
 
     @Slot(str)
@@ -477,6 +472,13 @@ class MainWindow(QMainWindow):
                 QMessageBox.warning(self, "Error", "Invalid command")
                 return
 
+            if threshold == "0F":
+                self.ui_user.line_thre_noti.setText("Heart rate too high")
+            elif threshold == "F0":
+                self.ui_user.line_thre_noti.setText("Heart rate too low")
+            elif threshold == "FF":
+                self.ui_user.line_thre_noti.setText("Normal heart rate")
+
             # Check UART
             if cmd == "00":
                 if data == "FFFFFFFF":
@@ -486,9 +488,9 @@ class MainWindow(QMainWindow):
                     QMessageBox.warning(self, "Error", "Invalid data")
                     return
 
-            # Plot heart rate in heart rate graph
+            # Plot heart rate
             elif cmd == "01":
-                self.update_heart_rate_graph()
+                self.update_heart_rate()
 
             # Plot raw PPG signal
             elif cmd == "11":
@@ -507,7 +509,7 @@ class MainWindow(QMainWindow):
 
             # Plot filtered PPG signal
             elif cmd == "21":
-                self.data_value = self.data_value - 1500 # Minus offset
+                self.data_value = self.data_value - 1000
                 if self.dev_widget.filtered_ppg_time:
                     filtered_ppg_new_time = self.dev_widget.filtered_ppg_time[-1] + 0.01
                 else:
@@ -521,16 +523,13 @@ class MainWindow(QMainWindow):
                     self.dev_widget.filtered_ppg_time.pop(0)
                     self.dev_widget.filtered_ppg_value.pop(0)
 
-            # Current heart rate
+            # Error notification
             elif cmd == "06":
-                self.ui_user.line_heart_rate.setText(str(self.data_value))
-
-                if threshold == "0F":
-                    self.ui_user.line_thre_noti.setText("Heart rate too high")
-                elif threshold == "F0":
-                    self.ui_user.line_thre_noti.setText("Heart rate too low")
-                elif threshold == "FF":
-                    self.ui_user.line_thre_noti.setText("Normal heart rate")
+                if data == "FFFFFFFF":
+                    self.dev_widget.ui_dev.line_err_noti.setText("Error occurred")
+                else:
+                    QMessageBox.warning(self, "Error", "Invalid data")
+                    return
 
             # Get epoch time from STM32, convert epoch time to date time for print record
             elif cmd == "04":
@@ -549,7 +548,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Error", f"Failed to read serial data: {str(e)}")
 
     @Slot()
-    def update_heart_rate_graph(self):
+    def update_heart_rate(self):
         if not self.serial_connection:
             return
 
@@ -583,19 +582,26 @@ class MainWindow(QMainWindow):
         self.ui_user.txt_record.setPlainText(records_text)
 
         heart_rate_graph_title = f"Heart Rate Graph in {self.day[-1]:02}/{self.month[-1]:02}/{self.year[-1]:04}"
-        self.heart_rate_graph.setTitle(heart_rate_graph_title, color = "black", size = "10pt")
+        self.heart_rate_graph.setTitle(heart_rate_graph_title, color="black", size="10pt")
 
-    @Slot()
     def update_raw_ppg_graph(self):
-        if len(self.dev_widget.raw_ppg_value) != 0:
-            self.dev_widget.raw_ppg_graph.plot(self.dev_widget.raw_ppg_time, self.dev_widget.raw_ppg_value, pen=self.dev_widget.raw_ppg_pen, clear=True)
-            self.dev_widget.raw_ppg_graph.autoRange()
+        self.dev_widget.raw_ppg_graph.plot(self.dev_widget.raw_ppg_time[0:self.ppg_graph_index], self.dev_widget.raw_ppg_value[0:self.ppg_graph_index], pen=self.dev_widget.raw_ppg_pen, clear=True)
+        self.dev_widget.raw_ppg_graph.autoRange()
 
-    @Slot()
     def update_filtered_ppg_graph(self):
-        if len(self.dev_widget.filtered_ppg_value) != 0:
-            self.dev_widget.filtered_ppg_graph.plot(self.dev_widget.filtered_ppg_time, self.dev_widget.filtered_ppg_value, pen=self.dev_widget.filtered_ppg_pen, clear=True)
-            self.dev_widget.filtered_ppg_graph.autoRange()
+        self.dev_widget.filtered_ppg_graph.plot(self.dev_widget.filtered_ppg_time[0:self.ppg_graph_index], self.dev_widget.filtered_ppg_value[0:self.ppg_graph_index], pen=self.dev_widget.filtered_ppg_pen, clear=True)
+        self.dev_widget.filtered_ppg_graph.autoRange()
+
+    Slot()
+    def update_ppg_graph(self):
+        if (len(self.dev_widget.raw_ppg_value) != 0) and (len(self.dev_widget.filtered_ppg_value) != 0):
+            if (len(self.dev_widget.raw_ppg_value) > self.ppg_graph_index) and (len(self.dev_widget.filtered_ppg_value) > self.ppg_graph_index):
+                self.ppg_graph_index += 1
+                self.update_raw_ppg_graph()
+                self.update_filtered_ppg_graph()
+            else:
+                self.update_raw_ppg_graph()
+                self.update_filtered_ppg_graph()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

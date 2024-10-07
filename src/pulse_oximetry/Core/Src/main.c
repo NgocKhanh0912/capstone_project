@@ -31,6 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define MAX_SIZE                  (100)
 // Set sampling rate at 100Hz
 #define PRESCALER_SAMPLING_RATE   (959U)
 #define AUTORELOAD_SAMPLING_RATE  (999U)
@@ -58,7 +59,14 @@ DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
 uint8_t display_buffer[1024];
-double filtered_data[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1];
+sys_display_t display;
+sys_measure_t ppg;
+double filtered_data[129];
+uint32_t peak_nums;
+drv_buzzer_t buzzer;
+cbuffer_t cbuffer;
+uint8_t data_buffer[MAX_SIZE] = {0};
+uint8_t data_received[MAX_SIZE] = {0};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

@@ -37,7 +37,7 @@ uint32_t bsp_adc_start(bsp_adc_typedef_t *badc)
   __ASSERT(badc != NULL, BSP_ADC_ERROR);
 
   hal_status_t ret = HAL_OK;
-  ret              = HAL_ADC_Start(badc);
+  ret = HAL_ADC_Start(badc);
 
   __ASSERT(ret == HAL_OK, BSP_ADC_FAILED);
 
@@ -49,7 +49,7 @@ uint32_t bsp_adc_start_it(bsp_adc_typedef_t *badc)
   __ASSERT(badc != NULL, BSP_ADC_ERROR);
 
   hal_status_t ret = HAL_OK;
-  ret              = HAL_ADC_Start_IT(badc);
+  ret = HAL_ADC_Start_IT(badc);
 
   __ASSERT(ret == HAL_OK, BSP_ADC_FAILED);
 
@@ -63,7 +63,7 @@ uint32_t bsp_adc_start_dma(bsp_adc_typedef_t *badc, uint32_t *dma_buf, uint32_t 
   __ASSERT(length > 0, BSP_ADC_ERROR);
 
   hal_status_t ret = HAL_OK;
-  ret              = HAL_ADC_Start_DMA(badc, dma_buf, length);
+  ret = HAL_ADC_Start_DMA(badc, dma_buf, length);
 
   __ASSERT(ret == HAL_OK, BSP_ADC_FAILED);
 
@@ -75,7 +75,7 @@ uint32_t bsp_adc_stop(bsp_adc_typedef_t *badc)
   __ASSERT(badc != NULL, BSP_ADC_ERROR);
 
   hal_status_t ret = HAL_OK;
-  ret              = HAL_ADC_Stop(badc);
+  ret = HAL_ADC_Stop(badc);
 
   __ASSERT(ret == HAL_OK, BSP_ADC_FAILED);
 
@@ -87,7 +87,7 @@ uint32_t bsp_adc_stop_it(bsp_adc_typedef_t *badc)
   __ASSERT(badc != NULL, BSP_ADC_ERROR);
 
   hal_status_t ret = HAL_OK;
-  ret              = HAL_ADC_Stop_IT(badc);
+  ret = HAL_ADC_Stop_IT(badc);
 
   __ASSERT(ret == HAL_OK, BSP_ADC_FAILED);
 
@@ -99,7 +99,7 @@ uint32_t bsp_adc_stop_dma(bsp_adc_typedef_t *badc)
   __ASSERT(badc != NULL, BSP_ADC_ERROR);
 
   hal_status_t ret = HAL_OK;
-  ret              = HAL_ADC_Stop_DMA(badc);
+  ret = HAL_ADC_Stop_DMA(badc);
 
   __ASSERT(ret == HAL_OK, BSP_ADC_FAILED);
 

@@ -29,8 +29,8 @@
 enum bsp_uart_status_t
 {
   BSP_UART_ERROR = 0xFFFFFFFF,
-  BSP_UART_FAIL  = 0x7FFFFFFF,
-  BSP_UART_OK    = 0x3FFFFFFF
+  BSP_UART_FAIL = 0x7FFFFFFF,
+  BSP_UART_OK = 0x3FFFFFFF
 };
 
 /* Public macros ------------------------------------------------------ */
@@ -48,7 +48,8 @@ typedef void (*bsp_uart_cb_t)(UART_HandleTypeDef *huart, uint16_t size);
  *
  * @return      The status of the UART read operation.
  */
-uint32_t bsp_uart_start_receive_to_idle_it(UART_HandleTypeDef *huart, uint8_t *rx_data, uint16_t bytes);
+uint32_t bsp_uart_start_receive_to_idle_it(UART_HandleTypeDef *huart,
+                                           uint8_t *rx_data, uint16_t bytes);
 
 /**
  * @brief       Start to receive data from UART using DMA until an events below is trigger:
@@ -62,7 +63,8 @@ uint32_t bsp_uart_start_receive_to_idle_it(UART_HandleTypeDef *huart, uint8_t *r
  *
  * @return      The status of the UART read operation.
  */
-uint32_t bsp_uart_start_receive_to_idle_dma(UART_HandleTypeDef *huart, uint8_t *rx_data, uint16_t bytes);
+uint32_t bsp_uart_start_receive_to_idle_dma(UART_HandleTypeDef *huart,
+                                            uint8_t *rx_data, uint16_t bytes);
 
 /**
  * @brief       Print data of specified length over UART.
@@ -73,7 +75,8 @@ uint32_t bsp_uart_start_receive_to_idle_dma(UART_HandleTypeDef *huart, uint8_t *
  *
  * @return      The status of the UART transmission operation.
  */
-uint32_t bsp_uart_transmit(UART_HandleTypeDef *huart, uint8_t *tx_data, uint16_t data_len);
+uint32_t bsp_uart_transmit(UART_HandleTypeDef *huart,
+                           uint8_t *tx_data, uint16_t data_len);
 
 /**
  * @brief       Register the callback function for UART event.

@@ -1,6 +1,0 @@
-{
-  "files.associations": {
-    "common.h": "c",
-    "sys_button.h": "c"
-  }
-}

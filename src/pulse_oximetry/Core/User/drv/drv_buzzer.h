@@ -28,9 +28,9 @@
 /* Public enumerate/structure ----------------------------------------- */
 enum drv_buzzer_status_t
 {
-  DRV_BUZZER_FAIL  = 0xFFFFFFFF,
+  DRV_BUZZER_FAIL = 0xFFFFFFFF,
   DRV_BUZZER_ERROR = 0x7FFFFFFF,
-  DRV_BUZZER_OK    = 0x3FFFFFFF
+  DRV_BUZZER_OK = 0x3FFFFFFF
 };
 
 typedef struct __attribute__((__packed__))
@@ -67,7 +67,9 @@ typedef struct __attribute__((__packed__))
  *
  * @return      drv_buzzer_status_t value.
  */
-uint32_t drv_buzzer_init(drv_buzzer_t *buzzer, bsp_tim_typedef_t *tim, uint32_t pwm_channel);
+uint32_t drv_buzzer_init(drv_buzzer_t *buzzer,
+                         bsp_tim_typedef_t *tim,
+                         uint32_t pwm_channel);
 
 /**
  * @brief       Play the buzzer with desired sond effect.

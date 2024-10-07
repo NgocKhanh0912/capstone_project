@@ -23,17 +23,17 @@
 #include "drv_button.h"
 
 /* Public defines ----------------------------------------------------- */
-#define BUTTON_DEBOUNCE_TIME     (10UL)
-#define BUTTON_RELEASE_TIME      (500UL)
-#define BUTTON_SINGLE_CLICK_TIME (500UL)
-#define BUTTON_HOLD_TIME         (3000UL)
+#define BUTTON_DEBOUNCE_TIME      (10UL)
+#define BUTTON_RELEASE_TIME       (500UL)
+#define BUTTON_SINGLE_CLICK_TIME  (500UL)
+#define BUTTON_HOLD_TIME          (3000UL)
 
 /* Public enumerate/structure ----------------------------------------- */
 typedef enum
 {
   SYS_BUTTON_ERROR = 0xFFFFFFFF,
-  SYS_BUTTON_FAIL  = 0x7FFFFFFF,
-  SYS_BUTTON_OK    = 0x3FFFFFFF
+  SYS_BUTTON_FAIL = 0x7FFFFFFF,
+  SYS_BUTTON_OK = 0x3FFFFFFF
 } sys_button_status_t;
 
 typedef enum
@@ -80,7 +80,7 @@ typedef void (*sys_button_evt_cb_t)();
 /* Public function prototypes ----------------------------------------- */
 /**
  * @brief       Initialize the system button
- *
+  *
  * @param[in]   tim                   Pointer of timer debound handler.
  * @param[in]   gpio                  Pointer point to GPIO port.
  * @param[in]   pin                   Pin of that port.
@@ -92,8 +92,8 @@ typedef void (*sys_button_evt_cb_t)();
  *  - 0x7FFFFFFF: Failed
  *  - 0x3FFFFFFF: Success
  */
-sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
-                                    uint32_t button_active_level);
+sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
+                                    uint16_t pin, uint32_t button_active_level);
 
 /**
  * @brief       Manage the system button

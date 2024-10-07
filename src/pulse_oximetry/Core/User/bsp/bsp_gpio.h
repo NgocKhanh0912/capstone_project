@@ -27,8 +27,8 @@
 typedef enum
 {
   BSP_GPIO_ERROR = 0xFFFFFFFF,
-  BSP_GPIO_FAIL  = 0x7FFFFFFF,
-  BSP_GPIO_OK    = 0x3FFFFFFF
+  BSP_GPIO_FAIL = 0x7FFFFFFF,
+  BSP_GPIO_OK = 0x3FFFFFFF
 } bsp_gpio_status_t;
 
 /* Public macros ------------------------------------------------------ */
