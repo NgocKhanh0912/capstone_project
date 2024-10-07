@@ -42,8 +42,8 @@ enum bsp_adc_status_t
 /**
  * @brief  Enable and Start ADC conversion
  *
- * @param[in]     badc pointer to a bsp_adc_typedef_t structure that contains
- *                the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - (0xFFFFFFFF): Error
@@ -55,8 +55,8 @@ uint32_t bsp_adc_start(bsp_adc_typedef_t *badc);
 /**
  * @brief         Enables the interrupt and starts ADC conversion of regular channels.
  *
- * @param[in]     badc pointer to a bsp_adc_typedef_t structure that contains
- *                the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - (0xFFFFFFFF): Error
@@ -68,8 +68,8 @@ uint32_t bsp_adc_start_it(bsp_adc_typedef_t *badc);
 /**
  * @brief         Enables ADC DMA request after last transfer (Single-ADC mode) and enables ADC peripheral.
  *
- * @param[in]     badc pointer to a bsp_adc_typedef_t structure that contains
- *                the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - (0xFFFFFFFF): Error
@@ -83,8 +83,8 @@ uint32_t bsp_adc_start_dma(bsp_adc_typedef_t *badc, uint32_t *dma_buf, uint32_t 
  *
  * @note   Caution: This function will stop also injected channels.
  *
- * @param[in]     badc pointer to a bsp_adc_typedef_t structure that contains
- *                the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - (0xFFFFFFFF): Error
@@ -98,8 +98,8 @@ uint32_t bsp_adc_stop(bsp_adc_typedef_t *badc);
  *
  * @note   Caution: This function will stop also injected channels.
  *
- * @param[in]     badc pointer to a bsp_adc_typedef_t structure that contains
- *                the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - (0xFFFFFFFF): Error
@@ -113,8 +113,8 @@ uint32_t bsp_adc_stop_it(bsp_adc_typedef_t *badc);
  *
  * @note   Caution: This function will stop also injected channels.
  *
- * @param[in]     badc pointer to a bsp_adc_typedef_t structure that contains
- *                the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - (0xFFFFFFFF): Error
@@ -128,8 +128,8 @@ uint32_t bsp_adc_stop_dma(bsp_adc_typedef_t *badc);
  *
  * @note   Caution: This function will stop also injected channels.
  *
- * @param  hadc pointer to a ADC_HandleTypeDef structure that contains
- *         the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - Converted value.
@@ -139,7 +139,7 @@ uint32_t bsp_adc_get_value(bsp_adc_typedef_t *badc);
 /**
  * @brief  Register the upper-layer function to handle the callback event.
  *
- * @param  bsp_adc_cb pointer to a function handle this callback.
+ * @param  bsp_adc_cb   Pointer to a function handle this callback.
  *
  * @return
  *  - (0xFFFFFFFF): Error
@@ -153,8 +153,8 @@ uint32_t bsp_adc_register_handler(cbuffer_t *adc_conv_cbuf);
  *
  * @note   Caution: This function will stop also injected channels.
  *
- * @param  hadc pointer to a ADC_HandleTypeDef structure that contains
- *         the configuration information for the specified ADC.
+ * @param[in]     badc Pointer to a bsp_adc_typedef_t structure that contains
+ *                     the configuration information for the specified ADC.
  *
  * @return
  *  - None.
