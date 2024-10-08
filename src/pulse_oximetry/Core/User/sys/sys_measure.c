@@ -70,7 +70,8 @@
 #define SYS_MEASURE_SAMPLING_RATE                                       (100.0)
 #define SYS_MEASURE_FILTERED_PPG_OFFSET                                 (1500.0)
 #define SYS_MEASURE_CALIB_INTERVAL                                      (0.0065)
-#define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS (25) // 25 bpm
+#define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS (20)
+#define SYS_MEASURE_MAX_HEART_RATE_NUMBER_OF_INSTABILITY                (5)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -319,8 +320,9 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   uint32_t peak_nums                                      = 0;
   uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = { 0 };
 
-  double heart_rate                 = 0;
-  static double previous_heart_rate = 0;
+  double heart_rate                        = 0;
+  static uint8_t unstable_heart_rate_count = 0;
+  static double previous_heart_rate        = 0;
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS - 1; i++)
   {
@@ -420,13 +422,20 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
     if (previous_heart_rate != 0)
     {
-      __ASSERT(abs(heart_rate - previous_heart_rate) <
-                 SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS,
-               SYS_MEASURE_FAILED);
+      if (abs(heart_rate - previous_heart_rate) >=
+          SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS)
+      {
+        unstable_heart_rate_count += 1;
+        if (unstable_heart_rate_count < SYS_MEASURE_MAX_HEART_RATE_NUMBER_OF_INSTABILITY)
+        {
+          return SYS_MEASURE_FAILED;
+        }
+      }
     }
 
-    previous_heart_rate = heart_rate;
-    signal->heart_rate  = (uint32_t)heart_rate;
+    unstable_heart_rate_count = 0;
+    previous_heart_rate       = heart_rate;
+    signal->heart_rate        = (uint32_t)heart_rate;
   }
 
   return SYS_MEASURE_OK;
