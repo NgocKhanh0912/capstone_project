@@ -66,6 +66,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/User/drv/drv_ssd1306.c
     Core/User/drv/drv_ds1307.c
     Core/User/middleware/cbuffer.c
+    Core/User/middleware/fft.c
     Core/User/middleware/ssd1306_fonts.c
     Core/User/sys/sys_protocol.c
     Core/User/sys/sys_display.c
