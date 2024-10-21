@@ -17,7 +17,8 @@
 /* Includes ----------------------------------------------------------- */
 #include "sys_measure.h"
 #include "common.h"
-#include "math.h"
+#include <math.h>
+#include "fft.h"
 
 /* Private defines ---------------------------------------------------- */
 /**
@@ -71,7 +72,9 @@
 #define SYS_MEASURE_FILTERED_PPG_OFFSET                                 (1500.0)
 #define SYS_MEASURE_CALIB_INTERVAL                                      (0.0065)
 #define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS (20)
-#define SYS_MEASURE_MAX_HEART_RATE_NUMBER_OF_INSTABILITY                (5)
+#define SYS_MEASURE_MAX_HEART_RATE_NUMBER_OF_INSTABILITY                (3)
+#define SYS_MEASURE_FFT_HEART_RATE_RESOLUTION \
+  (((double)SYS_MEASURE_SAMPLING_RATE / SYS_MEASURE_MAX_SAMPLES_PROCESS) * SECONDS_PER_MINUTE)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -124,6 +127,8 @@ uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim
 
   signal->heart_rate = 0;
   drv_hr_init(&(signal->dev), adc, tim, prescaler, autoreload);
+
+  fft_init();
 
   return SYS_MEASURE_OK;
 }
@@ -255,6 +260,11 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   cbuffer_t peak_detector_cbuf                        = signal->filtered_data;
   cb_read(&peak_detector_cbuf, handle_data, sizeof(handle_data));
 
+  double fft_input_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
+  memcpy(fft_input_data, handle_data, sizeof(fft_input_data));
+  double fft_heart_rate =
+    (SECONDS_PER_MINUTE * fft_get_frequency_of_peak_value(fft_input_data, SYS_MEASURE_SAMPLING_RATE));
+
   // Enhance the signal
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
   {
@@ -352,6 +362,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     }
   }
 
+  // Dynamic beta calibration
   if (peak_nums < SYS_MEASURE_MIN_PEAK_IN_BUFFER)
   {
     double decrease_beta = beta - SYS_MEASURE_CALIB_BETA_STEP;
@@ -420,9 +431,19 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
     __ASSERT(((heart_rate >= HEART_RATE_MIN) && (heart_rate <= HEART_RATE_MAX)), SYS_MEASURE_FAILED);
 
+    // Remove noisy heart rate signals caused by unstable sensor contact using FFT
+    if (((uint32_t)fft_heart_rate >= HEART_RATE_MIN) && ((uint32_t)fft_heart_rate <= HEART_RATE_MAX))
+    {
+      if (fabs(heart_rate - fft_heart_rate) > SYS_MEASURE_FFT_HEART_RATE_RESOLUTION)
+      {
+        return SYS_MEASURE_FAILED;
+      }
+    }
+
+    // Retain heart rate results when the user removes the sensor or changes the wearer of the device
     if (previous_heart_rate != 0)
     {
-      if (abs(heart_rate - previous_heart_rate) >=
+      if (fabs(heart_rate - previous_heart_rate) >=
           SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS)
       {
         unstable_heart_rate_count += 1;

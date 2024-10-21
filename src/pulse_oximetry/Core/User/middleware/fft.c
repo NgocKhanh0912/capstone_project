@@ -53,13 +53,14 @@ double fft_get_frequency_of_peak_value(double *input_signal, uint16_t sampling_f
   arm_rfft_fast_f32(&fft_handler, fft_input_buffer, fft_output_buffer, FFT_FLAG_FORWARD);
 
   float peak_value               = 0;
+  float current_value            = 0;
   double frequency_of_peak_value = 0;
   uint16_t frequency_index       = 0;
 
   for (uint16_t i = 0; i < FFT_BUFFER_MAX_SIZE; i += 2)
   {
-    float current_value = sqrtf((fft_output_buffer[i] * fft_output_buffer[i]) +
-                                (fft_output_buffer[i + 1] * fft_output_buffer[i + 1]));
+    current_value = sqrtf((fft_output_buffer[i] * fft_output_buffer[i]) +
+                          (fft_output_buffer[i + 1] * fft_output_buffer[i + 1]));
 
     if (current_value > peak_value)
     {
