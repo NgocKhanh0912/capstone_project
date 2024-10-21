@@ -65,7 +65,7 @@ fft_status_t fft_init();
  *
  * @retval       The frequency of the peak value in input signal buffer.
  */
-float fft_get_frequency_of_peak_value(double *input_signal, uint16_t sampling_frequency);
+double fft_get_frequency_of_peak_value(double *input_signal, uint16_t sampling_frequency);
 
 #endif /* USER_FFT_FFT_H_ */
 

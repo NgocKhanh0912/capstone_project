@@ -38,7 +38,7 @@ fft_status_t fft_init()
   return FFT_STATUS_OK;
 }
 
-float fft_get_frequency_of_peak_value(double *input_signal, uint16_t sampling_frequency)
+double fft_get_frequency_of_peak_value(double *input_signal, uint16_t sampling_frequency)
 {
   float fft_input_buffer[FFT_BUFFER_MAX_SIZE]  = { 0 };
   float fft_output_buffer[FFT_BUFFER_MAX_SIZE] = { 0 };
@@ -52,9 +52,9 @@ float fft_get_frequency_of_peak_value(double *input_signal, uint16_t sampling_fr
   // Perform FFT
   arm_rfft_fast_f32(&fft_handler, fft_input_buffer, fft_output_buffer, FFT_FLAG_FORWARD);
 
-  float peak_value              = 0;
-  float frequency_of_peak_value = 0;
-  uint16_t frequency_index      = 0;
+  float peak_value               = 0;
+  double frequency_of_peak_value = 0;
+  uint16_t frequency_index       = 0;
 
   for (uint16_t i = 0; i < FFT_BUFFER_MAX_SIZE; i += 2)
   {
@@ -66,7 +66,7 @@ float fft_get_frequency_of_peak_value(double *input_signal, uint16_t sampling_fr
       peak_value = current_value;
 
       // Mapping frequency to bin
-      frequency_of_peak_value = frequency_index * sampling_frequency / ((float)FFT_BUFFER_MAX_SIZE);
+      frequency_of_peak_value = (frequency_index * sampling_frequency) / ((double)FFT_BUFFER_MAX_SIZE);
     }
     frequency_index++;
   }
