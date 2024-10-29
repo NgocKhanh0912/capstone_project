@@ -217,14 +217,14 @@ uint32_t sys_manage_loop()
         sys_protocol_pkt_t filtered_data_pkt = { SYS_MANAGE_CMD_GET_FILTERED_PPG, (uint32_t)temp, 0xFF };
         sys_protocol_send_pkt_to_port(filtered_data_pkt);
 
-        if (cb_space_count(&(s_ppg_signal.filtered_data)) == 0)
+        if (cb_space_count(&(s_ppg_signal.filtered_data)) == sizeof(double) - 1)
         {
           cb_clear(&(s_ppg_signal.filtered_data));
         }
       }
     }
 
-    if (cb_space_count(&(s_ppg_signal.filtered_data)) == 0)
+    if (cb_space_count(&(s_ppg_signal.filtered_data)) == sizeof(double) - 1)
     {
       cb_clear(&(s_ppg_signal.filtered_data));
     }

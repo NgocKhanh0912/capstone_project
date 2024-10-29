@@ -123,7 +123,7 @@ uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim
   __ASSERT(data_buf != NULL, SYS_MEASURE_ERROR);
 
   cb_init(&(signal->dev.adc_conv), s_adc_val_buf, sizeof(s_adc_val_buf));
-  cb_init(&(signal->filtered_data), data_buf, SYS_MEASURE_MAX_SAMPLES_PROCESS * sizeof(double));
+  cb_init(&(signal->filtered_data), data_buf, (SYS_MEASURE_MAX_SAMPLES_PROCESS + 1) * sizeof(double));
 
   signal->heart_rate = 0;
   drv_hr_init(&(signal->dev), adc, tim, prescaler, autoreload);
@@ -141,7 +141,7 @@ uint32_t sys_measure_process_data(sys_measure_t *signal, cbuffer_t *gui_raw_ppg_
 
   sys_measure_filter_data(signal, gui_raw_ppg_cb, gui_filtered_ppg_cb);
 
-  if (cb_space_count(&signal->filtered_data) == 0)
+  if (cb_space_count(&signal->filtered_data) == sizeof(double) - 1)
   {
     sys_measure_peak_detector(signal);
   }
@@ -237,7 +237,10 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_ra
     }
 
     // Place the current output value at the first position of the array
-    cb_write(&(signal->filtered_data), &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+    if (cb_space_count(&(signal->filtered_data)) >= sizeof(double))
+    {
+      cb_write(&(signal->filtered_data), &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+    }
     cb_write(gui_filtered_ppg_cb, &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
   }
   return SYS_MEASURE_OK;
