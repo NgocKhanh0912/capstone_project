@@ -115,12 +115,14 @@ uint32_t sys_display_update_ppg_signal(sys_display_t *display, cbuffer_t *signal
 
   // Operation
   // Read data
-  if (cb_space_count(signal_buf) != 0)
+  if (cb_space_count(signal_buf) >= sizeof(double))
   {
     return SYS_DISPLAY_FAILED;
   }
+
   double temp_buf[SIGNAL_SIZE] = { 0 };
   cb_read(signal_buf, temp_buf, sizeof(temp_buf));
+
   // Check if we have reached the width or not
   s_graph_pos_x = (s_graph_pos_x > (GRAPH_WIDTH - 2) ? 0 : s_graph_pos_x);
   if (s_graph_pos_x == 0)
@@ -128,6 +130,7 @@ uint32_t sys_display_update_ppg_signal(sys_display_t *display, cbuffer_t *signal
     drv_ssd1306_fill_rectangle(&(display->screen), 0 + 1, MAX_HEIGHT - GRAPH_HEIGHT - BITMAP_HEIGHT + 1,
                                GRAPH_WIDTH - 1, MAX_HEIGHT - 9 - 1, DRV_SSD1306_COLOR_BLACK);
   }
+
   // Plot PPG signal on SSD1306
   for (uint8_t i = 0; i < ((MAX_WIDTH + 1) / RATIO); i++)
   {
@@ -139,8 +142,10 @@ uint32_t sys_display_update_ppg_signal(sys_display_t *display, cbuffer_t *signal
     s_graph_pos_x += RATIO;
     s_graph_pre_pos_y = s_graph_pos_y;
   }
+
   // Update result on SSD1306
   drv_ssd1306_update_screen(&(display->screen));
+
   // Return
   return SYS_DISPLAY_OK;
 }
