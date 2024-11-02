@@ -120,6 +120,8 @@ uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim
                           uint32_t prescaler, uint32_t autoreload, double *data_buf)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(adc != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(tim != NULL, SYS_MEASURE_ERROR);
   __ASSERT(data_buf != NULL, SYS_MEASURE_ERROR);
 
   cb_init(&(signal->dev.adc_conv), s_adc_val_buf, sizeof(s_adc_val_buf));
@@ -154,6 +156,8 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_ra
                                         cbuffer_t *gui_filtered_ppg_cb)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(gui_raw_ppg_cb != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(gui_filtered_ppg_cb != NULL, SYS_MEASURE_ERROR);
 
   // Coeffi in z-domain
 
@@ -241,7 +245,11 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_ra
     {
       cb_write(&(signal->filtered_data), &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
     }
-    cb_write(gui_filtered_ppg_cb, &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+
+    if (cb_space_count(gui_filtered_ppg_cb) >= sizeof(double))
+    {
+      cb_write(gui_filtered_ppg_cb, &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+    }
   }
   return SYS_MEASURE_OK;
 }
