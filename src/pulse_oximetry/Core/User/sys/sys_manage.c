@@ -237,6 +237,9 @@ uint32_t sys_manage_loop()
     if (s_mng.stream == SYS_MANAGE_STREAM_OLED)
     {
       sys_display_update_ppg_signal(&s_oled_screen, &(s_ppg_signal.filtered_data));
+
+      cb_clear(&(s_raw_ppg_stream_gui_cbuf));
+      cb_clear(&(s_filtered_ppg_stream_gui_cbuf));
     }
   }
 
