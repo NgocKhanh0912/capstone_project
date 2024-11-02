@@ -40,6 +40,9 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
+# Set the CPU and FPU options for Cortex-M4 with FPU
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb")
+
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -63,6 +66,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/User/drv/drv_ssd1306.c
     Core/User/drv/drv_ds1307.c
     Core/User/middleware/cbuffer.c
+    Core/User/middleware/fft.c
     Core/User/middleware/ssd1306_fonts.c
     Core/User/sys/sys_protocol.c
     Core/User/sys/sys_display.c
@@ -80,6 +84,12 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/User/drv
     Core/User/middleware
     Core/User/sys
+    Core/Inc 
+)
+
+# Link directories setup
+target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}/Lib # Path where libarm_cortexM4lf_math.a is located
 )
 
 # Add project symbols (macros)
@@ -88,8 +98,9 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 # Add linked libraries
-target_link_libraries(${CMAKE_PROJECT_NAME}
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     stm32cubemx
+    ${CMAKE_SOURCE_DIR}/Lib/libarm_cortexM4lf_math.a
 
     # Add user defined libraries
 )

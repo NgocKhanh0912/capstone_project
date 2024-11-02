@@ -1,6 +1,8 @@
 {
   "files.associations": {
     "common.h": "c",
-    "sys_button.h": "c"
+    "sys_button.h": "c",
+    "cmath": "c",
+    "math.h": "c"
   }
 }

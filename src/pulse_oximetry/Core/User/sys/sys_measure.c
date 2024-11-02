@@ -17,7 +17,8 @@
 /* Includes ----------------------------------------------------------- */
 #include "sys_measure.h"
 #include "common.h"
-#include "math.h"
+#include <math.h>
+#include "fft.h"
 
 /* Private defines ---------------------------------------------------- */
 /**
@@ -70,7 +71,10 @@
 #define SYS_MEASURE_SAMPLING_RATE                                       (100.0)
 #define SYS_MEASURE_FILTERED_PPG_OFFSET                                 (1500.0)
 #define SYS_MEASURE_CALIB_INTERVAL                                      (0.0065)
-#define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS (25) // 25 bpm
+#define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS (20)
+#define SYS_MEASURE_MAX_HEART_RATE_NUMBER_OF_INSTABILITY                (3)
+#define SYS_MEASURE_FFT_HEART_RATE_RESOLUTION \
+  (((double)SYS_MEASURE_SAMPLING_RATE / SYS_MEASURE_MAX_SAMPLES_PROCESS) * SECONDS_PER_MINUTE)
 
 /* Private enumerate/structure ---------------------------------------- */
 
@@ -116,13 +120,17 @@ uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim
                           uint32_t prescaler, uint32_t autoreload, double *data_buf)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(adc != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(tim != NULL, SYS_MEASURE_ERROR);
   __ASSERT(data_buf != NULL, SYS_MEASURE_ERROR);
 
   cb_init(&(signal->dev.adc_conv), s_adc_val_buf, sizeof(s_adc_val_buf));
-  cb_init(&(signal->filtered_data), data_buf, SYS_MEASURE_MAX_SAMPLES_PROCESS * sizeof(double));
+  cb_init(&(signal->filtered_data), data_buf, (SYS_MEASURE_MAX_SAMPLES_PROCESS + 1) * sizeof(double));
 
   signal->heart_rate = 0;
   drv_hr_init(&(signal->dev), adc, tim, prescaler, autoreload);
+
+  fft_init();
 
   return SYS_MEASURE_OK;
 }
@@ -135,7 +143,7 @@ uint32_t sys_measure_process_data(sys_measure_t *signal, cbuffer_t *gui_raw_ppg_
 
   sys_measure_filter_data(signal, gui_raw_ppg_cb, gui_filtered_ppg_cb);
 
-  if (cb_space_count(&signal->filtered_data) == 0)
+  if (cb_space_count(&signal->filtered_data) == sizeof(double) - 1)
   {
     sys_measure_peak_detector(signal);
   }
@@ -148,6 +156,8 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_ra
                                         cbuffer_t *gui_filtered_ppg_cb)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(gui_raw_ppg_cb != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(gui_filtered_ppg_cb != NULL, SYS_MEASURE_ERROR);
 
   // Coeffi in z-domain
 
@@ -231,8 +241,15 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_ra
     }
 
     // Place the current output value at the first position of the array
-    cb_write(&(signal->filtered_data), &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
-    cb_write(gui_filtered_ppg_cb, &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+    if (cb_space_count(&(signal->filtered_data)) >= sizeof(double))
+    {
+      cb_write(&(signal->filtered_data), &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+    }
+
+    if (cb_space_count(gui_filtered_ppg_cb) >= sizeof(double))
+    {
+      cb_write(gui_filtered_ppg_cb, &hpf_recent_output[0], sizeof(hpf_recent_output[0]));
+    }
   }
   return SYS_MEASURE_OK;
 }
@@ -253,6 +270,11 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   double handle_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
   cbuffer_t peak_detector_cbuf                        = signal->filtered_data;
   cb_read(&peak_detector_cbuf, handle_data, sizeof(handle_data));
+
+  double fft_input_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
+  memcpy(fft_input_data, handle_data, sizeof(fft_input_data));
+  double fft_heart_rate =
+    (SECONDS_PER_MINUTE * fft_get_frequency_of_peak_value(fft_input_data, SYS_MEASURE_SAMPLING_RATE));
 
   // Enhance the signal
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
@@ -319,8 +341,9 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   uint32_t peak_nums                                      = 0;
   uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = { 0 };
 
-  double heart_rate                 = 0;
-  static double previous_heart_rate = 0;
+  double heart_rate                        = 0;
+  static uint8_t unstable_heart_rate_count = 0;
+  static double previous_heart_rate        = 0;
 
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS - 1; i++)
   {
@@ -350,6 +373,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     }
   }
 
+  // Dynamic beta calibration
   if (peak_nums < SYS_MEASURE_MIN_PEAK_IN_BUFFER)
   {
     double decrease_beta = beta - SYS_MEASURE_CALIB_BETA_STEP;
@@ -418,15 +442,32 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
     __ASSERT(((heart_rate >= HEART_RATE_MIN) && (heart_rate <= HEART_RATE_MAX)), SYS_MEASURE_FAILED);
 
-    if (previous_heart_rate != 0)
+    // Remove noisy heart rate signals caused by unstable sensor contact using FFT
+    if (((uint32_t)fft_heart_rate >= HEART_RATE_MIN) && ((uint32_t)fft_heart_rate <= HEART_RATE_MAX))
     {
-      __ASSERT(abs(heart_rate - previous_heart_rate) <
-                 SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS,
-               SYS_MEASURE_FAILED);
+      if (fabs(heart_rate - fft_heart_rate) > SYS_MEASURE_FFT_HEART_RATE_RESOLUTION)
+      {
+        return SYS_MEASURE_FAILED;
+      }
     }
 
-    previous_heart_rate = heart_rate;
-    signal->heart_rate  = (uint32_t)heart_rate;
+    // Retain heart rate results when the user removes the sensor or changes the wearer of the device
+    if (previous_heart_rate != 0)
+    {
+      if (fabs(heart_rate - previous_heart_rate) >=
+          SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS)
+      {
+        unstable_heart_rate_count += 1;
+        if (unstable_heart_rate_count < SYS_MEASURE_MAX_HEART_RATE_NUMBER_OF_INSTABILITY)
+        {
+          return SYS_MEASURE_FAILED;
+        }
+      }
+    }
+
+    unstable_heart_rate_count = 0;
+    previous_heart_rate       = heart_rate;
+    signal->heart_rate        = (uint32_t)heart_rate;
   }
 
   return SYS_MEASURE_OK;
