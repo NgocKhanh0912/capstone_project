@@ -1,0 +1,26 @@
+@startuml TERMA_FLOWCHART
+
+hide empty description
+
+state Prior_Knowledge
+Prior_Knowledge -down-> Generate_blocks_of_interest : W1, W2
+Prior_Knowledge -down-> Thresholding : W1
+
+state Signal
+Signal -> Filtering
+
+state Filtering
+Filtering -> Enhancing : x[n]
+
+state Enhancing
+Enhancing -> Generate_blocks_of_interest : y[n]
+
+state Generate_blocks_of_interest
+Generate_blocks_of_interest -> Thresholding
+
+state Thresholding
+Thresholding -> Result : Indicate for main event
+
+state Result
+
+@enduml
