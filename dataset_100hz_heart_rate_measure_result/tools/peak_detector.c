@@ -30,7 +30,7 @@
 /* Private macros ----------------------------------------------------- */
 
 /* Public variables --------------------------------------------------- */
-const char *data_file = "real_world_dataset/golden_data/filtered_ppg_data_100hz.csv";
+const char *data_file = "../algorithm/real_world_data/data/filtered_ppg_data_100hz.csv";
 double sample[MAX_SAMPLES] = {0};
 
 /* Private variables -------------------------------------------------- */

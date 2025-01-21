@@ -1,5 +1,5 @@
 % Path to the CSV file
-mimic_afib_ppg_filepath = '../golden_data/mimic_afib_data_100hz.csv';
+mimic_afib_ppg_filepath = '../data/mimic_afib_data_100hz.csv';
 
 % Count the number of lines in the file
 fileID = fopen(mimic_afib_ppg_filepath, 'r');
