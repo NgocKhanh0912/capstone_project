@@ -72,9 +72,13 @@ function signal_labeling_ui(signal)
             end
         end
         labeled_peaks = unique(labeled_peaks); % Remove duplicates
+        
         if ~isempty(labeled_peaks)
-            writematrix(labeled_peaks, 'labeled_peaks.csv');
-            msgbox('Labeled peaks saved to labeled_peaks.csv', 'Info');
+            % Append labeled peaks to the CSV file
+            file_id = fopen('labeled_peaks.csv', 'a'); % Open file in append mode
+            fprintf(file_id, '%d\n', labeled_peaks); % Write data to file
+            fclose(file_id); % Close file
+            msgbox('Labeled peaks appended to labeled_peaks.csv', 'Info');
         else
             msgbox('No labeled peaks to save', 'Warning');
         end
