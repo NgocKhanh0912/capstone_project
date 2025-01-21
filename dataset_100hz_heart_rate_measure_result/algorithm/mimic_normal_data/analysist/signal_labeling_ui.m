@@ -40,31 +40,41 @@ function signal_labeling_ui(signal)
                          'Position', [500, 50, 80, 30], ...
                          'Callback', @save_callback);
 
-    % Add button: Add Datatip
+    % Add button: Add Point
     btn_add = uicontrol('Parent', fig, 'Style', 'pushbutton', 'String', 'Add Point', ...
                         'Position', [600, 50, 80, 30], ...
                         'Callback', @add_point_callback);
 
     % Callback: Next
     function next_callback(~, ~)
+        % Clear old handles
         delete(handles);
         handles = [];
+        
+        % Update the current window's starting index
         current_start = current_start + window_size;
+        
+        % Check if the end of the signal is reached
         if current_start > length(signal)
             msgbox('End of signal reached!', 'Info');
             return;
         end
+        
+        % Determine the current window's end index
         current_end = min(current_start + window_size - 1, length(signal));
+        
+        % Clear axes and plot the current window
         cla(ax);
         plot(ax, signal(current_start:current_end), 'b');
         
-        % Re-plot detected peaks in the current window
+        % Re-plot detected peaks within the current window
         plot_peaks_in_window(current_start, peak_indices, ax);
     end
 
     % Callback: Save
     function save_callback(~, ~)
-        labeled_peaks = []; % Reset labeled peaks
+        % Collect labeled peaks from the current window
+        labeled_peaks = [];
         for i = 1:numel(handles)
             if isvalid(handles(i)) % Only save valid handles
                 global_index = handles(i).UserData; % Global index
@@ -73,11 +83,11 @@ function signal_labeling_ui(signal)
         end
         labeled_peaks = unique(labeled_peaks); % Remove duplicates
         
+        % Append labeled peaks to the file
         if ~isempty(labeled_peaks)
-            % Append labeled peaks to the CSV file
             file_id = fopen('labeled_peaks.csv', 'a'); % Open file in append mode
-            fprintf(file_id, '%d\n', labeled_peaks); % Write data to file
-            fclose(file_id); % Close file
+            fprintf(file_id, '%d\n', labeled_peaks); % Write data
+            fclose(file_id); % Close the file
             msgbox('Labeled peaks appended to labeled_peaks.csv', 'Info');
         else
             msgbox('No labeled peaks to save', 'Warning');
@@ -93,9 +103,9 @@ function signal_labeling_ui(signal)
             local_index = round(click_pos(1));
 
             % Ensure x is within the current window range
-            if local_index >= 1 && local_index <= window_size
+            if local_index >= 1 && local_index <= min(window_size, length(signal) - current_start + 1)
                 global_index = current_start + local_index - 1; % Convert to global index
-
+                
                 % Ensure the global index is valid
                 if global_index > 0 && global_index <= length(signal)
                     % Force the y-coordinate to align with the signal value
@@ -127,7 +137,7 @@ function signal_labeling_ui(signal)
         local_index = round(current_pos(1));
 
         % Ensure x stays within the current window range
-        if local_index >= 1 && local_index <= window_size
+        if local_index >= 1 && local_index <= min(window_size, length(signal) - current_start + 1)
             global_index = current_start + local_index - 1; % Convert to global index
 
             % Ensure global index is valid
