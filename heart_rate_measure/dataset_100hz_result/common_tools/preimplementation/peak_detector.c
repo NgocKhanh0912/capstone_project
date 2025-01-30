@@ -30,7 +30,7 @@
 /* Private macros ----------------------------------------------------- */
 
 /* Public variables --------------------------------------------------- */
-const char *data_file = "../real_world_data/data/filtered_ppg_data_100hz.csv";
+const char *data_file = "golden_ppg_data_100hz.csv";
 double sample[MAX_SAMPLES] = {0};
 
 /* Private variables -------------------------------------------------- */
@@ -82,8 +82,8 @@ static void read_csv_file(const char *file_name, double *csv_buf, int samples)
 static uint32_t peak_detector(double *input)
 {
   // Choose the Windows Size W1, W2 in TERMA framework
-  uint32_t w_cycle = 97,
-           w_evt = 17;
+  uint32_t w_cycle = 55,
+           w_evt = 9;
 
   float ma_cycle[MAX_SAMPLES] = {0},
         ma_evt[MAX_SAMPLES] = {0};
@@ -128,7 +128,7 @@ static uint32_t peak_detector(double *input)
   mean_of_signal /= MAX_SAMPLES;
 
   // Calculate the Threshold for generating Block of Interest
-  float beta = 0.5;
+  float beta = 0.095;
   float threshold_1[MAX_SAMPLES] = {0};
 
   for (i = 0; i < MAX_SAMPLES; i++)
