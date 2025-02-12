@@ -1,18 +1,27 @@
-% Path to the CSV file
-mimic_afib_ppg_filepath = '../data/mimic_normal_data_100hz.csv';
+input_folder = 'E:/mimic_dataset/data/';
+output_folder = 'E:/mimic_dataset/labeled_peaks/';
 
-% Count the number of lines in the file
-fileID = fopen(mimic_afib_ppg_filepath, 'r');
-sample = 0;
-while ~feof(fileID)
-    fgetl(fileID); % Read each line from the file
-    sample = sample + 1;
+input_files = dir(fullfile(input_folder, '*.csv'));
+
+% Loop through each input file
+for i = 1:length(input_files)
+    input_filepath = fullfile(input_folder, input_files(i).name);
+    output_filepath = fullfile(output_folder, strcat(input_files(i).name(1:end-4), '_labeled_peaks.csv'));  % Corresponding output file path
+
+    % Read the PPG signal file
+    fileID = fopen(input_filepath, 'r');
+    sample = 0;
+    while ~feof(fileID)
+        fgetl(fileID); % Read each line from the file
+        sample = sample + 1;
+    end
+    fclose(fileID);
+
+    ppg_data = csvread(input_filepath, 0, 0, [0, 0, sample-1, 0]);
+    signal = double(ppg_data);
+    signal_labeling_ui(signal, output_filepath);
+    
+    disp(['Labeled file completed: ' input_files(i).name]);
 end
-fclose(fileID);
 
-mimic_afib_ppg_data = csvread(mimic_afib_ppg_filepath, 0, 0, [0, 0, sample-1, 0]);
-
-signal = double(mimic_afib_ppg_data);
-
-% Call the signal_labeling_ui function with the read signal
-signal_labeling_ui(signal);
+disp('Labeling process completed!');

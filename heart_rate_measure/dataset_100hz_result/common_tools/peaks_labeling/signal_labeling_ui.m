@@ -1,19 +1,16 @@
-function signal_labeling_ui(signal)
-    % Check input signal
-    if nargin < 1
-        signal = sin(linspace(0, 50*pi, 50000)) + 0.1 * randn(1, 50000);
-    end
-
+function signal_labeling_ui(signal, output_filepath)
     % Parameters
     window_size = 5000; % Points per view
     current_start = 1; % Starting point
     labeled_peaks = []; % Labeled points
     handles = []; % Store point handles
     
-    % Detect initial peaks using findpeaks
+    % Detect initial peaks using TERMA
     fs = 100;  % Sampling frequency (Hz)
-    [peak_amplitudes, peak_indices] = findpeaks(signal, ...
-        'MinPeakHeight', 0.5, 'MinPeakDistance', fs * 0.4);
+    w_cycle = 55;
+    w_evt = 9;
+    beta = 0.095;
+    peak_indices = terma_detect_peaks(signal, fs, w_cycle, w_evt, beta);
 
     % Create UI figure
     fig = figure('Name', 'Signal Labeling Tool', 'NumberTitle', 'off', ...
@@ -85,10 +82,10 @@ function signal_labeling_ui(signal)
         
         % Append labeled peaks to the file
         if ~isempty(labeled_peaks)
-            file_id = fopen('labeled_peaks.csv', 'a'); % Open file in append mode
+            file_id = fopen(output_filepath, 'a'); % Open file in append mode
             fprintf(file_id, '%d\n', labeled_peaks); % Write data
             fclose(file_id); % Close the file
-            msgbox('Labeled peaks appended to labeled_peaks.csv', 'Info');
+            msgbox('Labeled peaks appended', 'Info');
         else
             msgbox('No labeled peaks to save', 'Warning');
         end
