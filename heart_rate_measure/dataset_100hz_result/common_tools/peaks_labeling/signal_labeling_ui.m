@@ -4,7 +4,24 @@ function signal_labeling_ui(signal, output_filepath)
     current_start = 1; % Starting point
     labeled_peaks = []; % Labeled points
     handles = []; % Store point handles
-    
+
+    if exist(output_filepath, 'file')
+        file_id = fopen(output_filepath, 'r');
+        last_line = '';
+        while ~feof(file_id)
+            last_line = fgetl(file_id);
+        end
+        fclose(file_id);
+        
+        if ~isempty(last_line)
+            last_labeled_index = str2double(last_line);
+            if ~isnan(last_labeled_index) && last_labeled_index > 0
+                current_start = floor((last_labeled_index - 1) / window_size) * window_size + window_size + 1;
+                current_start = min(current_start, length(signal));
+            end
+        end
+    end
+
     % Detect initial peaks using TERMA
     fs = 100;  % Sampling frequency (Hz)
     w_cycle = 55;
@@ -18,7 +35,7 @@ function signal_labeling_ui(signal, output_filepath)
 
     % Axes for plotting signal
     ax = axes('Parent', fig, 'Position', [0.1, 0.2, 0.8, 0.7]);
-    plot(ax, signal(1:window_size), 'b');
+    plot(ax, signal(current_start:min(current_start + window_size - 1, length(signal))), 'b');
     hold(ax, 'on');
     title(ax, 'Signal Labeling');
     xlabel(ax, 'Index');
