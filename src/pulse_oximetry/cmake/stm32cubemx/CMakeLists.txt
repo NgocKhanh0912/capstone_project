@@ -14,6 +14,8 @@ target_compile_definitions(stm32cubemx INTERFACE
 
 target_include_directories(stm32cubemx INTERFACE
     ../../Core/Inc
+    ../../Middlewares/ST/AI/Inc
+    ../../X-CUBE-AI/App
     ../../Drivers/STM32F4xx_HAL_Driver/Inc
     ../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
     ../../Drivers/CMSIS/Device/ST/STM32F4xx/Include
@@ -21,6 +23,9 @@ target_include_directories(stm32cubemx INTERFACE
 )
 
 target_sources(stm32cubemx INTERFACE
+    ../../X-CUBE-AI/App/peak_detection_model.c
+    ../../X-CUBE-AI/App/peak_detection_model_data.c
+    ../../X-CUBE-AI/App/peak_detection_model_data_params.c
     ../../Core/Src/main.c
     ../../Core/Src/stm32f4xx_it.c
     ../../Core/Src/stm32f4xx_hal_msp.c
@@ -52,9 +57,11 @@ target_sources(stm32cubemx INTERFACE
 )
 
 target_link_directories(stm32cubemx INTERFACE
+    ../../Middlewares/ST/AI/Lib
 )
 
-target_link_libraries(stm32cubemx INTERFACE
+target_link_libraries(stm32cubemx INTERFACE 
+	:NetworkRuntime1000_CM4_GCC.a
 )
 
 # Validate that STM32CubeMX code is compatible with C standard
