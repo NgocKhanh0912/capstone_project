@@ -27,12 +27,12 @@
 #define SYS_PROTOCOL_MAX_NODE (1)
 
 /* Public enumerate/structure ----------------------------------------- */
-typedef enum
+enum sys_protocol_status_t
 {
   SYS_PROTOCOL_ERROR  = 0xFFFFFFFF,
   SYS_PROTOCOL_FAILED = 0x7FFFFFFF,
   SYS_PROTOCOL_OK     = 0x3FFFFFFF
-} sys_protocol_status_t;
+};
 typedef struct
 {
   uint8_t command;
@@ -62,9 +62,9 @@ typedef enum
  * @param[in]     uart    Hardware UART handler
  *
  * @return
- * -  (0xFFFFFFFF)  : Error
- * -  (0x7FFFFFFF)  : Failed
- * -  (0x3FFFFFFF)  : Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_protocol_init(UART_HandleTypeDef *uart);
 /**
@@ -74,9 +74,9 @@ uint32_t sys_protocol_init(UART_HandleTypeDef *uart);
  * @param[in]     rx_cb   List of node
  *
  * @return
- * -  (0xFFFFFFFF)  : Error
- * -  (0x7FFFFFFF)  : Failed
- * -  (0x3FFFFFFF)  : Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_protocol_register_node_to_send(sys_protocol_node_t rx_node, cbuffer_t *rx_cb);
 /**
@@ -86,9 +86,9 @@ uint32_t sys_protocol_register_node_to_send(sys_protocol_node_t rx_node, cbuffer
  * @param[in]     pkt     Packet to be sent
  *
  * @return
- * -  (0xFFFFFFFF)  : Error
- * -  (0x7FFFFFFF)  : Failed
- * -  (0x3FFFFFFF)  : Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_protocol_send_pkt_to_node(sys_protocol_node_t rx_node, sys_protocol_pkt_t pkt);
 /**
@@ -97,9 +97,9 @@ uint32_t sys_protocol_send_pkt_to_node(sys_protocol_node_t rx_node, sys_protocol
  * @param[in]     pkt     Packet to be sent
  *
  * @return
- * -  (0xFFFFFFFF)  : Error
- * -  (0x7FFFFFFF)  : Failed
- * -  (0x3FFFFFFF)  : Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_protocol_send_pkt_to_port(sys_protocol_pkt_t pkt);
 

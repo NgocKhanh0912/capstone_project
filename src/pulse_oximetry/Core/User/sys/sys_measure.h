@@ -56,9 +56,9 @@ typedef struct
  * @param[in]     data_buf     Filtered PPG buffer for cbuffer.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim,
                           uint32_t prescaler, uint32_t autoreload, double *data_buf);
@@ -71,9 +71,9 @@ uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim
  * @param[inout]      gui_filtered_ppg_cb    Pointer to the filtered PPG cbuffer to stream on GUI.
  * @return
  *
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_measure_process_data(sys_measure_t *signal, cbuffer_t *gui_raw_ppg_cb,
                                   cbuffer_t *gui_filtered_ppg_cb);

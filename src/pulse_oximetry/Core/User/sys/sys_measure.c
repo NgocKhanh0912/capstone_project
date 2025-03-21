@@ -95,9 +95,9 @@ static uint16_t s_adc_val_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = { 0 };
  *
  * @return
  *
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_raw_ppg_cb,
                                         cbuffer_t *gui_filtered_ppg_cb);
@@ -109,9 +109,9 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_ra
  *
  * @return
  *
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 static uint32_t sys_measure_peak_detector(sys_measure_t *signal);
 

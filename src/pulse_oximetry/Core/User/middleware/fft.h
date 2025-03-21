@@ -38,12 +38,12 @@
 /**
  * @brief FFT status enum definition.
  */
-typedef enum
+enum fft_status_t
 {
   FFT_STATUS_ERROR  = 0xFFFFFFFF,
   FFT_STATUS_FAILED = 0x7FFFFFFF,
   FFT_STATUS_OK     = 0x3FFFFFFF,
-} fft_status_t;
+};
 
 /* Public macros ------------------------------------------------------ */
 
@@ -53,9 +53,12 @@ typedef enum
 /**
  * @brief        Initialize FFT.
  *
- * @retval       FFT_STATUS_OK: if the function works correctly.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-fft_status_t fft_init();
+uint32_t fft_init();
 
 /**
  * @brief        Calculate frequency of the peak value in input signal buffer.

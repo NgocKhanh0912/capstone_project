@@ -94,9 +94,11 @@ static void sys_manage_interval_elapsed(bsp_tim_typedef_t *tim);
 /* Function definitions ----------------------------------------------- */
 uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer)
 {
-  uint32_t ret = SYS_DISPLAY_OK;
-  ret          = sys_display_init(&s_oled_screen, i2c, dev_buffer);
+  uint32_t ret;
+
+  ret = sys_display_init(&s_oled_screen, i2c, dev_buffer);
   __ASSERT(ret == SYS_DISPLAY_OK, SYS_MANAGE_ERROR);
+
   ret = sys_display_show_noti(&s_oled_screen, s_success_noti);
   __ASSERT(ret == SYS_DISPLAY_OK, SYS_MANAGE_ERROR);
 
@@ -106,8 +108,8 @@ uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer)
 uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim, uint32_t prescaler,
                                   uint32_t autoreload, double *data_buf)
 {
-  uint32_t ret = SYS_MEASURE_OK;
-  ret          = sys_measure_init(&s_ppg_signal, adc, tim, prescaler, autoreload, data_buf);
+  uint32_t ret;
+  ret = sys_measure_init(&s_ppg_signal, adc, tim, prescaler, autoreload, data_buf);
   __ASSERT(ret == SYS_MEASURE_OK, SYS_MANAGE_FAILED);
 
   return SYS_MANAGE_OK;
@@ -116,22 +118,27 @@ uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim
 uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
                                  uint32_t button_active_level)
 {
-  uint32_t ret = SYS_BUTTON_OK;
-  ret          = sys_button_init(tim, gpio, pin, button_active_level);
+  uint32_t ret;
+
+  ret = sys_button_init(tim, gpio, pin, button_active_level);
   __ASSERT(ret == SYS_BUTTON_OK, SYS_MANAGE_ERROR);
+
   ret = sys_button_register_cb_function(sys_manage_record_heart_rate, sys_manage_select_stream,
                                         sys_manage_pwr_ctrl);
   __ASSERT(ret == SYS_BUTTON_OK, SYS_MANAGE_ERROR);
+
   return SYS_MANAGE_OK;
 }
 
 uint32_t sys_manage_start_protocol(UART_HandleTypeDef *uart)
 {
-  uint32_t ret = SYS_PROTOCOL_OK;
-  ret          = sys_protocol_init(uart);
+  uint32_t ret;
+
+  ret = sys_protocol_init(uart);
   __ASSERT(ret == SYS_PROTOCOL_OK, SYS_MANAGE_ERROR);
 
   cb_init(&s_rx_pkt_cbuf, s_rx_pkt_buf, sizeof(s_rx_pkt_buf));
+
   ret = sys_protocol_register_node_to_send(SYS_PROTOCOL_SYS_MNG, &s_rx_pkt_cbuf);
   __ASSERT(ret == SYS_PROTOCOL_OK, SYS_MANAGE_ERROR);
 
@@ -140,8 +147,8 @@ uint32_t sys_manage_start_protocol(UART_HandleTypeDef *uart)
 
 uint32_t sys_manage_start_rtc(bsp_i2c_handle_t *i2c)
 {
-  uint32_t ret = SYS_TIME_OK;
-  ret          = sys_time_init(i2c, &s_rtc);
+  uint32_t ret;
+  ret = sys_time_init(i2c, &s_rtc);
   __ASSERT(ret == SYS_TIME_OK, SYS_MANAGE_ERROR);
 
   return SYS_MANAGE_OK;
@@ -149,8 +156,8 @@ uint32_t sys_manage_start_rtc(bsp_i2c_handle_t *i2c)
 
 uint32_t sys_manage_start_buzzer(bsp_tim_typedef_t *tim, uint32_t pwm_channel)
 {
-  uint32_t ret = DRV_BUZZER_OK;
-  ret          = drv_buzzer_init(&s_passive_buzzer, tim, pwm_channel);
+  uint32_t ret;
+  ret = drv_buzzer_init(&s_passive_buzzer, tim, pwm_channel);
   __ASSERT(ret == DRV_BUTTON_OK, SYS_MANAGE_ERROR);
 
   return SYS_MANAGE_OK;
@@ -158,9 +165,9 @@ uint32_t sys_manage_start_buzzer(bsp_tim_typedef_t *tim, uint32_t pwm_channel)
 
 uint32_t sys_manage_start_storage()
 {
-  uint32_t ret = SYS_STORAGE_OK;
-  ret          = sys_storage_init(&s_heart_rate_records, BSP_FLASH_SECTOR_7_ADDRESS,
-                                  SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE);
+  uint32_t ret;
+  ret = sys_storage_init(&s_heart_rate_records, BSP_FLASH_SECTOR_7_ADDRESS,
+                         SYS_MANAGE_SEGMENT_HEART_RATE_RECORDS_SIZE);
   __ASSERT(ret == SYS_STORAGE_OK, SYS_MANAGE_FAILED);
 
   return SYS_MANAGE_OK;
@@ -431,7 +438,7 @@ uint32_t sys_manage_loop()
     uint8_t heart_rate = 0;
     uint8_t msg[]      = "Sending";
     sys_display_show_noti(&s_oled_screen, msg);
-    uint32_t ret = 0;
+    uint32_t ret;
     do
     {
       ret = sys_storage_export(&s_heart_rate_records, &time, 4);

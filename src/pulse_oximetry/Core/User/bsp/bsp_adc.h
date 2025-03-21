@@ -48,7 +48,7 @@ enum bsp_adc_status_t
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_adc_start(bsp_adc_typedef_t *badc);
 
@@ -61,7 +61,7 @@ uint32_t bsp_adc_start(bsp_adc_typedef_t *badc);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_adc_start_it(bsp_adc_typedef_t *badc);
 
@@ -74,7 +74,7 @@ uint32_t bsp_adc_start_it(bsp_adc_typedef_t *badc);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_adc_start_dma(bsp_adc_typedef_t *badc, uint32_t *dma_buf, uint32_t length);
 
@@ -89,7 +89,7 @@ uint32_t bsp_adc_start_dma(bsp_adc_typedef_t *badc, uint32_t *dma_buf, uint32_t 
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_adc_stop(bsp_adc_typedef_t *badc);
 
@@ -104,7 +104,7 @@ uint32_t bsp_adc_stop(bsp_adc_typedef_t *badc);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_adc_stop_it(bsp_adc_typedef_t *badc);
 
@@ -119,7 +119,7 @@ uint32_t bsp_adc_stop_it(bsp_adc_typedef_t *badc);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_adc_stop_dma(bsp_adc_typedef_t *badc);
 
@@ -144,7 +144,7 @@ uint32_t bsp_adc_get_value(bsp_adc_typedef_t *badc);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_adc_register_handler(cbuffer_t *adc_conv_cbuf);
 

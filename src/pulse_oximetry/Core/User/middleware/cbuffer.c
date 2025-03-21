@@ -37,10 +37,12 @@
  * @param[in]    cb      Pointer to a cbuffer_t structure.
  * @param[in]    byte    Data to write.
  *
- * @retval       CB_STATUS_OK: if the function works correctly.
- * @retval       CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-static cbuffer_status_t cb_write_byte(cbuffer_t *cb, uint8_t byte);
+static uint32_t cb_write_byte(cbuffer_t *cb, uint8_t byte);
 
 /**
  * @brief        Read 1 byte from circular buffer.
@@ -48,13 +50,15 @@ static cbuffer_status_t cb_write_byte(cbuffer_t *cb, uint8_t byte);
  * @param[in]    cb      Pointer to a cbuffer_t structure.
  * @param[in]    byte    Pointer to data buffer.
  *
- * @retval       CB_STATUS_OK: if the function works correctly.
- * @retval       CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-static cbuffer_status_t cb_read_byte(cbuffer_t *cb, uint8_t *byte);
+static uint32_t cb_read_byte(cbuffer_t *cb, uint8_t *byte);
 
 /* Function definitions ----------------------------------------------- */
-cbuffer_status_t cb_init(cbuffer_t *cb, void *buf, uint32_t size)
+uint32_t cb_init(cbuffer_t *cb, void *buf, uint32_t size)
 {
   __ASSERT(cb != NULL, CB_STATUS_ERROR);
   __ASSERT(buf != NULL, CB_STATUS_ERROR);
@@ -70,7 +74,7 @@ cbuffer_status_t cb_init(cbuffer_t *cb, void *buf, uint32_t size)
   return CB_STATUS_OK;
 }
 
-cbuffer_status_t cb_clear(cbuffer_t *cb)
+uint32_t cb_clear(cbuffer_t *cb)
 {
   __ASSERT(cb != NULL, CB_STATUS_ERROR);
 
@@ -189,7 +193,7 @@ uint32_t cb_space_count(cbuffer_t *cb)
   return res;
 }
 
-static cbuffer_status_t cb_write_byte(cbuffer_t *cb, uint8_t byte)
+static uint32_t cb_write_byte(cbuffer_t *cb, uint8_t byte)
 {
   uint32_t next = cb->writer + 1;
 
@@ -206,7 +210,7 @@ static cbuffer_status_t cb_write_byte(cbuffer_t *cb, uint8_t byte)
   return CB_STATUS_OK;
 }
 
-static cbuffer_status_t cb_read_byte(cbuffer_t *cb, uint8_t *byte)
+static uint32_t cb_read_byte(cbuffer_t *cb, uint8_t *byte)
 {
   __ASSERT(cb->reader != cb->writer, CB_STATUS_ERROR);
 

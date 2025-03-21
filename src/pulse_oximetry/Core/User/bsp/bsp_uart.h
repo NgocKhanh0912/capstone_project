@@ -46,7 +46,10 @@ typedef void (*bsp_uart_cb_t)(UART_HandleTypeDef *huart, uint16_t size);
  * @param[out]  rx_data     Pointer to the buffer to store received data.
  * @param[in]   bytes       Number of bytes to read until an idle line is detected.
  *
- * @return      The status of the UART read operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_uart_start_receive_to_idle_it(UART_HandleTypeDef *huart, uint8_t *rx_data, uint16_t bytes);
 
@@ -60,7 +63,10 @@ uint32_t bsp_uart_start_receive_to_idle_it(UART_HandleTypeDef *huart, uint8_t *r
  * @param[out]  rx_data     Pointer to the buffer to store received data.
  * @param[in]   bytes       Number of bytes to read until an idle line is detected.
  *
- * @return      The status of the UART read operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_uart_start_receive_to_idle_dma(UART_HandleTypeDef *huart, uint8_t *rx_data, uint16_t bytes);
 
@@ -71,7 +77,10 @@ uint32_t bsp_uart_start_receive_to_idle_dma(UART_HandleTypeDef *huart, uint8_t *
  * @param[in]   tx_data     Pointer to the data to be transmitted.
  * @param[in]   data_len    Length of the data to be transmitted.
  *
- * @return      The status of the UART transmission operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_uart_transmit(UART_HandleTypeDef *huart, uint8_t *tx_data, uint16_t data_len);
 
@@ -80,7 +89,10 @@ uint32_t bsp_uart_transmit(UART_HandleTypeDef *huart, uint8_t *tx_data, uint16_t
  *
  * @param[in]   rx_evt_cb       Function pointer to the UART receive event.
  *
- * @return      The status of the UART transmission operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_uart_register_cb_function(bsp_uart_cb_t rx_evt_cb);
 
@@ -90,7 +102,10 @@ uint32_t bsp_uart_register_cb_function(bsp_uart_cb_t rx_evt_cb);
  * @param[in]   uart       Pointer to the UART handle structure.
  * @param[in]   size       Number of bytes to read until an idle line is detected.
  *
- * @return      The status of the UART transmission operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_uart_rx_cb_handler(UART_HandleTypeDef *uart, uint16_t size);
 

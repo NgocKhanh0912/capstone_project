@@ -65,12 +65,12 @@
 /**
  * @brief Status of DS1307
  */
-typedef enum
+enum drv_ds1307_status_t
 {
   DRV_DS1307_ERROR  = 0xFFFFFFFF,
   DRV_DS1307_FAILED = 0x7FFFFFFF,
   DRV_DS1307_OK     = 0x3FFFFFFF
-} drv_ds1307_status_t;
+};
 
 /**
  * @brief Enum for select mode 12/24h
@@ -124,10 +124,12 @@ typedef struct __attribute__((__packed__))
  *              Only one RTC DS1307 is allowed to run at a time.
  *              If you initialize another DS1307,
  *              it means you have deinitialized the previous DS1307.
- *
- * @return      The status of the DS1307 driver operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-drv_ds1307_status_t drv_ds1307_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307);
+uint32_t drv_ds1307_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307);
 
 /**
  * @brief       Set time to RTC DS1307.
@@ -136,9 +138,12 @@ drv_ds1307_status_t drv_ds1307_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307
  *
  * @attention   No.
  *
- * @return      The status of the DS1307 driver operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-drv_ds1307_status_t drv_ds1307_set_time(drv_ds1307_t *ds1307);
+uint32_t drv_ds1307_set_time(drv_ds1307_t *ds1307);
 
 /**
  * @brief       Get time from RTC DS1307.
@@ -147,9 +152,12 @@ drv_ds1307_status_t drv_ds1307_set_time(drv_ds1307_t *ds1307);
  *
  * @attention   No.
  *
- * @return      The status of the DS1307 driver operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-drv_ds1307_status_t drv_ds1307_get_time(drv_ds1307_t *ds1307);
+uint32_t drv_ds1307_get_time(drv_ds1307_t *ds1307);
 
 /**
  * @brief       Set date to RTC DS1307.
@@ -158,9 +166,12 @@ drv_ds1307_status_t drv_ds1307_get_time(drv_ds1307_t *ds1307);
  *
  * @attention   No.
  *
- * @return      The status of the DS1307 driver operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-drv_ds1307_status_t drv_ds1307_set_date(drv_ds1307_t *ds1307);
+uint32_t drv_ds1307_set_date(drv_ds1307_t *ds1307);
 
 /**
  * @brief       Get date from RTC DS1307.
@@ -169,9 +180,12 @@ drv_ds1307_status_t drv_ds1307_set_date(drv_ds1307_t *ds1307);
  *
  * @attention   No.
  *
- * @return      The status of the DS1307 driver operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-drv_ds1307_status_t drv_ds1307_get_date(drv_ds1307_t *ds1307);
+uint32_t drv_ds1307_get_date(drv_ds1307_t *ds1307);
 
 #endif // __USER_DRIVER_DRV_DS1307_H
 

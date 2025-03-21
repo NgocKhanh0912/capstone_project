@@ -44,7 +44,7 @@ static uint8_t s_id_mng[SYS_STORAGE_NUM_OF_ID]            = { 0 };
  * @note   Can allocate maximum 256 IDs.
  *
  * @return
- *  - the available ID
+ *  - The available ID
  */
 static uint8_t sys_storage_get_id(void);
 
@@ -54,7 +54,7 @@ static uint8_t sys_storage_get_id(void);
  * @param[in]   id      ID that you want to find the index.
  *
  * @return
- *  - the index of id in s_storage_mng array
+ *  - The index of id in s_storage_mng array
  */
 static uint8_t sys_storage_get_id_curr_pos_in_arr(uint8_t id);
 
@@ -65,7 +65,7 @@ static uint8_t sys_storage_get_id_curr_pos_in_arr(uint8_t id);
  * @param[in]   q      Temporary pointer for the comparation.
  *
  * @return
- *  - the minus result
+ *  - The minus result
  */
 static uint32_t sys_storage_address_comparator(const void *p, const void *q);
 
@@ -132,8 +132,8 @@ uint32_t sys_storage_init(sys_storage_t *storage, uint32_t start_address, uint32
   s_id_mng[storage->id] = SYS_STORAGE_ID_ACTIVE;
   storage->address      = start_address;
 
-  uint32_t ret = BSP_FLASH_OK;
-  ret          = bsp_flash_write(storage->address, &storage->id, SYS_STORAGE_ID_SIZE);
+  uint32_t ret;
+  ret = bsp_flash_write(storage->address, &storage->id, SYS_STORAGE_ID_SIZE);
   __ASSERT(ret == BSP_FLASH_OK, SYS_STORAGE_FAILED);
 
   storage->size       = size;
@@ -150,9 +150,10 @@ uint32_t sys_storage_import(sys_storage_t *storage, void *data, uint32_t size)
   __ASSERT(size != 0, SYS_STORAGE_ERROR);
   __ASSERT(s_id_mng[storage->id] == SYS_STORAGE_ID_ACTIVE, SYS_STORAGE_ERROR);
 
-  uint32_t ret = BSP_FLASH_OK;
-  ret          = bsp_flash_write(storage->address + (storage->size - storage->space_left), data, size);
+  uint32_t ret;
+  ret = bsp_flash_write(storage->address + (storage->size - storage->space_left), data, size);
   __ASSERT(ret == BSP_FLASH_OK, SYS_STORAGE_FAILED);
+
   storage->space_left -= size;
 
   return SYS_STORAGE_OK;
@@ -167,9 +168,10 @@ uint32_t sys_storage_export(sys_storage_t *storage, void *data, uint32_t size)
   __ASSERT(size != 0, SYS_STORAGE_ERROR);
   __ASSERT(s_id_mng[storage->id] == SYS_STORAGE_ID_ACTIVE, SYS_STORAGE_ERROR);
 
-  uint32_t ret = BSP_FLASH_OK;
-  ret          = bsp_flash_read(storage->pointer, data, size);
+  uint32_t ret;
+  ret = bsp_flash_read(storage->pointer, data, size);
   __ASSERT(ret == BSP_FLASH_OK, SYS_STORAGE_FAILED);
+
   storage->pointer += size;
 
   return SYS_STORAGE_OK;
@@ -180,7 +182,7 @@ uint32_t sys_storage_fully_clean(sys_storage_t *storage)
   __ASSERT(storage != NULL, SYS_STORAGE_ERROR);
   __ASSERT(s_id_mng[storage->id] == SYS_STORAGE_ID_ACTIVE, SYS_STORAGE_ERROR);
 
-  uint32_t ret = BSP_FLASH_OK;
+  uint32_t ret;
 
   // Clear backup sector
   ret = bsp_flash_erase_sector(SYS_STORAGE_BACKUP_FLASH_SECTOR);
@@ -227,8 +229,8 @@ uint32_t sys_storage_deinit(sys_storage_t *storage)
   __ASSERT(storage != NULL, SYS_STORAGE_ERROR);
   __ASSERT(s_id_mng[storage->id] == SYS_STORAGE_ID_ACTIVE, SYS_STORAGE_ERROR);
 
-  uint32_t ret = BSP_FLASH_OK;
-  ret          = sys_storage_fully_clean(storage);
+  uint32_t ret;
+  ret = sys_storage_fully_clean(storage);
   __ASSERT(ret == BSP_FLASH_OK, SYS_STORAGE_FAILED);
 
   s_id_mng[storage->id] = SYS_STORAGE_ID_INACTIVE;

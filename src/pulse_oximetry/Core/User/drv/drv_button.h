@@ -24,12 +24,12 @@
 /* Public defines ----------------------------------------------------- */
 
 /* Public enumerate/structure ----------------------------------------- */
-typedef enum
+enum drv_button_status_t
 {
   DRV_BUTTON_FAIL  = 0xFFFFFFFF,
   DRV_BUTTON_ERROR = 0x7FFFFFFF,
   DRV_BUTTON_OK    = 0x3FFFFFFF
-} drv_button_status_t;
+};
 
 typedef struct __attribute__((__packed__))
 {
@@ -51,20 +51,20 @@ typedef void (*drv_button_callback)(uint16_t exti_line);
 /**
  * @brief       This function initializes the button
  *
- * @param[in]   button      Pointer points to the button data
- * @param[in]   button_port Pointer points to port connecting to the button
- * @param[in]   button_pin  Pin of that port
- * @param[in]   button_active_level Determine the active high or active low button
+ * @param[in]   button                Pointer points to the button data
+ * @param[in]   button_port           Pointer points to port connecting to the button
+ * @param[in]   button_pin            Pin of that port
+ * @param[in]   button_active_level   Determine the active high or active low button
  *
  * @attention   None
  *
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-drv_button_status_t drv_button_init(drv_button_t *button, GPIO_TypeDef *button_port, uint16_t button_pin,
-                                    uint32_t button_active_level);
+uint32_t drv_button_init(drv_button_t *button, GPIO_TypeDef *button_port, uint16_t button_pin,
+                         uint32_t button_active_level);
 
 /**
  * @brief       This function handle the button external interrupt
@@ -76,9 +76,9 @@ drv_button_status_t drv_button_init(drv_button_t *button, GPIO_TypeDef *button_p
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-drv_button_status_t drv_button_exti_handler(uint16_t exti_line);
+uint32_t drv_button_exti_handler(uint16_t exti_line);
 
 /**
  * @brief       This function register the callback function for external interrupt
@@ -90,9 +90,9 @@ drv_button_status_t drv_button_exti_handler(uint16_t exti_line);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-drv_button_status_t drv_button_register_callback(drv_button_callback callback_function);
+uint32_t drv_button_register_callback(drv_button_callback callback_function);
 
 #endif /* USER_DRV_DRV_BUTTON_H_ */
 

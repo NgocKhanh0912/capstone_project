@@ -52,7 +52,7 @@ static uint8_t convert_bcd_to_decimal(uint8_t bcd);
 static uint8_t convert_decimal_to_bcd(uint8_t decimal);
 
 /* Function definitions ----------------------------------------------- */
-drv_ds1307_status_t drv_ds1307_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307)
+uint32_t drv_ds1307_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307)
 {
   __ASSERT((i2c != NULL), DRV_DS1307_ERROR);
   __ASSERT((ds1307 != NULL), DRV_DS1307_ERROR);
@@ -62,7 +62,7 @@ drv_ds1307_status_t drv_ds1307_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307
   return DRV_DS1307_OK;
 }
 
-drv_ds1307_status_t drv_ds1307_set_time(drv_ds1307_t *ds1307)
+uint32_t drv_ds1307_set_time(drv_ds1307_t *ds1307)
 {
   __ASSERT((ds1307 != NULL), DRV_DS1307_ERROR);
 
@@ -100,25 +100,25 @@ drv_ds1307_status_t drv_ds1307_set_time(drv_ds1307_t *ds1307)
     *(tx_time_buffer + 2) &= ~(1 << HOUR_MODE_BIT); // Select mode 24h
   }
 
-  drv_ds1307_status_t d_error_status = DRV_DS1307_OK;
-  d_error_status                     = (drv_ds1307_status_t)bsp_i2c_mem_write(
-    ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_TIME_REGISTER_ADDRESS, DS1307_REGISTER_ADDRESS_SIZE,
-    tx_time_buffer, DS1307_TIME_SIZE, DS1307_TIMEOUT);
+  uint32_t d_error_status = DRV_DS1307_OK;
+  d_error_status =
+    bsp_i2c_mem_write(ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_TIME_REGISTER_ADDRESS,
+                      DS1307_REGISTER_ADDRESS_SIZE, tx_time_buffer, DS1307_TIME_SIZE, DS1307_TIMEOUT);
   __ASSERT((d_error_status == DRV_DS1307_OK), DRV_DS1307_FAILED);
 
   return DRV_DS1307_OK;
 }
 
-drv_ds1307_status_t drv_ds1307_get_time(drv_ds1307_t *ds1307)
+uint32_t drv_ds1307_get_time(drv_ds1307_t *ds1307)
 {
   __ASSERT((ds1307 != NULL), DRV_DS1307_ERROR);
 
   uint8_t rx_time_buffer[DS1307_TIME_SIZE] = { 0 };
 
-  drv_ds1307_status_t d_error_status = DRV_DS1307_OK;
-  d_error_status                     = (drv_ds1307_status_t)bsp_i2c_mem_read(
-    ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_TIME_REGISTER_ADDRESS, DS1307_REGISTER_ADDRESS_SIZE,
-    rx_time_buffer, DS1307_TIME_SIZE, DS1307_TIMEOUT);
+  uint32_t d_error_status = DRV_DS1307_OK;
+  d_error_status =
+    bsp_i2c_mem_read(ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_TIME_REGISTER_ADDRESS,
+                     DS1307_REGISTER_ADDRESS_SIZE, rx_time_buffer, DS1307_TIME_SIZE, DS1307_TIMEOUT);
   __ASSERT((d_error_status == DRV_DS1307_OK), DRV_DS1307_FAILED);
 
   ds1307->second = convert_bcd_to_decimal(*(rx_time_buffer));
@@ -156,7 +156,7 @@ drv_ds1307_status_t drv_ds1307_get_time(drv_ds1307_t *ds1307)
   return DRV_DS1307_OK;
 }
 
-drv_ds1307_status_t drv_ds1307_set_date(drv_ds1307_t *ds1307)
+uint32_t drv_ds1307_set_date(drv_ds1307_t *ds1307)
 {
   __ASSERT((ds1307 != NULL), DRV_DS1307_ERROR);
 
@@ -175,25 +175,25 @@ drv_ds1307_status_t drv_ds1307_set_date(drv_ds1307_t *ds1307)
   *(tx_date_buffer + 2) = convert_decimal_to_bcd(ds1307->month);
   *(tx_date_buffer + 3) = convert_decimal_to_bcd(ds1307->year);
 
-  drv_ds1307_status_t d_error_status = DRV_DS1307_OK;
-  d_error_status                     = (drv_ds1307_status_t)bsp_i2c_mem_write(
-    ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_DATE_REGISTER_ADDRESS, DS1307_REGISTER_ADDRESS_SIZE,
-    tx_date_buffer, DS1307_DATE_SIZE, DS1307_TIMEOUT);
+  uint32_t d_error_status = DRV_DS1307_OK;
+  d_error_status =
+    bsp_i2c_mem_write(ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_DATE_REGISTER_ADDRESS,
+                      DS1307_REGISTER_ADDRESS_SIZE, tx_date_buffer, DS1307_DATE_SIZE, DS1307_TIMEOUT);
   __ASSERT((d_error_status == DRV_DS1307_OK), DRV_DS1307_FAILED);
 
   return DRV_DS1307_OK;
 }
 
-drv_ds1307_status_t drv_ds1307_get_date(drv_ds1307_t *ds1307)
+uint32_t drv_ds1307_get_date(drv_ds1307_t *ds1307)
 {
   __ASSERT((ds1307 != NULL), DRV_DS1307_ERROR);
 
   uint8_t rx_date_buffer[DS1307_DATE_SIZE] = { 0 };
 
-  drv_ds1307_status_t d_error_status = DRV_DS1307_OK;
-  d_error_status                     = (drv_ds1307_status_t)bsp_i2c_mem_read(
-    ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_DATE_REGISTER_ADDRESS, DS1307_REGISTER_ADDRESS_SIZE,
-    rx_date_buffer, DS1307_DATE_SIZE, DS1307_TIMEOUT);
+  uint32_t d_error_status = DRV_DS1307_OK;
+  d_error_status =
+    bsp_i2c_mem_read(ds1307->i2c, DS1307_I2C_ADDRESS, DS1307_DATE_REGISTER_ADDRESS,
+                     DS1307_REGISTER_ADDRESS_SIZE, rx_date_buffer, DS1307_DATE_SIZE, DS1307_TIMEOUT);
   __ASSERT((d_error_status == DRV_DS1307_OK), DRV_DS1307_FAILED);
 
   ds1307->day   = convert_bcd_to_decimal(*(rx_date_buffer));

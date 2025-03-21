@@ -30,12 +30,19 @@
 /* Public variables --------------------------------------------------- */
 
 /* Public function prototypes ----------------------------------------- */
-
 /**
  * @brief       Get time that from current to begining of the system.
  *
- * @return      current tick of system.
+ * @return      Current tick of system.
  */
 uint32_t bsp_utils_get_tick();
+
+/**
+ * @brief       Blocking delay.
+ *
+ * @param[in]   delay_time    Delay time (in ms).
+ *
+ */
+void bsp_utils_blocking_delay(uint32_t delay_time);
 
 #endif /* USER_BSP_UTILS_H_ */

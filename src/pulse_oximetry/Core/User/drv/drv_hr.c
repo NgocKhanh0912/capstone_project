@@ -35,9 +35,9 @@
  * @param[in]     hr_sen  pointer to a drv_hr_t structure that store the information of Heart Rate sensor
  *
  * @return
- *  - (-2): Error
- *  - (-1): Fail
- *  - (0) : Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 static uint32_t drv_hr_peri_init(drv_hr_t *hr_sen);
 
@@ -56,8 +56,8 @@ uint32_t drv_hr_init(drv_hr_t *hr_sen, bsp_adc_typedef_t *sen_adc, bsp_tim_typed
   hr_sen->sampling_rate.prescaler  = prescaler;
   hr_sen->sampling_rate.autoreload = autoreload;
 
-  uint32_t ret = DRV_HR_OK;
-  ret          = drv_hr_peri_init(hr_sen);
+  uint32_t ret;
+  ret = drv_hr_peri_init(hr_sen);
   __ASSERT(ret == DRV_HR_OK, DRV_HR_FAIL);
 
   ret = bsp_adc_register_handler(&(hr_sen->adc_conv));
@@ -72,9 +72,11 @@ uint32_t drv_hr_sleep(drv_hr_t *hr_sen)
 {
   __ASSERT(hr_sen != NULL, DRV_HR_ERROR);
 
-  uint32_t ret = BSP_TIMER_OK;
-  ret          = bsp_timer_stop_it(hr_sen->sampling_rate.timer);
+  uint32_t ret;
+
+  ret = bsp_timer_stop_it(hr_sen->sampling_rate.timer);
   __ASSERT(ret == BSP_TIMER_OK, DRV_HR_FAIL);
+
   ret = bsp_adc_stop_it(hr_sen->adc);
   __ASSERT(ret == BSP_ADC_OK, DRV_HR_FAIL);
 
@@ -87,9 +89,11 @@ uint32_t drv_hr_wakeup(drv_hr_t *hr_sen)
 {
   __ASSERT(hr_sen != NULL, DRV_HR_ERROR);
 
-  uint32_t ret = BSP_ADC_OK;
-  ret          = bsp_adc_start_it(hr_sen->adc);
+  uint32_t ret;
+
+  ret = bsp_adc_start_it(hr_sen->adc);
   __ASSERT(ret == BSP_ADC_OK, DRV_HR_FAIL);
+
   ret = bsp_timer_start_it(hr_sen->sampling_rate.timer);
   __ASSERT(ret == BSP_TIMER_OK, DRV_HR_FAIL);
 
@@ -103,8 +107,9 @@ static uint32_t drv_hr_peri_init(drv_hr_t *hr_sen)
 {
   __ASSERT(hr_sen != NULL, DRV_HR_ERROR);
 
-  uint32_t ret = BSP_TIMER_OK;
-  ret          = bsp_timer_set_prescaler(hr_sen->sampling_rate.timer, hr_sen->sampling_rate.prescaler);
+  uint32_t ret;
+
+  ret = bsp_timer_set_prescaler(hr_sen->sampling_rate.timer, hr_sen->sampling_rate.prescaler);
   __ASSERT(ret == BSP_TIMER_OK, DRV_HR_FAIL);
 
   ret = bsp_timer_set_autoreload(hr_sen->sampling_rate.timer, hr_sen->sampling_rate.autoreload);

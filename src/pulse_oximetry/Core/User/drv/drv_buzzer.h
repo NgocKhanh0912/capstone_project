@@ -65,7 +65,10 @@ typedef struct __attribute__((__packed__))
  * @attention   the valid buzzer period and duty cycle.
  * @note        Module buzzer low level trigger.
  *
- * @return      drv_buzzer_status_t value.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_buzzer_init(drv_buzzer_t *buzzer, bsp_tim_typedef_t *tim, uint32_t pwm_channel);
 
@@ -77,7 +80,10 @@ uint32_t drv_buzzer_init(drv_buzzer_t *buzzer, bsp_tim_typedef_t *tim, uint32_t 
  *
  * @note        sound_effect_buf contains the notes for sound effect.
  *
- * @return      drv_buzzer_status_t value.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_buzzer_play(drv_buzzer_t *buzzer, sound_effect_t *sound_effect_buf, uint32_t length);
 

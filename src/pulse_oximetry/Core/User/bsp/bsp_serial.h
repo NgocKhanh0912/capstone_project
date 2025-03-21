@@ -57,8 +57,8 @@ typedef void (*bsp_evt_cb_t)(uint16_t);
  *
  * @return
  *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Fail
- *  - (0x3FFFFFFF) : Success
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_serial_init(UART_HandleTypeDef *uart);
 
@@ -69,8 +69,8 @@ uint32_t bsp_serial_init(UART_HandleTypeDef *uart);
  * @param[in]     tx_size   Size of transmitter buffer
  * @return
  *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Fail
- *  - (0x3FFFFFFF) : Success
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_serial_transmit(uint8_t *tx_buf, uint16_t tx_size);
 
@@ -81,8 +81,8 @@ uint32_t bsp_serial_transmit(uint8_t *tx_buf, uint16_t tx_size);
  *
  * @return
  *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Fail
- *  - (0x3FFFFFFF) : Success
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_serial_receive(uint8_t *rx_buf);
 
@@ -93,8 +93,8 @@ uint32_t bsp_serial_receive(uint8_t *rx_buf);
  *
  * @return
  *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Fail
- *  - (0x3FFFFFFF) : Success
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_serial_register_cb_function(bsp_evt_cb_t new_rx_data_cb);
 

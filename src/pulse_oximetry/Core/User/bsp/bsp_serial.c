@@ -46,8 +46,8 @@ static uint8_t swap_buffer_b[DMA_BUFFER_SIZE] = { 0 };
  *
  * @return
  *  - (0xFFFFFFFF): Error
- *  - (0x7FFFFFFF): Fail
- *  - (0x3FFFFFFF) : Success
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 static void bsp_serial_rx_evt_handler(UART_HandleTypeDef *uart, uint16_t size);
 /* Function definitions ----------------------------------------------- */
@@ -63,8 +63,8 @@ uint32_t bsp_serial_init(UART_HandleTypeDef *uart)
   b_serial.reader         = 0;
   b_serial.received_bytes = 0;
 
-  uint32_t ret = BSP_UART_OK;
-  ret          = bsp_uart_start_receive_to_idle_dma(b_serial.uart, b_serial.dma_buf, b_serial.size);
+  uint32_t ret;
+  ret = bsp_uart_start_receive_to_idle_dma(b_serial.uart, b_serial.dma_buf, b_serial.size);
   __ASSERT(ret == BSP_UART_OK, BSP_SERIAL_FAILED);
 
   ret = bsp_uart_register_cb_function(bsp_serial_rx_evt_handler);
@@ -77,8 +77,8 @@ uint32_t bsp_serial_transmit(uint8_t *tx_buf, uint16_t tx_size)
 {
   __ASSERT(tx_buf != NULL, BSP_SERIAL_ERROR);
 
-  uint32_t ret = BSP_UART_OK;
-  ret          = bsp_uart_transmit(b_serial.uart, tx_buf, tx_size);
+  uint32_t ret;
+  ret = bsp_uart_transmit(b_serial.uart, tx_buf, tx_size);
   __ASSERT(ret == BSP_UART_OK, BSP_SERIAL_FAILED);
 
   return BSP_SERIAL_OK;

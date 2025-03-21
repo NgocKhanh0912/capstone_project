@@ -105,7 +105,10 @@ uint32_t drv_buzzer_play(drv_buzzer_t *buzzer, sound_effect_t *sound_effect_buf,
 static uint16_t drv_buzzer_calculate_prescaler(uint32_t frequency)
 {
   if (frequency == 0)
+  {
     return 0;
+  }
+
   return (TIM_CLOCK_SRC / (1000 * (frequency)) - 1);
 }
 

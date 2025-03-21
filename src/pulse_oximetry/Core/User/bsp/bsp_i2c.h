@@ -25,12 +25,12 @@
 typedef I2C_HandleTypeDef bsp_i2c_handle_t;
 
 /* Public enumerate/structure ----------------------------------------- */
-typedef enum
+enum bsp_i2c_status_t
 {
   BSP_I2C_ERROR  = 0xFFFFFFFF,
   BSP_I2C_FAILED = 0x7FFFFFFF,
   BSP_I2C_OK     = 0x3FFFFFFF
-} bsp_i2c_status_t;
+};
 
 /* Public macros ------------------------------------------------------ */
 
@@ -50,10 +50,10 @@ typedef enum
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                         uint8_t *data_buffer, uint16_t size, uint32_t time_out);
+uint32_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_buffer,
+                                 uint16_t size, uint32_t time_out);
 
 /**
  * @brief         Receive an amount of data over I2C from Master
@@ -68,10 +68,10 @@ bsp_i2c_status_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_buffer,
-                                        uint16_t size, uint32_t time_out);
+uint32_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_buffer,
+                                uint16_t size, uint32_t time_out);
 
 /**
  * @brief         Transmit an amount of data over I2C from Master with Interrupt
@@ -85,10 +85,10 @@ bsp_i2c_status_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                            uint8_t *data_buffer, uint16_t size);
+uint32_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_buffer,
+                                    uint16_t size);
 
 /**
  * @brief         Receive an amount of data over I2C from Master with Interrupt
@@ -102,10 +102,10 @@ bsp_i2c_status_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t dev
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                           uint8_t *data_buffer, uint16_t size);
+uint32_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_buffer,
+                                   uint16_t size);
 
 /**
  * @brief         Write an amount of data into a specific memory over I2C
@@ -122,11 +122,10 @@ bsp_i2c_status_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t devi
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                   uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size,
-                                   uint32_t time_out);
+uint32_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                           uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size, uint32_t time_out);
 
 /**
  * @brief         Read an amount of data from a specific memory over I2C
@@ -143,11 +142,10 @@ bsp_i2c_status_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_addre
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                  uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size,
-                                  uint32_t time_out);
+uint32_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                          uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size, uint32_t time_out);
 
 /**
  * @brief         Write an amount of data into a specific memory over I2C with Interrupt
@@ -163,10 +161,10 @@ bsp_i2c_status_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_addres
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                      uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size);
+uint32_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                              uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size);
 
 /**
  * @brief         Read an amount of data from a specific memory over I2C withn Interrupt
@@ -182,10 +180,10 @@ bsp_i2c_status_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_ad
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_i2c_status_t bsp_i2c_mem_read_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                     uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size);
+uint32_t bsp_i2c_mem_read_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                             uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size);
 #endif // __BSP_I2C_H
 
 /* End of file -------------------------------------------------------- */

@@ -30,7 +30,7 @@ static bsp_timer_cb_t b_debound_period_elapsed  = NULL;
 /* Private function prototypes ---------------------------------------- */
 
 /* Function definitions ----------------------------------------------- */
-bsp_timer_status_t bsp_timer_set_prescaler(bsp_tim_typedef_t *htim, uint32_t prescaler)
+uint32_t bsp_timer_set_prescaler(bsp_tim_typedef_t *htim, uint32_t prescaler)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
   __ASSERT((prescaler >= 0) && (prescaler < 65536), BSP_TIMER_ERROR);
@@ -40,7 +40,7 @@ bsp_timer_status_t bsp_timer_set_prescaler(bsp_tim_typedef_t *htim, uint32_t pre
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_set_autoreload(bsp_tim_typedef_t *htim, uint32_t autoreload)
+uint32_t bsp_timer_set_autoreload(bsp_tim_typedef_t *htim, uint32_t autoreload)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
   __ASSERT((autoreload >= 0) && (autoreload < 65536), BSP_TIMER_ERROR);
@@ -50,8 +50,7 @@ bsp_timer_status_t bsp_timer_set_autoreload(bsp_tim_typedef_t *htim, uint32_t au
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_t tim_channel,
-                                                uint32_t compare)
+uint32_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_t tim_channel, uint32_t compare)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
   __ASSERT((tim_channel == TIM_CHANNEL_1) || (tim_channel == TIM_CHANNEL_2) ||
@@ -64,7 +63,7 @@ bsp_timer_status_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_start(bsp_tim_typedef_t *htim)
+uint32_t bsp_timer_start(bsp_tim_typedef_t *htim)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
 
@@ -75,7 +74,7 @@ bsp_timer_status_t bsp_timer_start(bsp_tim_typedef_t *htim)
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_start_it(bsp_tim_typedef_t *htim)
+uint32_t bsp_timer_start_it(bsp_tim_typedef_t *htim)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
 
@@ -86,7 +85,7 @@ bsp_timer_status_t bsp_timer_start_it(bsp_tim_typedef_t *htim)
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_stop(bsp_tim_typedef_t *htim)
+uint32_t bsp_timer_stop(bsp_tim_typedef_t *htim)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
 
@@ -97,7 +96,7 @@ bsp_timer_status_t bsp_timer_stop(bsp_tim_typedef_t *htim)
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_stop_it(bsp_tim_typedef_t *htim)
+uint32_t bsp_timer_stop_it(bsp_tim_typedef_t *htim)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
 
@@ -108,7 +107,7 @@ bsp_timer_status_t bsp_timer_stop_it(bsp_tim_typedef_t *htim)
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_pwm_start(bsp_tim_typedef_t *htim, uint32_t tim_channel)
+uint32_t bsp_pwm_start(bsp_tim_typedef_t *htim, uint32_t tim_channel)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
   __ASSERT((tim_channel == TIM_CHANNEL_1) || (tim_channel == TIM_CHANNEL_2) ||
@@ -122,7 +121,7 @@ bsp_timer_status_t bsp_pwm_start(bsp_tim_typedef_t *htim, uint32_t tim_channel)
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_pwm_start_it(bsp_tim_typedef_t *htim, uint32_t tim_channel)
+uint32_t bsp_pwm_start_it(bsp_tim_typedef_t *htim, uint32_t tim_channel)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
   __ASSERT((tim_channel == TIM_CHANNEL_1) || (tim_channel == TIM_CHANNEL_2) ||
@@ -136,7 +135,7 @@ bsp_timer_status_t bsp_pwm_start_it(bsp_tim_typedef_t *htim, uint32_t tim_channe
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_pwm_stop(bsp_tim_typedef_t *htim, uint32_t tim_channel)
+uint32_t bsp_pwm_stop(bsp_tim_typedef_t *htim, uint32_t tim_channel)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
   __ASSERT((tim_channel == TIM_CHANNEL_1) || (tim_channel == TIM_CHANNEL_2) ||
@@ -150,7 +149,7 @@ bsp_timer_status_t bsp_pwm_stop(bsp_tim_typedef_t *htim, uint32_t tim_channel)
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_pwm_stop_it(bsp_tim_typedef_t *htim, uint32_t tim_channel)
+uint32_t bsp_pwm_stop_it(bsp_tim_typedef_t *htim, uint32_t tim_channel)
 {
   __ASSERT(htim != NULL, BSP_TIMER_ERROR);
   __ASSERT((tim_channel == TIM_CHANNEL_1) || (tim_channel == TIM_CHANNEL_2) ||
@@ -164,7 +163,7 @@ bsp_timer_status_t bsp_pwm_stop_it(bsp_tim_typedef_t *htim, uint32_t tim_channel
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_register_interval_callback(bsp_timer_cb_t interval_period_elapsed)
+uint32_t bsp_timer_register_interval_callback(bsp_timer_cb_t interval_period_elapsed)
 {
   __ASSERT(interval_period_elapsed != NULL, BSP_TIMER_ERROR);
   b_interval_period_elapsed = interval_period_elapsed;
@@ -172,7 +171,7 @@ bsp_timer_status_t bsp_timer_register_interval_callback(bsp_timer_cb_t interval_
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_register_debound_callback(bsp_timer_cb_t debound_period_elapsed)
+uint32_t bsp_timer_register_debound_callback(bsp_timer_cb_t debound_period_elapsed)
 {
   __ASSERT(debound_period_elapsed != NULL, BSP_TIMER_ERROR);
   b_debound_period_elapsed = debound_period_elapsed;
@@ -180,7 +179,7 @@ bsp_timer_status_t bsp_timer_register_debound_callback(bsp_timer_cb_t debound_pe
   return BSP_TIMER_OK;
 }
 
-bsp_timer_status_t bsp_timer_period_callback_handler(bsp_tim_typedef_t *htim)
+uint32_t bsp_timer_period_callback_handler(bsp_tim_typedef_t *htim)
 {
   if (htim->Instance == TIM5)
   {

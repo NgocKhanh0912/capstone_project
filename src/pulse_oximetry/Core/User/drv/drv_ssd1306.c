@@ -56,8 +56,9 @@ uint32_t drv_ssd1306_init(drv_ssd1306_t *dev, bsp_i2c_handle_t *dev_i2c, uint16_
   dev->size.height = dev_height;
 
   // Init sequence
-  uint32_t ret = DRV_SSD1306_OK;
-  HAL_Delay(100);
+  bsp_utils_blocking_delay(100);
+
+  uint32_t ret;
   ret = drv_ssd1306_oled_init(dev);
   __ASSERT((ret == DRV_SSD1306_OK), DRV_SSD1306_FAILED);
 
@@ -80,8 +81,8 @@ uint32_t drv_ssd1306_set_display(drv_ssd1306_t *dev, drv_ssd1306_display_t state
     // Do nothing
     break;
   }
-  uint32_t ret = DRV_SSD1306_OK;
-  ret          = drv_ssd1306_write_command(dev, value);
+  uint32_t ret;
+  ret = drv_ssd1306_write_command(dev, value);
   __ASSERT((ret == DRV_SSD1306_OK), DRV_SSD1306_FAILED);
   return DRV_SSD1306_OK;
 }
@@ -95,9 +96,11 @@ uint32_t drv_ssd1306_fill_screen(drv_ssd1306_t *dev, uint32_t color)
   // Operation
   memset((dev->buffer), (color == DRV_SSD1306_COLOR_BLACK) ? 0x00 : 0xFF,
          (dev->size.height * dev->size.width / 8));
-  uint32_t ret = DRV_SSD1306_OK;
-  ret          = drv_ssd1306_update_screen(dev);
+
+  uint32_t ret;
+  ret = drv_ssd1306_update_screen(dev);
   __ASSERT((ret == DRV_SSD1306_OK), DRV_SSD1306_FAILED);
+
   return DRV_SSD1306_OK;
 }
 
@@ -436,17 +439,19 @@ static uint32_t drv_ssd1306_oled_init(drv_ssd1306_t *dev)
 }
 static uint32_t drv_ssd1306_write_command(drv_ssd1306_t *dev, uint8_t command)
 {
-  uint32_t ret = DRV_SSD1306_OK;
-  ret          = bsp_i2c_mem_write(dev->i2c, dev->address, 0x00, 1, &command, 1, HAL_MAX_DELAY);
+  uint32_t ret;
+  ret = bsp_i2c_mem_write(dev->i2c, dev->address, 0x00, 1, &command, 1, HAL_MAX_DELAY);
   __ASSERT((ret == DRV_SSD1306_OK), DRV_SSD1306_FAILED);
+
   return DRV_SSD1306_OK;
 }
 
 static uint32_t drv_ssd1306_write_data(drv_ssd1306_t *dev, uint8_t *data, uint16_t size)
 {
-  uint32_t ret = DRV_SSD1306_OK;
-  ret          = bsp_i2c_mem_write(dev->i2c, dev->address, 0x40, 1, data, size, HAL_MAX_DELAY);
+  uint32_t ret;
+  ret = bsp_i2c_mem_write(dev->i2c, dev->address, 0x40, 1, data, size, HAL_MAX_DELAY);
   __ASSERT((ret == DRV_SSD1306_OK), DRV_SSD1306_FAILED);
+
   return DRV_SSD1306_OK;
 }
 

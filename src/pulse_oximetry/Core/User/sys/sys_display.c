@@ -225,8 +225,8 @@ uint32_t sys_display_clear_all(sys_display_t *display)
 
 uint32_t sys_display_sleep(sys_display_t *display)
 {
-  uint32_t ret = DRV_SSD1306_OK;
-  ret          = drv_ssd1306_set_display(&(display->screen), DRV_SSD1306_DISPLAY_OFF);
+  uint32_t ret;
+  ret = drv_ssd1306_set_display(&(display->screen), DRV_SSD1306_DISPLAY_OFF);
   __ASSERT(ret == DRV_SSD1306_OK, SYS_DISPLAY_ERROR);
 
   return SYS_DISPLAY_OK;
@@ -234,8 +234,8 @@ uint32_t sys_display_sleep(sys_display_t *display)
 
 uint32_t sys_display_wakeup(sys_display_t *display)
 {
-  uint32_t ret = DRV_SSD1306_OK;
-  ret          = drv_ssd1306_set_display(&(display->screen), DRV_SSD1306_DISPLAY_ON);
+  uint32_t ret;
+  ret = drv_ssd1306_set_display(&(display->screen), DRV_SSD1306_DISPLAY_ON);
   __ASSERT(ret == DRV_SSD1306_OK, SYS_DISPLAY_ERROR);
 
   return SYS_DISPLAY_OK;

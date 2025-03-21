@@ -24,12 +24,12 @@
 /* Public defines ----------------------------------------------------- */
 
 /* Public enumerate/structure ----------------------------------------- */
-typedef enum
+enum bsp_gpio_status_t
 {
   BSP_GPIO_ERROR = 0xFFFFFFFF,
   BSP_GPIO_FAIL  = 0x7FFFFFFF,
   BSP_GPIO_OK    = 0x3FFFFFFF
-} bsp_gpio_status_t;
+};
 
 /* Public macros ------------------------------------------------------ */
 
@@ -46,9 +46,9 @@ typedef enum
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_gpio_status_t bsp_gpio_write_pin(GPIO_TypeDef *gpio, uint16_t pin, GPIO_PinState gpio_state);
+uint32_t bsp_gpio_write_pin(GPIO_TypeDef *gpio, uint16_t pin, GPIO_PinState gpio_state);
 
 /**
  * @brief       This function read logic level of the INPUT GPIO
@@ -71,9 +71,9 @@ GPIO_PinState bsp_gpio_read_pin(GPIO_TypeDef *gpio, uint16_t pin);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_gpio_status_t bsp_gpio_toggle_pin(GPIO_TypeDef *gpio, uint16_t pin);
+uint32_t bsp_gpio_toggle_pin(GPIO_TypeDef *gpio, uint16_t pin);
 
 /**
  * @brief       This function enable external interrupt line
@@ -83,9 +83,9 @@ bsp_gpio_status_t bsp_gpio_toggle_pin(GPIO_TypeDef *gpio, uint16_t pin);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_gpio_status_t bsp_gpio_exti_enable(uint16_t pin);
+uint32_t bsp_gpio_exti_enable(uint16_t pin);
 
 /**
  * @brief       This function disable external interrupt line
@@ -95,9 +95,9 @@ bsp_gpio_status_t bsp_gpio_exti_enable(uint16_t pin);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_gpio_status_t bsp_gpio_exti_enable(uint16_t pin);
+uint32_t bsp_gpio_exti_enable(uint16_t pin);
 
 /**
  * @brief       This function handle external interrupt line
@@ -107,9 +107,9 @@ bsp_gpio_status_t bsp_gpio_exti_enable(uint16_t pin);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_gpio_status_t bsp_gpio_exti_handler(uint16_t pin);
+uint32_t bsp_gpio_exti_handler(uint16_t pin);
 
 #endif /* USER_BSP_BSP_GPIO_H_ */
 

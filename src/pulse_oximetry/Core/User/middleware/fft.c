@@ -31,9 +31,11 @@ static arm_rfft_fast_instance_f32 fft_handler;
 /* Private function prototypes ---------------------------------------- */
 
 /* Function definitions ----------------------------------------------- */
-fft_status_t fft_init()
+uint32_t fft_init()
 {
-  arm_rfft_fast_init_f32(&fft_handler, FFT_BUFFER_MAX_SIZE);
+  arm_status ret;
+  ret = arm_rfft_fast_init_f32(&fft_handler, FFT_BUFFER_MAX_SIZE);
+  __ASSERT(ret == ARM_MATH_SUCCESS, FFT_STATUS_ERROR);
 
   return FFT_STATUS_OK;
 }

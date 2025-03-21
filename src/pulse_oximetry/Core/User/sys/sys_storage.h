@@ -81,9 +81,9 @@ typedef struct __attribute__((__packed__))
  * @attention     Please read Flash module organization before use.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_storage_init(sys_storage_t *storage, uint32_t start_address, uint32_t size);
 
@@ -95,9 +95,9 @@ uint32_t sys_storage_init(sys_storage_t *storage, uint32_t start_address, uint32
  * @param[in]     size          Number of bytes of data.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_storage_import(sys_storage_t *storage, void *data, uint32_t size);
 
@@ -109,9 +109,9 @@ uint32_t sys_storage_import(sys_storage_t *storage, void *data, uint32_t size);
  * @param[in]     size          Number of bytes of data.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_storage_export(sys_storage_t *storage, void *data, uint32_t size);
 
@@ -121,9 +121,9 @@ uint32_t sys_storage_export(sys_storage_t *storage, void *data, uint32_t size);
  * @param[in]     storage       Pointer to structure mangage the data segment.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_storage_fully_clean(sys_storage_t *storage);
 
@@ -135,9 +135,9 @@ uint32_t sys_storage_fully_clean(sys_storage_t *storage);
  * @attention     Please read Flash module organization before use.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_storage_deinit(sys_storage_t *storage);
 

@@ -31,8 +31,8 @@
 /* Private function prototypes ---------------------------------------- */
 
 /* Function definitions ----------------------------------------------- */
-bsp_i2c_status_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                         uint8_t *data_pointer, uint16_t size, uint32_t time_out)
+uint32_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_pointer,
+                                 uint16_t size, uint32_t time_out)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -42,11 +42,12 @@ bsp_i2c_status_t bsp_i2c_master_transmit(bsp_i2c_handle_t *hi2c, uint16_t device
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Master_Transmit(hi2c, device_address, data_pointer, size, time_out);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                        uint8_t *data_pointer, uint16_t size, uint32_t time_out)
+uint32_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_pointer,
+                                uint16_t size, uint32_t time_out)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -56,11 +57,12 @@ bsp_i2c_status_t bsp_i2c_master_receive(bsp_i2c_handle_t *hi2c, uint16_t device_
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Master_Receive(hi2c, device_address, data_pointer, size, time_out);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                            uint8_t *data_pointer, uint16_t size)
+uint32_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_pointer,
+                                    uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -70,11 +72,12 @@ bsp_i2c_status_t bsp_i2c_master_transmit_it(bsp_i2c_handle_t *hi2c, uint16_t dev
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Master_Transmit_IT(hi2c, device_address, data_pointer, size);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t device_address,
-                                           uint8_t *data_buffer, uint16_t size)
+uint32_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint8_t *data_buffer,
+                                   uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -84,12 +87,12 @@ bsp_i2c_status_t bsp_i2c_master_receive_it(bsp_i2c_handle_t *hi2c, uint16_t devi
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Master_Receive_IT(hi2c, device_address, data_buffer, size);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                   uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size,
-                                   uint32_t time_out)
+uint32_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                           uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size, uint32_t time_out)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -99,12 +102,12 @@ bsp_i2c_status_t bsp_i2c_mem_write(bsp_i2c_handle_t *hi2c, uint16_t device_addre
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Mem_Write(hi2c, device_address, mem_address, mem_address_size, data_buffer, size, time_out);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                  uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size,
-                                  uint32_t time_out)
+uint32_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                          uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size, uint32_t time_out)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -114,11 +117,12 @@ bsp_i2c_status_t bsp_i2c_mem_read(bsp_i2c_handle_t *hi2c, uint16_t device_addres
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Mem_Read(hi2c, device_address, mem_address, mem_address_size, data_buffer, size, time_out);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                      uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size)
+uint32_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                              uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -128,11 +132,12 @@ bsp_i2c_status_t bsp_i2c_mem_write_it(bsp_i2c_handle_t *hi2c, uint16_t device_ad
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Mem_Write_IT(hi2c, device_address, mem_address, mem_address_size, data_buffer, size);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 
-bsp_i2c_status_t bsp_i2c_mem_read_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
-                                     uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size)
+uint32_t bsp_i2c_mem_read_it(bsp_i2c_handle_t *hi2c, uint16_t device_address, uint16_t mem_address,
+                             uint16_t mem_address_size, uint8_t *data_buffer, uint16_t size)
 {
   // Check parameters
   __ASSERT((hi2c != NULL), BSP_I2C_ERROR);
@@ -142,6 +147,7 @@ bsp_i2c_status_t bsp_i2c_mem_read_it(bsp_i2c_handle_t *hi2c, uint16_t device_add
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Mem_Read_IT(hi2c, device_address, mem_address, mem_address_size, data_buffer, size);
   __ASSERT((ret == HAL_OK), BSP_I2C_FAILED);
+
   return BSP_I2C_OK;
 }
 

@@ -29,12 +29,12 @@
 #define BUTTON_HOLD_TIME         (3000UL)
 
 /* Public enumerate/structure ----------------------------------------- */
-typedef enum
+enum sys_button_status_t
 {
   SYS_BUTTON_ERROR = 0xFFFFFFFF,
   SYS_BUTTON_FAIL  = 0x7FFFFFFF,
   SYS_BUTTON_OK    = 0x3FFFFFFF
-} sys_button_status_t;
+};
 
 typedef enum
 {
@@ -88,12 +88,12 @@ typedef void (*sys_button_evt_cb_t)();
  *
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
-                                    uint32_t button_active_level);
+uint32_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
+                         uint32_t button_active_level);
 
 /**
  * @brief       Manage the system button
@@ -101,9 +101,9 @@ sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-sys_button_status_t sys_button_manage();
+uint32_t sys_button_manage();
 
 /**
  * @brief       Register button event callback: ON/OFF power.
@@ -111,11 +111,10 @@ sys_button_status_t sys_button_manage();
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-sys_button_status_t sys_button_register_cb_function(sys_button_evt_cb_t single_click,
-                                                    sys_button_evt_cb_t double_click,
-                                                    sys_button_evt_cb_t hold);
+uint32_t sys_button_register_cb_function(sys_button_evt_cb_t single_click, sys_button_evt_cb_t double_click,
+                                         sys_button_evt_cb_t hold);
 
 #endif // __USER_SYS_SYS_BUTTON_H
 

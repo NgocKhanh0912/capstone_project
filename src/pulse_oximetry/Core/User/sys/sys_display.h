@@ -54,9 +54,9 @@ typedef struct
  * @param[in]     i2c      Pointer to I2C handler.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_init(sys_display_t *display, bsp_i2c_handle_t *i2c, uint8_t *dev_buffer);
 
@@ -67,9 +67,9 @@ uint32_t sys_display_init(sys_display_t *display, bsp_i2c_handle_t *i2c, uint8_t
  * @param[in]     heart_rate    Measured heart rate.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_update_heart_rate(sys_display_t *display, uint8_t heart_rate);
 
@@ -80,9 +80,9 @@ uint32_t sys_display_update_heart_rate(sys_display_t *display, uint8_t heart_rat
  * @param[in]     signal_buf      Amount of PPG data needed to graph.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_update_ppg_signal(sys_display_t *display, cbuffer_t *signal_buf);
 
@@ -93,9 +93,9 @@ uint32_t sys_display_update_ppg_signal(sys_display_t *display, cbuffer_t *signal
  * @param[in]     threshold     Pointer to array contains upper and lower threshold.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_update_threshold(sys_display_t *display, uint8_t *threshold);
 
@@ -106,9 +106,9 @@ uint32_t sys_display_update_threshold(sys_display_t *display, uint8_t *threshold
  * @param[in]     msg         Pointer to the message array.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_show_noti(sys_display_t *display, char *msg);
 
@@ -118,9 +118,9 @@ uint32_t sys_display_show_noti(sys_display_t *display, char *msg);
  * @param[in]     display     Pointer to sys_display_t structure for manage the display in the system.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_clear_all(sys_display_t *display);
 
@@ -130,9 +130,9 @@ uint32_t sys_display_clear_all(sys_display_t *display);
  * @param[in]     display     Pointer to sys_display_t structure for manage the display in the system.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_sleep(sys_display_t *display);
 
@@ -142,9 +142,9 @@ uint32_t sys_display_sleep(sys_display_t *display);
  * @param[in]     display     Pointer to sys_display_t structure for manage the display in the system.
  *
  * @return
- *  - (0xFFFFFFFF): Error.
- *  - (0x7FFFFFFF): Failed.
- *  - (0x3FFFFFFF) : Success.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_display_wakeup(sys_display_t *display);
 

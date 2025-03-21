@@ -46,8 +46,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-  uint32_t ret = BSP_UART_OK;
-  ret          = bsp_uart_rx_cb_handler(huart, Size);
+  uint32_t ret;
+  ret = bsp_uart_rx_cb_handler(huart, Size);
 
   if (ret != BSP_UART_OK)
   {

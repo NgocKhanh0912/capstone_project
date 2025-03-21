@@ -8,7 +8,7 @@
  *             Giang Phan Truong
  *             Khanh Nguyen Ngoc
  *
- * @brief      <A brief description of the content of the file>
+ * @brief      Heart icon for OLED
  *
  * @note
  * @example
@@ -31,7 +31,7 @@
 
 /* Public variables --------------------------------------------------- */
 const uint8_t heart_icon[] = {
-  // 'heart_icon, 9x9px
+  // Heart_icon, 9x9px
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3e, 0x00, 0x3e, 0x00, 0x1c, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 

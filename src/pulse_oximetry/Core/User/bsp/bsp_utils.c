@@ -34,6 +34,11 @@ uint32_t bsp_utils_get_tick()
   return HAL_GetTick();
 }
 
+void bsp_utils_blocking_delay(uint32_t delay_time)
+{
+  HAL_Delay(delay_time);
+}
+
 /* Private definitions ----------------------------------------------- */
 
 /* End of file -------------------------------------------------------- */

@@ -57,9 +57,9 @@ enum bsp_flash_status_t
  * @brief  Unlock the FLASH memory
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_flash_unlock(void);
 
@@ -67,9 +67,9 @@ uint32_t bsp_flash_unlock(void);
  * @brief  Lock the FLASH memory
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_flash_lock(void);
 
@@ -79,9 +79,9 @@ uint32_t bsp_flash_lock(void);
  * @param[in]   sector_num   Sector want to be erased.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_flash_erase_sector(uint32_t sector_num);
 
@@ -94,9 +94,9 @@ uint32_t bsp_flash_erase_sector(uint32_t sector_num);
  * @param[in]    dest_sector_size   Destination sector full size.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_flash_copy_sector(uint32_t src_sector_addr, uint32_t src_sector_size, uint32_t dest_sector_addr,
                                uint32_t dest_sector_size);
@@ -111,9 +111,9 @@ uint32_t bsp_flash_copy_sector(uint32_t src_sector_addr, uint32_t src_sector_siz
  * @param[in]    src_start_address    Start of address you want to copy.
  * @param[in]    size                 Size of memory you want to copy.
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_flash_copy_address(uint32_t src_sector_addr, uint32_t src_sector_size, uint32_t dest_sector_addr,
                                 uint32_t dest_sector_size, uint32_t src_start_address, uint32_t size);
@@ -126,9 +126,9 @@ uint32_t bsp_flash_copy_address(uint32_t src_sector_addr, uint32_t src_sector_si
  * @param[in]   nbytes       Size of written data in byte.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_flash_write(uint32_t address, void *data_buf, uint32_t nbytes);
 
@@ -140,9 +140,9 @@ uint32_t bsp_flash_write(uint32_t address, void *data_buf, uint32_t nbytes);
  * @param[in]   nbytes       Size of read data in byte.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t bsp_flash_read(uint32_t address, void *data_buf, uint32_t nbytes);
 

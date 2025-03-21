@@ -86,7 +86,7 @@ typedef enum
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_init(drv_ssd1306_t *dev, bsp_i2c_handle_t *dev_i2c, uint16_t dev_address,
                           uint8_t *dev_buffer, uint8_t dev_width, uint8_t dev_height);
@@ -100,7 +100,7 @@ uint32_t drv_ssd1306_init(drv_ssd1306_t *dev, bsp_i2c_handle_t *dev_i2c, uint16_
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_set_display(drv_ssd1306_t *dev, drv_ssd1306_display_t state);
 
@@ -113,7 +113,7 @@ uint32_t drv_ssd1306_set_display(drv_ssd1306_t *dev, drv_ssd1306_display_t state
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_set_cursor(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_y);
 
@@ -126,7 +126,7 @@ uint32_t drv_ssd1306_set_cursor(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_y
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_set_contrast(drv_ssd1306_t *dev, uint8_t value);
 
@@ -139,7 +139,7 @@ uint32_t drv_ssd1306_set_contrast(drv_ssd1306_t *dev, uint8_t value);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_fill_screen(drv_ssd1306_t *dev, uint32_t color);
 
@@ -153,7 +153,7 @@ uint32_t drv_ssd1306_fill_screen(drv_ssd1306_t *dev, uint32_t color);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_draw_pixel(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_y, drv_ssd1306_color_t color);
 
@@ -168,7 +168,7 @@ uint32_t drv_ssd1306_draw_pixel(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_y
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_write_char(drv_ssd1306_t *dev, char ch, ssd1306_font_t font, drv_ssd1306_color_t color);
 
@@ -183,7 +183,7 @@ uint32_t drv_ssd1306_write_char(drv_ssd1306_t *dev, char ch, ssd1306_font_t font
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_write_string(drv_ssd1306_t *dev, char *str, ssd1306_font_t font,
                                   drv_ssd1306_color_t color);
@@ -196,7 +196,7 @@ uint32_t drv_ssd1306_write_string(drv_ssd1306_t *dev, char *str, ssd1306_font_t 
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_update_screen(drv_ssd1306_t *dev);
 
@@ -209,7 +209,7 @@ uint32_t drv_ssd1306_update_screen(drv_ssd1306_t *dev);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_draw_bitmap(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_y, const uint8_t *bitmap,
                                  uint8_t bitmap_width, uint8_t bitmap_height, drv_ssd1306_color_t color);
@@ -225,7 +225,7 @@ uint32_t drv_ssd1306_draw_bitmap(drv_ssd1306_t *dev, uint8_t pos_x, uint8_t pos_
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_draw_line(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y1, uint8_t pos_x2,
                                uint8_t pos_y2, drv_ssd1306_color_t color);
@@ -240,7 +240,7 @@ uint32_t drv_ssd1306_draw_line(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_draw_rectangle(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y1, uint8_t pos_x2,
                                     uint8_t pos_y2, drv_ssd1306_color_t color);
@@ -256,7 +256,7 @@ uint32_t drv_ssd1306_draw_rectangle(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t 
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_ssd1306_fill_rectangle(drv_ssd1306_t *dev, uint8_t pos_x1, uint8_t pos_y1, uint8_t pos_x2,
                                     uint8_t pos_y2, drv_ssd1306_color_t color);

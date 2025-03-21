@@ -20,6 +20,7 @@
 
 /* Includes ----------------------------------------------------------- */
 #include "main.h"
+#include <stdint.h>
 
 /* Public defines ----------------------------------------------------- */
 #define SECONDS_PER_MINUTE (60u)

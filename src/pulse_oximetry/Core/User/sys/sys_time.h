@@ -28,12 +28,12 @@
 /**
  * @brief Status of sys_time operation
  */
-typedef enum
+enum sys_time_status_t
 {
   SYS_TIME_ERROR  = 0xFFFFFFFF,
   SYS_TIME_FAILED = 0x7FFFFFFF,
   SYS_TIME_OK     = 0x3FFFFFFF
-} sys_time_status_t;
+};
 
 /**
  * @brief Alarm data type
@@ -65,9 +65,12 @@ typedef void (*sys_used_alarm_evt_cb_t)(void);
  *              If you initialize another DS1307,
  *              it means you have deinitialized the previous DS1307.
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307);
+uint32_t sys_time_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307);
 
 /**
  * @brief       Set epoch time to RTC DS1307.
@@ -77,9 +80,12 @@ sys_time_status_t sys_time_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307);
  *
  * @attention   GMT0 epoch time is required.
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_set_epoch_time(uint32_t epoch_time, drv_ds1307_t *ds1307);
+uint32_t sys_time_set_epoch_time(uint32_t epoch_time, drv_ds1307_t *ds1307);
 
 /**
  * @brief       Set date time to RTC DS1307.
@@ -88,9 +94,12 @@ sys_time_status_t sys_time_set_epoch_time(uint32_t epoch_time, drv_ds1307_t *ds1
  *
  * @attention   Date time is required (HH:MM:SS d:DD:MM:YY).
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_set_date_time(drv_ds1307_t *ds1307);
+uint32_t sys_time_set_date_time(drv_ds1307_t *ds1307);
 
 /**
  * @brief       Get date time from RTC DS1307.
@@ -99,9 +108,12 @@ sys_time_status_t sys_time_set_date_time(drv_ds1307_t *ds1307);
  *
  * @attention   Get date time (HH:MM:SS d:DD:MM:YY).
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_get_date_time(drv_ds1307_t *ds1307);
+uint32_t sys_time_get_date_time(drv_ds1307_t *ds1307);
 
 /**
  *
@@ -116,9 +128,12 @@ uint32_t sys_time_get_epoch_time(drv_ds1307_t *ds1307);
  *
  * @attention   No.
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm_id);
+uint32_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm_id);
 
 /**
  * @brief       Get alarm.
@@ -127,9 +142,12 @@ sys_time_status_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm
  *
  * @attention   Callback to sys_manage if alarm event happened.
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_get_alarm();
+uint32_t sys_time_get_alarm();
 
 /**
  * @brief       Cancel alarm.
@@ -138,9 +156,12 @@ sys_time_status_t sys_time_get_alarm();
  *
  * @attention   Cancel the alarm corresponding to the alarm id.
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_cancel_alarm(uint8_t alarm_id);
+uint32_t sys_time_cancel_alarm(uint8_t alarm_id);
 
 /**
  * @brief       Callback to sys_manage if alarm event happened.
@@ -149,9 +170,12 @@ sys_time_status_t sys_time_cancel_alarm(uint8_t alarm_id);
  *
  * @attention   No.
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_register_alarm_cb(sys_alarm_evt_cb_t alarm_evt_cb);
+uint32_t sys_time_register_alarm_cb(sys_alarm_evt_cb_t alarm_evt_cb);
 
 /**
  * @brief       Callback to sys_manage if used alarm is set again event happened.
@@ -160,9 +184,12 @@ sys_time_status_t sys_time_register_alarm_cb(sys_alarm_evt_cb_t alarm_evt_cb);
  *
  * @attention   No.
  *
- * @return      The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-sys_time_status_t sys_time_register_used_alarm_cb(sys_used_alarm_evt_cb_t used_alarm_evt_cb);
+uint32_t sys_time_register_used_alarm_cb(sys_used_alarm_evt_cb_t used_alarm_evt_cb);
 
 #endif // __USER_SYSTEM_SYS_TIME_H
 

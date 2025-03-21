@@ -25,12 +25,12 @@
 typedef TIM_HandleTypeDef bsp_tim_typedef_t;
 
 /* Public enumerate/structure ----------------------------------------- */
-typedef enum
+enum bsp_timer_status_t
 {
   BSP_TIMER_ERROR = 0xFFFFFFFF,
   BSP_TIMER_FAIL  = 0x7FFFFFFF,
   BSP_TIMER_OK    = 0x3FFFFFFF
-} bsp_timer_status_t;
+};
 
 /* Public macros ------------------------------------------------------ */
 
@@ -49,9 +49,9 @@ typedef void (*bsp_timer_cb_t)(bsp_tim_typedef_t *htim);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_set_prescaler(bsp_tim_typedef_t *htim, uint32_t prescaler);
+uint32_t bsp_timer_set_prescaler(bsp_tim_typedef_t *htim, uint32_t prescaler);
 
 /**
  * @brief       Set the counter period value for clock of timer.
@@ -64,9 +64,9 @@ bsp_timer_status_t bsp_timer_set_prescaler(bsp_tim_typedef_t *htim, uint32_t pre
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_set_autoreload(bsp_tim_typedef_t *htim, uint32_t autoreload);
+uint32_t bsp_timer_set_autoreload(bsp_tim_typedef_t *htim, uint32_t autoreload);
 
 /**
  * @brief       Set pulse value for PWM of this channel.
@@ -79,10 +79,9 @@ bsp_timer_status_t bsp_timer_set_autoreload(bsp_tim_typedef_t *htim, uint32_t au
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_t tim_channel,
-                                                uint32_t compare);
+uint32_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_t tim_channel, uint32_t compare);
 
 /**
  * @brief       Start the PWM generator on a channel of timer.
@@ -94,9 +93,9 @@ bsp_timer_status_t bsp_timer_set_output_compare(bsp_tim_typedef_t *htim, uint32_
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_start(bsp_tim_typedef_t *htim);
+uint32_t bsp_timer_start(bsp_tim_typedef_t *htim);
 
 /**
  * @brief       Start the PWM generator on a channel of timer and enable this timer interrupt.
@@ -108,9 +107,9 @@ bsp_timer_status_t bsp_timer_start(bsp_tim_typedef_t *htim);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_start_it(bsp_tim_typedef_t *htim);
+uint32_t bsp_timer_start_it(bsp_tim_typedef_t *htim);
 
 /**
  * @brief       Stop counter on a channel of timer.
@@ -120,9 +119,9 @@ bsp_timer_status_t bsp_timer_start_it(bsp_tim_typedef_t *htim);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_stop(bsp_tim_typedef_t *htim);
+uint32_t bsp_timer_stop(bsp_tim_typedef_t *htim);
 
 /**
  * @brief       Stop counter on a channel of timer in interrupt mode.
@@ -132,9 +131,9 @@ bsp_timer_status_t bsp_timer_stop(bsp_tim_typedef_t *htim);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_stop_it(bsp_tim_typedef_t *htim);
+uint32_t bsp_timer_stop_it(bsp_tim_typedef_t *htim);
 
 /**
  * @brief       Start the PWM generator on a channel of timer.
@@ -147,9 +146,9 @@ bsp_timer_status_t bsp_timer_stop_it(bsp_tim_typedef_t *htim);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_pwm_start(bsp_tim_typedef_t *htim, uint32_t tim_channel);
+uint32_t bsp_pwm_start(bsp_tim_typedef_t *htim, uint32_t tim_channel);
 
 /**
  * @brief       Start the PWM generator on a channel of timer and enable this timer interrupt.
@@ -162,9 +161,9 @@ bsp_timer_status_t bsp_pwm_start(bsp_tim_typedef_t *htim, uint32_t tim_channel);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_pwm_start_it(bsp_tim_typedef_t *htim, uint32_t tim_channel);
+uint32_t bsp_pwm_start_it(bsp_tim_typedef_t *htim, uint32_t tim_channel);
 
 /**
  * @brief       Stop the PWM generator on a channel of timer.
@@ -175,9 +174,9 @@ bsp_timer_status_t bsp_pwm_start_it(bsp_tim_typedef_t *htim, uint32_t tim_channe
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_pwm_stop(bsp_tim_typedef_t *htim, uint32_t tim_channel);
+uint32_t bsp_pwm_stop(bsp_tim_typedef_t *htim, uint32_t tim_channel);
 
 /**
  * @brief       Stop the PWM generator on a channel of timer in interrupt mode.
@@ -188,9 +187,9 @@ bsp_timer_status_t bsp_pwm_stop(bsp_tim_typedef_t *htim, uint32_t tim_channel);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_pwm_stop_it(bsp_tim_typedef_t *htim, uint32_t tim_channel);
+uint32_t bsp_pwm_stop_it(bsp_tim_typedef_t *htim, uint32_t tim_channel);
 
 /**
  * @brief       Register the function for interval event handler.
@@ -198,11 +197,11 @@ bsp_timer_status_t bsp_pwm_stop_it(bsp_tim_typedef_t *htim, uint32_t tim_channel
  * @param[in]   interval_period_elapsed     Function pointer to handle the interval period elapsed event.
 
  *
- * @return      -2 if error,
- *              -1 if fail,
- *              0 if successfully.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_register_interval_callback(bsp_timer_cb_t interval_period_elapsed);
+uint32_t bsp_timer_register_interval_callback(bsp_timer_cb_t interval_period_elapsed);
 
 /**
  * @brief       Register the function for debound event handler.
@@ -210,22 +209,22 @@ bsp_timer_status_t bsp_timer_register_interval_callback(bsp_timer_cb_t interval_
  * @param[in]   debound_period_elapsed      Function pointer to handle the debound period elapsed event.
 
  *
- * @return      -2 if error,
- *              -1 if fail,
- *              0 if successfully.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_register_debound_callback(bsp_timer_cb_t debound_period_elapsed);
+uint32_t bsp_timer_register_debound_callback(bsp_timer_cb_t debound_period_elapsed);
 
 /**
  * @brief       Handle the callback event
  *
  * @param[in]   htim          Pointer of timer handler.
  *
- * @return      -2 if error,
- *              -1 if fail,
- *              0 if successfully.
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-bsp_timer_status_t bsp_timer_period_callback_handler(bsp_tim_typedef_t *htim);
+uint32_t bsp_timer_period_callback_handler(bsp_tim_typedef_t *htim);
 
 #endif /* USER_BSP_BSP_TIMER_H_ */
 

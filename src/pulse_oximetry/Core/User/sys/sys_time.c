@@ -49,61 +49,64 @@ sys_time_alarm_t *s_alarm_time_internal[MAX_NUMBER_OF_ALARM] = { NULL };
  * @param[in]       date_time     Pointer to drv_ds1307_t structure
  *                                  to store date time.
  *
- * @return          The status of sys_time operation.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-static sys_time_status_t sys_time_convert_epoch_time(uint32_t epoch_time, drv_ds1307_t *date_time);
+static uint32_t sys_time_convert_epoch_time(uint32_t epoch_time, drv_ds1307_t *date_time);
 
 /* Function definitions ----------------------------------------------- */
-sys_time_status_t sys_time_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307)
+uint32_t sys_time_init(I2C_HandleTypeDef *i2c, drv_ds1307_t *ds1307)
 {
-  sys_time_status_t ret = SYS_TIME_OK;
+  uint32_t ret;
 
-  ret = (sys_time_status_t)drv_ds1307_init(i2c, ds1307);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
+  ret = drv_ds1307_init(i2c, ds1307);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
 
   s_alarm_ds1307_internal = ds1307;
 
   return SYS_TIME_OK;
 }
 
-sys_time_status_t sys_time_set_epoch_time(uint32_t epoch_time, drv_ds1307_t *ds1307)
+uint32_t sys_time_set_epoch_time(uint32_t epoch_time, drv_ds1307_t *ds1307)
 {
-  sys_time_status_t ret = SYS_TIME_OK;
+  uint32_t ret;
 
   ret = sys_time_convert_epoch_time(epoch_time, ds1307);
   __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
 
-  ret = (sys_time_status_t)drv_ds1307_set_time(ds1307);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
+  ret = (uint32_t)drv_ds1307_set_time(ds1307);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
 
-  ret = (sys_time_status_t)drv_ds1307_set_date(ds1307);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
-
-  return SYS_TIME_OK;
-}
-
-sys_time_status_t sys_time_set_date_time(drv_ds1307_t *ds1307)
-{
-  sys_time_status_t ret = SYS_TIME_OK;
-
-  ret = (sys_time_status_t)drv_ds1307_set_time(ds1307);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
-
-  ret = (sys_time_status_t)drv_ds1307_set_date(ds1307);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
+  ret = (uint32_t)drv_ds1307_set_date(ds1307);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
 
   return SYS_TIME_OK;
 }
 
-sys_time_status_t sys_time_get_date_time(drv_ds1307_t *ds1307)
+uint32_t sys_time_set_date_time(drv_ds1307_t *ds1307)
 {
-  sys_time_status_t ret = SYS_TIME_OK;
+  uint32_t ret;
 
-  ret = (sys_time_status_t)drv_ds1307_get_time(ds1307);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
+  ret = (uint32_t)drv_ds1307_set_time(ds1307);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
 
-  ret = (sys_time_status_t)drv_ds1307_get_date(ds1307);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
+  ret = (uint32_t)drv_ds1307_set_date(ds1307);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
+
+  return SYS_TIME_OK;
+}
+
+uint32_t sys_time_get_date_time(drv_ds1307_t *ds1307)
+{
+  uint32_t ret;
+
+  ret = (uint32_t)drv_ds1307_get_time(ds1307);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
+
+  ret = (uint32_t)drv_ds1307_get_date(ds1307);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
 
   return SYS_TIME_OK;
 }
@@ -112,6 +115,7 @@ uint32_t sys_time_get_epoch_time(drv_ds1307_t *ds1307)
 {
   // Check parameters
   __ASSERT((ds1307 != NULL), SYS_TIME_ERROR);
+
   // Operation
   sys_time_get_date_time(ds1307);
 
@@ -125,11 +129,12 @@ uint32_t sys_time_get_epoch_time(drv_ds1307_t *ds1307)
   t.tm_sec   = (ds1307->second);
   t.tm_isdst = (-1);
   t_of_day   = mktime(&t);
+
   // Return
   return (uint32_t)t_of_day;
 }
 
-sys_time_status_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm_id)
+uint32_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm_id)
 {
   if (s_alarm_time_internal[alarm_id] != NULL)
   {
@@ -162,14 +167,14 @@ sys_time_status_t sys_time_set_alarm(sys_time_alarm_t *alarm_time, uint8_t alarm
   return SYS_TIME_OK;
 }
 
-sys_time_status_t sys_time_get_alarm()
+uint32_t sys_time_get_alarm()
 {
   __ASSERT((s_alarm_time_internal != NULL), SYS_TIME_ERROR);
 
-  sys_time_status_t ret = SYS_TIME_OK;
+  uint32_t ret;
 
-  ret = (sys_time_status_t)drv_ds1307_get_time(s_alarm_ds1307_internal);
-  __ASSERT((ret == SYS_TIME_OK), SYS_TIME_FAILED);
+  ret = (uint32_t)drv_ds1307_get_time(s_alarm_ds1307_internal);
+  __ASSERT((ret == DRV_DS1307_OK), SYS_TIME_FAILED);
 
   for (int i = 0; i < MAX_NUMBER_OF_ALARM; i++)
   {
@@ -188,7 +193,7 @@ sys_time_status_t sys_time_get_alarm()
   return SYS_TIME_OK;
 }
 
-sys_time_status_t sys_time_cancel_alarm(uint8_t alarm_id)
+uint32_t sys_time_cancel_alarm(uint8_t alarm_id)
 {
   __ASSERT((s_alarm_time_internal[alarm_id] != NULL), SYS_TIME_ERROR);
 
@@ -197,7 +202,7 @@ sys_time_status_t sys_time_cancel_alarm(uint8_t alarm_id)
   return SYS_TIME_OK;
 }
 
-sys_time_status_t sys_time_register_alarm_cb(sys_alarm_evt_cb_t alarm_evt_cb)
+uint32_t sys_time_register_alarm_cb(sys_alarm_evt_cb_t alarm_evt_cb)
 {
   __ASSERT((alarm_evt_cb != NULL), SYS_TIME_ERROR);
 
@@ -206,7 +211,7 @@ sys_time_status_t sys_time_register_alarm_cb(sys_alarm_evt_cb_t alarm_evt_cb)
   return SYS_TIME_OK;
 }
 
-sys_time_status_t sys_time_register_used_alarm_cb(sys_used_alarm_evt_cb_t used_alarm_evt_cb)
+uint32_t sys_time_register_used_alarm_cb(sys_used_alarm_evt_cb_t used_alarm_evt_cb)
 {
   __ASSERT((used_alarm_evt_cb != NULL), SYS_TIME_ERROR);
 
@@ -216,7 +221,7 @@ sys_time_status_t sys_time_register_used_alarm_cb(sys_used_alarm_evt_cb_t used_a
 }
 
 /* Private definitions ------------------------------------------------ */
-static sys_time_status_t sys_time_convert_epoch_time(uint32_t epoch_time, drv_ds1307_t *date_time)
+static uint32_t sys_time_convert_epoch_time(uint32_t epoch_time, drv_ds1307_t *date_time)
 {
   __ASSERT((date_time != NULL), SYS_TIME_ERROR);
 

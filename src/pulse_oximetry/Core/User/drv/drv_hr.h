@@ -67,7 +67,7 @@ typedef struct
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_hr_init(drv_hr_t *hr_sen, bsp_adc_typedef_t *sen_adc, bsp_tim_typedef_t *tim, uint32_t prescaler,
                      uint32_t autoreload);
@@ -80,7 +80,7 @@ uint32_t drv_hr_init(drv_hr_t *hr_sen, bsp_adc_typedef_t *sen_adc, bsp_tim_typed
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_hr_sleep(drv_hr_t *hr_sen);
 
@@ -92,7 +92,7 @@ uint32_t drv_hr_sleep(drv_hr_t *hr_sen);
  * @return
  *  - (0xFFFFFFFF): Error
  *  - (0x7FFFFFFF): Failed
- *  - (0x3FFFFFFF) : Success
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t drv_hr_wakeup(drv_hr_t *hr_sen);
 

@@ -42,11 +42,11 @@ static void sys_button_detect_edge(uint16_t exti_line);
 static void sys_button_debound();
 
 /* Function definitions ----------------------------------------------- */
-sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
-                                    uint32_t button_active_level)
+uint32_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
+                         uint32_t button_active_level)
 {
   drv_button_t dbutton;
-  drv_button_status_t ret = DRV_BUTTON_OK;
+  uint32_t ret;
 
   ret = drv_button_init(&dbutton, gpio, pin, button_active_level);
   __ASSERT(ret == DRV_BUTTON_OK, SYS_BUTTON_FAIL);
@@ -64,7 +64,7 @@ sys_button_status_t sys_button_init(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, 
   return SYS_BUTTON_OK;
 }
 
-sys_button_status_t sys_button_manage()
+uint32_t sys_button_manage()
 {
   static uint32_t previous_end_time = 0;
 
@@ -222,9 +222,8 @@ sys_button_status_t sys_button_manage()
   return SYS_BUTTON_OK;
 }
 
-sys_button_status_t sys_button_register_cb_function(sys_button_evt_cb_t single_click,
-                                                    sys_button_evt_cb_t double_click,
-                                                    sys_button_evt_cb_t hold)
+uint32_t sys_button_register_cb_function(sys_button_evt_cb_t single_click, sys_button_evt_cb_t double_click,
+                                         sys_button_evt_cb_t hold)
 {
   __ASSERT(single_click != NULL, SYS_BUTTON_ERROR);
   __ASSERT(double_click != NULL, SYS_BUTTON_ERROR);

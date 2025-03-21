@@ -69,12 +69,12 @@ typedef struct
 /**
  * @brief Circular buffer status enum definition.
  */
-typedef enum
+enum cbuffer_status_t
 {
   CB_STATUS_ERROR  = 0xFFFFFFFF,
   CB_STATUS_FAILED = 0x7FFFFFFF,
   CB_STATUS_OK     = 0x3FFFFFFF,
-} cbuffer_status_t;
+};
 
 /* Public macros ------------------------------------------------------ */
 
@@ -88,20 +88,24 @@ typedef enum
  * @param[in]    buf     Pointer to array.
  * @param[in]    size    Size of buffer.
  *
- * @retval       CB_STATUS_OK: if the function works correctly.
- * @retval       CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-cbuffer_status_t cb_init(cbuffer_t *cb, void *buf, uint32_t size);
+uint32_t cb_init(cbuffer_t *cb, void *buf, uint32_t size);
 
 /**
  * @brief        Clear circular buffer.
  *
  * @param[in]    cb    Pointer to a cbuffer_t structure.
  *
- * @retval       CB_STATUS_OK: if the function works correctly.
- * @retval       CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
-cbuffer_status_t cb_clear(cbuffer_t *cb);
+uint32_t cb_clear(cbuffer_t *cb);
 
 /**
  * @brief         Read data from circular buffer.
@@ -110,8 +114,9 @@ cbuffer_status_t cb_clear(cbuffer_t *cb);
  * @param[out]    buf     Pointer to data buffer.
  * @param[in]     size    Size of data that want to read.
  *
- * @retval        Number of successfully read byte: if the function works correctly.
- * @retval        CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - Number of successfully read byte: Success
  */
 uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes);
 
@@ -122,8 +127,9 @@ uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes);
  * @param[in]    buf     Pointer to data buffer.
  * @param[in]    size    Size of data that want to write.
  *
- * @retval       Number of successfully write byte: if the function works correctly.
- * @retval       CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - Number of successfully write byte: Success
  */
 uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes);
 
@@ -132,8 +138,9 @@ uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes);
  *
  * @param[in]    cb    Pointer to a cbuffer_t structure.
  *
- * @retval       Number of byte in circular buffer: if the function works correctly.
- * @retval       CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - Number of byte in circular buffer: Success
  */
 uint32_t cb_data_count(cbuffer_t *cb);
 
@@ -142,8 +149,9 @@ uint32_t cb_data_count(cbuffer_t *cb);
  *
  * @param[in]    cb    Pointer to a cbuffer_t structure.
  *
- * @retval       Number of space (in byte unit) in circular buffer: if the function works correctly.
- * @retval       CB_STATUS_ERROR: if the function encounters an error.
+ * @return
+ *  - (0xFFFFFFFF): Error
+ *  - Number of space (in byte unit) in circular buffer: Success
  */
 uint32_t cb_space_count(cbuffer_t *cb);
 

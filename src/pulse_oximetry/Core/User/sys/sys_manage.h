@@ -96,9 +96,9 @@ typedef struct
  * @param[in]     i2c      pointer to I2C handler.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0X7FFFFFFF: Failed
- *  - 0X3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer);
 
@@ -112,9 +112,9 @@ uint32_t sys_manage_start_display(bsp_i2c_handle_t *i2c, uint8_t *dev_buffer);
  * @param[in]     data_buf      Pointer to buffer that store processed data.
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim, uint32_t prescaler,
                                   uint32_t autoreload, double *data_buf);
@@ -129,9 +129,9 @@ uint32_t sys_manage_start_measure(bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim
  *
  *
  * @return
- *  - 0xFFFFFFFF: Error
- *  - 0x7FFFFFFF: Failed
- *  - 0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_start_button(bsp_tim_typedef_t *tim, GPIO_TypeDef *gpio, uint16_t pin,
                                  uint32_t button_active_level);
@@ -159,9 +159,9 @@ uint32_t sys_manage_start_protocol(UART_HandleTypeDef *uart);
  * @note        Module buzzer low level trigger.
  *
  * @return
- * -  0xFFFFFFFF: Error
- * -  0x7FFFFFFF: Failed
- * -  0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_start_buzzer(bsp_tim_typedef_t *tim, uint32_t pwm_channel);
 
@@ -175,9 +175,9 @@ uint32_t sys_manage_start_buzzer(bsp_tim_typedef_t *tim, uint32_t pwm_channel);
  *              it means you have deinitialized the previous DS1307.
  *
  * @return
- * -  0xFFFFFFFF: Error
- * -  0x7FFFFFFF: Failed
- * -  0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_start_rtc(bsp_i2c_handle_t *i2c);
 
@@ -185,9 +185,9 @@ uint32_t sys_manage_start_rtc(bsp_i2c_handle_t *i2c);
  * @brief       Initialize service for stroing heart rate
  *
  * @return
- * -  0xFFFFFFFF: Error
- * -  0x7FFFFFFF: Failed
- * -  0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_start_storage();
 
@@ -202,9 +202,9 @@ uint32_t sys_manage_start_storage();
  *              it means you have deinitialized the previous DS1307.
  *
  * @return
- * -  0xFFFFFFFF: Error
- * -  0x7FFFFFFF: Failed
- * -  0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_start(bsp_tim_typedef_t *tim);
 /**
@@ -213,9 +213,9 @@ uint32_t sys_manage_start(bsp_tim_typedef_t *tim);
  * @attention   Services need to be started before use this function.
  *
  * @return
- * -  0xFFFFFFFF: Error
- * -  0x7FFFFFFF: Failed
- * -  0x3FFFFFFF: Success
+ *  - (0xFFFFFFFF): Error
+ *  - (0x7FFFFFFF): Failed
+ *  - (0x3FFFFFFF): Success
  */
 uint32_t sys_manage_loop();
 
