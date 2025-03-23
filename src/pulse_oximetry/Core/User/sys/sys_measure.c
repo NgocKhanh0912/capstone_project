@@ -15,12 +15,31 @@
  */
 
 /* Includes ----------------------------------------------------------- */
+#include <math.h>
+#include <float.h>
 #include "sys_measure.h"
 #include "common.h"
-#include <math.h>
 #include "fft.h"
 
+#include "ai_datatypes_defines.h"
+#include "ai_platform.h"
+#include "peak_detection_model.h"
+#include "peak_detection_model_data.h"
+
 /* Private defines ---------------------------------------------------- */
+/**
+ * @defgroup Defines for configuring the peak detection method
+ * @brief    Configuration options for selecting peak detection algorithm or model.
+ * @{
+ */
+#define TERMA_ALGORITHM   (1)
+#define DILATED_CNN_MODEL (2)
+
+#define SYS_MEASURE_PEAK_DETECTOR (DILATED_CNN_MODEL)
+
+#if SYS_MEASURE_PEAK_DETECTOR == TERMA_ALGORITHM
+#define USE_ALGORITHM
+
 /**
  * @defgroup Defines related to TERMA beta coefficient
  * @brief    Beta max, min value; calib beta step; beta init value
@@ -39,6 +58,26 @@
  */
 #define SYS_MEASURE_WINDOW_EVENT (9)
 #define SYS_MEASURE_WINDOW_CYCLE ((SYS_MEASURE_WINDOW_EVENT * 6) + 1)
+/**@} */
+
+#elif SYS_MEASURE_PEAK_DETECTOR == DILATED_CNN_MODEL
+#define USE_MODEL
+#define SYS_MEASURE_PEAK_ACCEPT_THRESHOLD (0.4)
+#define SYS_MEASURE_PEAK_TOLERANCE        (0.3 * SYS_MEASURE_SAMPLING_RATE)
+
+/**
+ * @defgroup Defines related to PPG data normalization
+ * @brief    Epsilon for data range, normalization max and min values.
+ * @{
+ */
+#define SYS_MEASURE_NORMALIZE_PPG_EPSILON (1e-6)
+#define SYS_MEASURE_NORMALIZE_PPG_MAX     (1.0)
+#define SYS_MEASURE_NORMALIZE_PPG_MIN     (-1.0)
+/**@} */
+
+#else
+#error "Peak detector is not valid"
+#endif
 /**@} */
 
 /**
@@ -83,13 +122,93 @@
 /* Public variables --------------------------------------------------- */
 static uint16_t s_adc_val_buf[SYS_MEASURE_MAX_SAMPLES_PROCESS + 1] = { 0 };
 
+#if defined(USE_MODEL)
+static ai_handle s_peak_detection_model = AI_HANDLE_NULL;
+
+AI_ALIGNED(4) static ai_u8 s_activations[AI_PEAK_DETECTION_MODEL_DATA_ACTIVATIONS_SIZE];
+AI_ALIGNED(4) static ai_float s_input_data[AI_PEAK_DETECTION_MODEL_IN_1_SIZE];
+AI_ALIGNED(4) static ai_float s_output_data[AI_PEAK_DETECTION_MODEL_OUT_1_SIZE];
+
+static ai_buffer ai_input =
+  AI_BUFFER_INIT(AI_FLAG_NONE, AI_BUFFER_FORMAT_FLOAT,
+                 AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 1, 1, AI_PEAK_DETECTION_MODEL_IN_1_SIZE),
+                 AI_PEAK_DETECTION_MODEL_IN_1_SIZE, NULL, s_input_data);
+
+static ai_buffer ai_output =
+  AI_BUFFER_INIT(AI_FLAG_NONE, AI_BUFFER_FORMAT_FLOAT,
+                 AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 1, 1, AI_PEAK_DETECTION_MODEL_OUT_1_SIZE),
+                 AI_PEAK_DETECTION_MODEL_OUT_1_SIZE, NULL, s_output_data);
+#endif
+
 /* Private variables -------------------------------------------------- */
 
 /* Private function prototypes ---------------------------------------- */
+#if defined(USE_MODEL)
+/**
+ * @brief  Init the AI Model.
+ *
+ * @return
+ *
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF): Success.
+ */
+static uint32_t sys_measure_ai_model_init(void);
+
+/**
+ * @brief  Run the AI Model.
+ *
+ * @return
+ *
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF): Success.
+ */
+static uint32_t sys_measure_ai_model_run(void);
+
+/**
+ * @brief  Normalize the filtered PPG signal.
+ *
+ * @param[inout]     ppg_data              The filtered PPG signal.
+ * @param[in]        ppg_data_length       Length of the filtered PPG signal.
+ * @param[in]        norm_max              Normalization max value.
+ * @param[in]        norm_min              Normalization min value.
+ *
+ * @return
+ *
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF): Success.
+ */
+static uint32_t sys_measure_normalize_ppg_data(double *ppg_data, uint16_t ppg_data_length, double norm_max,
+                                               double norm_min);
+
+/**
+ * @brief  Filters out close peaks, retaining only the highest peak in each group.
+ *
+ * This function processes an array of detected peak indices and removes peaks that are
+ * too close to each other based on a specified tolerance. In each group of close peaks,
+ * only the peak with the highest signal value is retained.
+ *
+ * @param[inout]     peak_indices       Array of detected peak indices (modified after filtering).
+ * @param[inout]     num_peaks          Pointer to the number of peaks (updated after filtering).
+ * @param[in]        signal             Array containing PPG signal data.
+ * @param[in]        tolerance          Minimum distance between peaks to consider them separate.
+ *
+ * @return
+ *
+ *  - (0xFFFFFFFF): Error.
+ *  - (0x7FFFFFFF): Failed.
+ *  - (0x3FFFFFFF): Success.
+ */
+static uint32_t sys_measure_filter_close_peaks(uint32_t *peak_indices, uint32_t *num_peaks, double *signal,
+                                               uint32_t tolerance);
+#endif
+
 /**
  * @brief  Filter the interferances of the signal.
  *
- * @param[in]        signal                The signal object.
+ * @param[inout]     signal                The signal object.
  * @param[inout]     gui_raw_ppg_cb        Pointer to the raw PPG cbuffer to stream on GUI.
  * @param[inout]     gui_filtered_ppg_cb   Pointer to the filtered PPG cbuffer to stream on GUI.
  *
@@ -116,6 +235,151 @@ static uint32_t sys_measure_filter_data(sys_measure_t *signal, cbuffer_t *gui_ra
 static uint32_t sys_measure_peak_detector(sys_measure_t *signal);
 
 /* Function definitions ----------------------------------------------- */
+#if defined(USE_MODEL)
+static uint32_t sys_measure_ai_model_init(void)
+{
+  // Create model
+  ai_error model_create_ret =
+    ai_peak_detection_model_create(&s_peak_detection_model, AI_PEAK_DETECTION_MODEL_DATA_CONFIG);
+  __ASSERT(model_create_ret.type == AI_ERROR_NONE, SYS_MEASURE_ERROR);
+
+  const ai_network_params params = { .params = AI_PEAK_DETECTION_MODEL_DATA_WEIGHTS(
+                                       ai_peak_detection_model_data_weights_get()),
+                                     .activations = AI_PEAK_DETECTION_MODEL_DATA_ACTIVATIONS(s_activations) };
+
+  // Init model
+  ai_bool model_init_ret = ai_peak_detection_model_init(s_peak_detection_model, &params);
+  __ASSERT(model_init_ret == true, SYS_MEASURE_FAILED);
+
+  return SYS_MEASURE_OK;
+}
+
+static uint32_t sys_measure_ai_model_run(void)
+{
+  __ASSERT(s_peak_detection_model != AI_HANDLE_NULL, SYS_MEASURE_ERROR);
+
+  ai_i32 batch = ai_peak_detection_model_run(s_peak_detection_model, &ai_input, &ai_output);
+  __ASSERT(batch == 1, SYS_MEASURE_FAILED);
+
+  return SYS_MEASURE_OK;
+}
+
+static uint32_t sys_measure_normalize_ppg_data(double *ppg_data, uint16_t ppg_data_length, double norm_max,
+                                               double norm_min)
+{
+  __ASSERT(ppg_data != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(ppg_data_length != 0, SYS_MEASURE_ERROR);
+  __ASSERT(norm_max >= norm_min, SYS_MEASURE_ERROR);
+
+  double ppg_min = DBL_MAX;
+  double ppg_max = -DBL_MAX;
+
+  // Find max and min of PPG data
+  for (uint_fast16_t i = 0; i < ppg_data_length; i++)
+  {
+    if (ppg_data[i] < ppg_min)
+    {
+      ppg_min = ppg_data[i];
+    }
+
+    if (ppg_data[i] > ppg_max)
+    {
+      ppg_max = ppg_data[i];
+    }
+  }
+
+  double range = ppg_max - ppg_min;
+  __ASSERT(range >= SYS_MEASURE_NORMALIZE_PPG_EPSILON, SYS_MEASURE_FAILED);
+
+  double scale = (norm_max - norm_min) / range;
+
+  // Normalize PPG data
+  for (uint_fast16_t i = 0; i < ppg_data_length; i++)
+  {
+    ppg_data[i] = norm_min + (ppg_data[i] - ppg_min) * scale;
+  }
+
+  return SYS_MEASURE_OK;
+}
+
+static uint32_t sys_measure_filter_close_peaks(uint32_t *peak_indices, uint32_t *num_peaks, double *signal,
+                                               uint32_t tolerance)
+{
+  __ASSERT(peak_indices != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(num_peaks != NULL, SYS_MEASURE_ERROR);
+  __ASSERT(*num_peaks != 0, SYS_MEASURE_ERROR);
+  __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
+
+  uint32_t filtered_peaks[AI_PEAK_DETECTION_MODEL_OUT_1_SIZE] = { 0 };
+  uint32_t filtered_count                                     = 0;
+
+  // Temporary group for close peaks
+  uint32_t current_group[AI_PEAK_DETECTION_MODEL_OUT_1_SIZE] = { 0 };
+  uint32_t group_size                                        = 0;
+
+  // Initialize the first group with the first peak
+  current_group[group_size++] = peak_indices[0];
+
+  for (uint32_t i = 1; i < *num_peaks; i++)
+  {
+    // If the peak is within the tolerance range, add it to the current group
+    if (peak_indices[i] - current_group[group_size - 1] <= tolerance)
+    {
+      current_group[group_size++] = peak_indices[i];
+    }
+    else
+    {
+      // Select the highest peak in the current group
+      uint32_t best_peak = current_group[0];
+      double max_value   = signal[best_peak];
+
+      for (uint32_t j = 1; j < group_size; j++)
+      {
+        if (signal[current_group[j]] > max_value)
+        {
+          best_peak = current_group[j];
+          max_value = signal[best_peak];
+        }
+      }
+
+      filtered_peaks[filtered_count++] = best_peak;
+
+      // Start a new group with the current peak
+      group_size                  = 0;
+      current_group[group_size++] = peak_indices[i];
+    }
+  }
+
+  // Process the last group
+  if (group_size > 0)
+  {
+    uint32_t best_peak = current_group[0];
+    double max_value   = signal[best_peak];
+
+    for (uint32_t j = 1; j < group_size; j++)
+    {
+      if (signal[current_group[j]] > max_value)
+      {
+        best_peak = current_group[j];
+        max_value = signal[best_peak];
+      }
+    }
+
+    filtered_peaks[filtered_count++] = best_peak;
+  }
+
+  // Copy the filtered peaks back to the input array, update the number of peaks after filtering
+  for (uint32_t i = 0; i < filtered_count; i++)
+  {
+    peak_indices[i] = filtered_peaks[i];
+  }
+
+  *num_peaks = filtered_count;
+
+  return SYS_MEASURE_OK;
+}
+#endif
+
 uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim_typedef_t *tim,
                           uint32_t prescaler, uint32_t autoreload, double *data_buf)
 {
@@ -124,13 +388,25 @@ uint32_t sys_measure_init(sys_measure_t *signal, bsp_adc_typedef_t *adc, bsp_tim
   __ASSERT(tim != NULL, SYS_MEASURE_ERROR);
   __ASSERT(data_buf != NULL, SYS_MEASURE_ERROR);
 
-  cb_init(&(signal->dev.adc_conv), s_adc_val_buf, sizeof(s_adc_val_buf));
-  cb_init(&(signal->filtered_data), data_buf, (SYS_MEASURE_MAX_SAMPLES_PROCESS + 1) * sizeof(double));
+  uint32_t ret;
+
+  ret = cb_init(&(signal->dev.adc_conv), s_adc_val_buf, sizeof(s_adc_val_buf));
+  __ASSERT(ret == CB_STATUS_OK, SYS_MEASURE_FAILED);
+
+  ret = cb_init(&(signal->filtered_data), data_buf, (SYS_MEASURE_MAX_SAMPLES_PROCESS + 1) * sizeof(double));
+  __ASSERT(ret == CB_STATUS_OK, SYS_MEASURE_FAILED);
 
   signal->heart_rate = 0;
-  drv_hr_init(&(signal->dev), adc, tim, prescaler, autoreload);
+  ret                = drv_hr_init(&(signal->dev), adc, tim, prescaler, autoreload);
+  __ASSERT(ret == DRV_HR_OK, SYS_MEASURE_FAILED);
 
-  fft_init();
+#if defined(USE_ALGORITHM)
+  ret = fft_init();
+  __ASSERT(ret == FFT_STATUS_OK, SYS_MEASURE_FAILED);
+#elif defined(USE_MODEL)
+  ret = sys_measure_ai_model_init();
+  __ASSERT(ret == SYS_MEASURE_OK, SYS_MEASURE_FAILED);
+#endif
 
   return SYS_MEASURE_OK;
 }
@@ -258,6 +534,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
 
+#if defined(USE_ALGORITHM)
   // Choose the beta and Windows Size W1, W2 in TERMA framework
   static int w_cycle = SYS_MEASURE_WINDOW_CYCLE;
   static int w_evt   = SYS_MEASURE_WINDOW_EVENT;
@@ -336,7 +613,7 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   uint32_t pos_stop_block       = 0;
   uint32_t is_block_of_interest = 0;
 
-  double peak                                             = 0;
+  double peak_amplitude                                   = 0;
   uint32_t peak_index                                     = 0;
   uint32_t peak_nums                                      = 0;
   uint32_t peak_index_buf[SYS_MEASURE_MAX_PEAK_IN_BUFFER] = { 0 };
@@ -469,6 +746,112 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
     previous_heart_rate       = heart_rate;
     signal->heart_rate        = (uint32_t)heart_rate;
   }
+#elif defined(USE_MODEL)
+  uint32_t ret;
+
+  double handle_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
+  cbuffer_t peak_detector_cbuf                        = signal->filtered_data;
+  cb_read(&peak_detector_cbuf, handle_data, sizeof(handle_data));
+
+  ret = sys_measure_normalize_ppg_data(handle_data, SYS_MEASURE_MAX_SAMPLES_PROCESS,
+                                       SYS_MEASURE_NORMALIZE_PPG_MAX, SYS_MEASURE_NORMALIZE_PPG_MIN);
+  __ASSERT(ret == SYS_MEASURE_OK, SYS_MEASURE_FAILED);
+
+  // Move normalized data to AI input buffer
+  for (uint_fast16_t i = 0; i < AI_PEAK_DETECTION_MODEL_IN_1_SIZE; i++)
+  {
+    s_input_data[i] = (ai_float)handle_data[i];
+  }
+
+  ret = sys_measure_ai_model_run();
+  __ASSERT(ret == SYS_MEASURE_OK, SYS_MEASURE_FAILED);
+
+  uint32_t peak_nums                                          = 0;
+  uint32_t peak_index_buf[AI_PEAK_DETECTION_MODEL_OUT_1_SIZE] = { 0 };
+
+  // Find peaks
+  for (uint_fast16_t i = 0; i < AI_PEAK_DETECTION_MODEL_OUT_1_SIZE; i++)
+  {
+    if (s_output_data[i] > SYS_MEASURE_PEAK_ACCEPT_THRESHOLD)
+    {
+      peak_index_buf[peak_nums] = i;
+      peak_nums++;
+    }
+  }
+
+  // Filter close peaks
+  ret = sys_measure_filter_close_peaks(peak_index_buf, &peak_nums, handle_data, SYS_MEASURE_PEAK_TOLERANCE);
+  __ASSERT(ret == SYS_MEASURE_OK, SYS_MEASURE_FAILED);
+
+  double heart_rate                        = 0;
+  static uint8_t unstable_heart_rate_count = 0;
+  static double previous_heart_rate        = 0;
+
+  // Choose stable peak and calculate the peak interval (in second unit)
+  if (peak_nums >= 4)
+  {
+    heart_rate = peak_index_buf[2] - peak_index_buf[1];
+    __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+  }
+  else if (peak_nums == 3)
+  {
+    if (peak_index_buf[0] >= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER)
+    {
+      heart_rate = peak_index_buf[1] - peak_index_buf[0];
+      __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+    }
+    else if (peak_index_buf[2] <= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER)
+    {
+      heart_rate = peak_index_buf[2] - peak_index_buf[1];
+      __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+    }
+    else
+    {
+      return SYS_MEASURE_FAILED;
+    }
+  }
+  else
+  {
+    if ((peak_index_buf[0] >= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_BEGIN_OF_BUFFER) &&
+        (peak_index_buf[1] <= SYS_MEASURE_PEAK_STABLE_POSITION_THRESHOLD_AT_THE_END_OF_BUFFER))
+    {
+      heart_rate = peak_index_buf[1] - peak_index_buf[0];
+      __ASSERT(heart_rate > 0, SYS_MEASURE_FAILED);
+    }
+    else
+    {
+      return SYS_MEASURE_FAILED;
+    }
+  }
+
+  heart_rate *= (1 / SYS_MEASURE_SAMPLING_RATE);
+
+  // Calibration
+  heart_rate -= SYS_MEASURE_CALIB_INTERVAL;
+
+  // Estimate the heart rate (beats per minute unit)
+  heart_rate = SECONDS_PER_MINUTE / heart_rate;
+
+  __ASSERT(((heart_rate >= HEART_RATE_MIN) && (heart_rate <= HEART_RATE_MAX)), SYS_MEASURE_FAILED);
+
+  // Retain heart rate results when the user removes the sensor or changes the wearer of the device
+  if (previous_heart_rate != 0)
+  {
+    if (fabs(heart_rate - previous_heart_rate) >=
+        SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS)
+    {
+      unstable_heart_rate_count += 1;
+      if (unstable_heart_rate_count < SYS_MEASURE_MAX_HEART_RATE_NUMBER_OF_INSTABILITY)
+      {
+        return SYS_MEASURE_FAILED;
+      }
+    }
+  }
+
+  unstable_heart_rate_count = 0;
+  previous_heart_rate       = heart_rate;
+  signal->heart_rate        = (uint32_t)heart_rate;
+#endif
 
   return SYS_MEASURE_OK;
 }
