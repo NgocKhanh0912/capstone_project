@@ -534,6 +534,10 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 {
   __ASSERT(signal != NULL, SYS_MEASURE_ERROR);
 
+  double handle_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
+  cbuffer_t peak_detector_cbuf                        = signal->filtered_data;
+  cb_read(&peak_detector_cbuf, handle_data, sizeof(handle_data));
+
 #if defined(USE_ALGORITHM)
   // Choose the beta and Windows Size W1, W2 in TERMA framework
   static int w_cycle = SYS_MEASURE_WINDOW_CYCLE;
@@ -544,9 +548,6 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
   double mean_of_signal = 0;
   int i, j;
-  double handle_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
-  cbuffer_t peak_detector_cbuf                        = signal->filtered_data;
-  cb_read(&peak_detector_cbuf, handle_data, sizeof(handle_data));
 
   double fft_input_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
   memcpy(fft_input_data, handle_data, sizeof(fft_input_data));
@@ -634,13 +635,13 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
       pos_stop_block = i;
       if (pos_stop_block - pos_start_block >= w_evt)
       {
-        peak = handle_data[pos_start_block];
+        peak_amplitude = handle_data[pos_start_block];
         for (i = pos_start_block; i <= pos_stop_block; i++)
         {
-          if (handle_data[i] > peak)
+          if (handle_data[i] > peak_amplitude)
           {
-            peak       = handle_data[i];
-            peak_index = i;
+            peak_amplitude = handle_data[i];
+            peak_index     = i;
           }
         }
         peak_index_buf[peak_nums] = peak_index;
@@ -716,7 +717,6 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
     // Estimate the heart rate (beats per minute unit)
     heart_rate = SECONDS_PER_MINUTE / heart_rate;
-
     __ASSERT(((heart_rate >= HEART_RATE_MIN) && (heart_rate <= HEART_RATE_MAX)), SYS_MEASURE_FAILED);
 
     // Remove noisy heart rate signals caused by unstable sensor contact using FFT
@@ -748,10 +748,6 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   }
 #elif defined(USE_MODEL)
   uint32_t ret;
-
-  double handle_data[SYS_MEASURE_MAX_SAMPLES_PROCESS] = { 0 };
-  cbuffer_t peak_detector_cbuf                        = signal->filtered_data;
-  cb_read(&peak_detector_cbuf, handle_data, sizeof(handle_data));
 
   ret = sys_measure_normalize_ppg_data(handle_data, SYS_MEASURE_MAX_SAMPLES_PROCESS,
                                        SYS_MEASURE_NORMALIZE_PPG_MAX, SYS_MEASURE_NORMALIZE_PPG_MIN);
@@ -831,7 +827,6 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
   // Estimate the heart rate (beats per minute unit)
   heart_rate = SECONDS_PER_MINUTE / heart_rate;
-
   __ASSERT(((heart_rate >= HEART_RATE_MIN) && (heart_rate <= HEART_RATE_MAX)), SYS_MEASURE_FAILED);
 
   // Retain heart rate results when the user removes the sensor or changes the wearer of the device
