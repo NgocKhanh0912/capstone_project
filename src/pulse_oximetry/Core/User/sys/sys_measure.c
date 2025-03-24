@@ -62,17 +62,31 @@
 
 #elif SYS_MEASURE_PEAK_DETECTOR == DILATED_CNN_MODEL
 #define USE_MODEL
-#define SYS_MEASURE_PEAK_ACCEPT_THRESHOLD (0.4)
-#define SYS_MEASURE_PEAK_TOLERANCE        (0.3 * SYS_MEASURE_SAMPLING_RATE)
+#define SYS_MEASURE_PEAK_ACCEPT_THRESHOLD     (0.4)
+#define SYS_MEASURE_PEAK_TOLERANCE            (0.3 * SYS_MEASURE_SAMPLING_RATE)
 
 /**
  * @defgroup Defines related to PPG data normalization
  * @brief    Epsilon for data range, normalization max and min values.
  * @{
  */
-#define SYS_MEASURE_NORMALIZE_PPG_EPSILON (1e-6)
-#define SYS_MEASURE_NORMALIZE_PPG_MAX     (1.0)
-#define SYS_MEASURE_NORMALIZE_PPG_MIN     (-1.0)
+#define SYS_MEASURE_NORMALIZE_PPG_EPSILON     (1e-6)
+#define SYS_MEASURE_NORMALIZE_PPG_MAX         (1.0)
+#define SYS_MEASURE_NORMALIZE_PPG_MIN         (-1.0)
+/**@} */
+
+/**
+ * @defgroup Defines related to shape format
+ * @brief    Batch, channels, width, height and size of input/output format.
+ * @{
+ */
+#define SYS_MEASURE_MODEL_SHAPE_TYPE          (AI_SHAPE_BCWH)                      // Type BCWH
+#define SYS_MEASURE_MODEL_SHAPE_SIZE          (4)                                  // B + C + W + H, size is 4
+#define SYS_MEASURE_MODEL_SHAPE_BATCH         (1)                                  // Batch (B)
+#define SYS_MEASURE_MODEL_SHAPE_CHANNELS      (1)                                  // Channels (C)
+#define SYS_MEASURE_MODEL_SHAPE_WIDTH         (1)                                  // Width (W)
+#define SYS_MEASURE_MODEL_SHAPE_INPUT_HEIGHT  (AI_PEAK_DETECTION_MODEL_IN_1_SIZE)  // Input shape height (H)
+#define SYS_MEASURE_MODEL_SHAPE_OUTPUT_HEIGHT (AI_PEAK_DETECTION_MODEL_OUT_1_SIZE) // Output shape height (H)
 /**@} */
 
 #else
@@ -131,12 +145,16 @@ AI_ALIGNED(4) static ai_float s_output_data[AI_PEAK_DETECTION_MODEL_OUT_1_SIZE];
 
 static ai_buffer ai_input =
   AI_BUFFER_INIT(AI_FLAG_NONE, AI_BUFFER_FORMAT_FLOAT,
-                 AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 1, 1, AI_PEAK_DETECTION_MODEL_IN_1_SIZE),
+                 AI_BUFFER_SHAPE_INIT(SYS_MEASURE_MODEL_SHAPE_TYPE, SYS_MEASURE_MODEL_SHAPE_SIZE,
+                                      SYS_MEASURE_MODEL_SHAPE_BATCH, SYS_MEASURE_MODEL_SHAPE_CHANNELS,
+                                      SYS_MEASURE_MODEL_SHAPE_WIDTH, SYS_MEASURE_MODEL_SHAPE_INPUT_HEIGHT),
                  AI_PEAK_DETECTION_MODEL_IN_1_SIZE, NULL, s_input_data);
 
 static ai_buffer ai_output =
   AI_BUFFER_INIT(AI_FLAG_NONE, AI_BUFFER_FORMAT_FLOAT,
-                 AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 1, 1, AI_PEAK_DETECTION_MODEL_OUT_1_SIZE),
+                 AI_BUFFER_SHAPE_INIT(SYS_MEASURE_MODEL_SHAPE_TYPE, SYS_MEASURE_MODEL_SHAPE_SIZE,
+                                      SYS_MEASURE_MODEL_SHAPE_BATCH, SYS_MEASURE_MODEL_SHAPE_CHANNELS,
+                                      SYS_MEASURE_MODEL_SHAPE_WIDTH, SYS_MEASURE_MODEL_SHAPE_OUTPUT_HEIGHT),
                  AI_PEAK_DETECTION_MODEL_OUT_1_SIZE, NULL, s_output_data);
 #endif
 
