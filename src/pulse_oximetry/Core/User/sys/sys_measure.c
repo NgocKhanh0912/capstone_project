@@ -122,6 +122,7 @@
 /**@} */
 
 #define SYS_MEASURE_SAMPLING_RATE                                       (100.0)
+#define SYS_MEASURE_FILTERED_PPG_MIN_AMPLITUDE                          (100.0)
 #define SYS_MEASURE_FILTERED_PPG_OFFSET                                 (1500.0)
 #define SYS_MEASURE_CALIB_INTERVAL                                      (0.0065)
 #define SYS_MEASURE_MAX_HEART_RATE_VARIABILITY_BETWEEN_TWO_MEASUREMENTS (20)
@@ -304,6 +305,12 @@ static uint32_t sys_measure_normalize_ppg_data(double *ppg_data, uint16_t ppg_da
     {
       ppg_max = ppg_data[i];
     }
+  }
+
+  // No actual PPG signal, return
+  if (ppg_max <= SYS_MEASURE_FILTERED_PPG_MIN_AMPLITUDE)
+  {
+    return SYS_MEASURE_FAILED;
   }
 
   double range = ppg_max - ppg_min;
@@ -572,10 +579,24 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
   double fft_heart_rate =
     (SECONDS_PER_MINUTE * fft_get_frequency_of_peak_value(fft_input_data, SYS_MEASURE_SAMPLING_RATE));
 
+  double ppg_max = -DBL_MAX;
+
   // Enhance the signal
   for (i = 0; i < SYS_MEASURE_MAX_SAMPLES_PROCESS; i++)
   {
+    if (handle_data[i] > ppg_max)
+    {
+      ppg_max = handle_data[i];
+    }
+
     handle_data[i] = pow(handle_data[i] + SYS_MEASURE_FILTERED_PPG_OFFSET, 2);
+  }
+
+  // No actual PPG signal, return
+  if (ppg_max <= SYS_MEASURE_FILTERED_PPG_MIN_AMPLITUDE)
+  {
+    signal->heart_rate = 0;
+    return SYS_MEASURE_FAILED;
   }
 
   // Calculate the Event Duration Moving Average
@@ -769,7 +790,11 @@ static uint32_t sys_measure_peak_detector(sys_measure_t *signal)
 
   ret = sys_measure_normalize_ppg_data(handle_data, SYS_MEASURE_MAX_SAMPLES_PROCESS,
                                        SYS_MEASURE_NORMALIZE_PPG_MAX, SYS_MEASURE_NORMALIZE_PPG_MIN);
-  __ASSERT(ret == SYS_MEASURE_OK, SYS_MEASURE_FAILED);
+  if (ret == SYS_MEASURE_FAILED)
+  {
+    signal->heart_rate = 0;
+    return SYS_MEASURE_FAILED;
+  }
 
   // Move normalized data to AI input buffer
   for (uint_fast16_t i = 0; i < AI_PEAK_DETECTION_MODEL_IN_1_SIZE; i++)
