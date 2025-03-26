@@ -17,7 +17,12 @@ def compute_afib_confusion_matrix(detected_afib, labeled_afib, total_duration):
     detected_arr = np.zeros(total_duration, dtype=int)
     labeled_arr = np.zeros(total_duration, dtype=int)
 
-    # Mark detected AFib episodes
+    # If no AFib
+    if detected_afib == [(0, 0)]:
+        detected_afib = []
+    if labeled_afib == [(0, 0)]:
+        labeled_afib = []
+
     for onset, offset in detected_afib:
         detected_arr[onset:offset] = 1
 
@@ -25,32 +30,26 @@ def compute_afib_confusion_matrix(detected_afib, labeled_afib, total_duration):
     for onset, offset in labeled_afib:
         labeled_arr[onset:offset] = 1
 
-    # Compute duration-based metrics
+    # Duration-based metrics
     tp_duration = np.sum((detected_arr == 1) & (labeled_arr == 1))
     fp_duration = np.sum((detected_arr == 1) & (labeled_arr == 0))
     fn_duration = np.sum((detected_arr == 0) & (labeled_arr == 1))
     tn_duration = np.sum((detected_arr == 0) & (labeled_arr == 0))
 
-    # Compute episode-based metrics
-    tp_episode = sum(
-        any(labeled_arr[onset:offset] == 1) for onset, offset in detected_afib
-    )
-    fp_episode = sum(
-        all(labeled_arr[onset:offset] == 0) for onset, offset in detected_afib
-    )
-    fn_episode = sum(
-        all(detected_arr[onset:offset] == 0) for onset, offset in labeled_afib
-    )
+    # Episode-based metrics
+    tp_episode = sum(any(labeled_arr[onset:offset] == 1) for onset, offset in detected_afib if onset < offset)
+    fp_episode = sum(all(labeled_arr[onset:offset] == 0) for onset, offset in detected_afib if onset < offset)
+    fn_episode = sum(all(detected_arr[onset:offset] == 0) for onset, offset in labeled_afib if onset < offset)
 
     # Calculate metrics for duration
-    accuracy_duration = (tp_duration + tn_duration) / (tp_duration + fp_duration + fn_duration + tn_duration)
+    accuracy_duration = (tp_duration + tn_duration) / total_duration if total_duration > 0 else 0
     precision_duration = tp_duration / (tp_duration + fp_duration) if (tp_duration + fp_duration) > 0 else 0
     recall_duration = tp_duration / (tp_duration + fn_duration) if (tp_duration + fn_duration) > 0 else 0
     der_duration = (fp_duration + fn_duration) / tp_duration if tp_duration > 0 else 0
     f1_score_duration = 2 * (precision_duration * recall_duration) / (precision_duration + recall_duration) if (precision_duration + recall_duration) > 0 else 0
 
     # Calculate metrics for episode
-    accuracy_episode = (tp_episode + (len(labeled_afib) - fn_episode)) / len(labeled_afib)
+    accuracy_episode = tp_episode / (tp_episode + fp_episode + fn_episode) if (tp_episode + fp_episode + fn_episode) > 0 else 1
     precision_episode = tp_episode / (tp_episode + fp_episode) if (tp_episode + fp_episode) > 0 else 0
     recall_episode = tp_episode / (tp_episode + fn_episode) if (tp_episode + fn_episode) > 0 else 0
     der_episode = (fp_episode + fn_episode) / tp_episode if tp_episode > 0 else 0
