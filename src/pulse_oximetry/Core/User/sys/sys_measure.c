@@ -63,7 +63,7 @@
 #elif SYS_MEASURE_PEAK_DETECTOR == DILATED_CNN_MODEL
 #define USE_MODEL
 #define SYS_MEASURE_PEAK_ACCEPT_THRESHOLD     (0.8)
-#define SYS_MEASURE_PEAK_TOLERANCE            (0.3 * SYS_MEASURE_SAMPLING_RATE)
+#define SYS_MEASURE_PEAK_TOLERANCE            (0.24 * SYS_MEASURE_SAMPLING_RATE)
 
 /**
  * @defgroup Defines related to PPG data normalization
