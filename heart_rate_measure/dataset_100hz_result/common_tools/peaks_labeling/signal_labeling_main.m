@@ -3,16 +3,14 @@ output_folder = 'E:/mimic_dataset/labeled_peaks/';
 
 input_files = dir(fullfile(input_folder, '*.csv'));
 
-% Loop through each input file
 for i = 1:length(input_files)
     input_filepath = fullfile(input_folder, input_files(i).name);
-    output_filepath = fullfile(output_folder, strcat(input_files(i).name(1:end-4), '_labeled_peaks.csv'));  % Corresponding output file path
+    output_filepath = fullfile(output_folder, strcat(input_files(i).name(1:end-4), '_labeled_peaks.csv'));
 
-    % Read the PPG signal file
     fileID = fopen(input_filepath, 'r');
     sample = 0;
     while ~feof(fileID)
-        fgetl(fileID); % Read each line from the file
+        fgetl(fileID);
         sample = sample + 1;
     end
     fclose(fileID);

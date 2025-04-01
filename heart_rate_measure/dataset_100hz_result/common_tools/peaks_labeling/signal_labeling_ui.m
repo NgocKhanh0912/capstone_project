@@ -90,18 +90,20 @@ function signal_labeling_ui(signal, output_filepath)
         % Collect labeled peaks from the current window
         labeled_peaks = [];
         for i = 1:numel(handles)
-            if isvalid(handles(i)) % Only save valid handles
-                global_index = handles(i).UserData; % Global index
+            if isvalid(handles(i))
+                global_index = handles(i).UserData;
                 labeled_peaks = [labeled_peaks; global_index];
             end
         end
-        labeled_peaks = unique(labeled_peaks); % Remove duplicates
+
+        % Remove duplicates peaks
+        labeled_peaks = unique(labeled_peaks);
         
         % Append labeled peaks to the file
         if ~isempty(labeled_peaks)
-            file_id = fopen(output_filepath, 'a'); % Open file in append mode
-            fprintf(file_id, '%d\n', labeled_peaks); % Write data
-            fclose(file_id); % Close the file
+            file_id = fopen(output_filepath, 'a');
+            fprintf(file_id, '%d\n', labeled_peaks);
+            fclose(file_id);
             msgbox('Labeled peaks appended', 'Info');
         else
             msgbox('No labeled peaks to save', 'Warning');
